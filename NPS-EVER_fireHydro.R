@@ -26,9 +26,10 @@ library(here)
 ### Locate all the require data
 # setwd (dir="E:/npsHydro/EVERoutcomes")
 
+# dir.create(here("analysis"), showWarnings = FALSE)
 
 ### Read vegetation types data
-vegetation <- st_read("CLC_Veg_Exotic_Final_Updated.shp")
+vegetation <- st_read("CLC_Veg_Exotic_Final_Updated_EDEN_py.shp") # "CLC_Veg_Exotic_Final_Updated.shp" not present in provided .zip; changed to "CLC_Veg_Exotic_Final_Updated_EDEN_py.shp"
   vegetation$FuelType <- revalue(vegetation$Veg_Cat, c("NA"=1,                                                   
                                                        "Coastal Forest"=2,
                                                        "Brazilian Pepper/HID" = 2,      

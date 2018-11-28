@@ -4,6 +4,7 @@
 #'
 #' @format An sfc_POLYGON object of planning unit boundaries for Big Cypress National Preserve and Everglades National Park
 #' \describe{
+#' \item{none}{none}
 #'}
 #' @docType data
 #' @keywords planning units

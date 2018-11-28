@@ -1,0 +1,86 @@
+#' @title Generate fire-hydro shapefile
+#'
+#' @description Generates shapefile showing fire potential. Presently only works on the SFNRC network (for EDEN data access)
+#' 
+#' @usage getFireHydro(EDEN_date, output_shapefile = paste0(tempDir(), "output.shp"), png = NULL, csv = NULL)
+#' 
+#' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
+#' @param output_shapefile file address for shapefile output
+#' @param png If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").
+#' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")
+#' 
+#' @return dataframe \code{getFireHydro} produces a shapefile.
+#' 
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' }
+#' 
+#' @importFrom utils write.csv
+#' @importFrom sf st_read
+#' @importFrom sf st_transform
+#' @importFrom sf st_intersection
+#' @importFrom sf st_write
+#' @importFrom plyr revalue
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarize
+#' 
+#' 
+#' @export
+
+
+getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+                         png = NULL, csv = NULL) {
+  
+  ### argument to auto-generate output 
+  # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
+  # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
+  
+  
+  ### Read EDEN EPA hydro data                    
+  # eden_epa <-st_read("eden_epa20181018.shp") # file not provided. Verify that no processing of EDEN data is necessary. 
+  # edenReclassFileName  <- paste0("analysis/outcomes/eden_epa", EDEN_date, "Reclass.shp")
+  eden_epa               <- sf::st_read(paste0("/opt/physical/gis/eden/", substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
+  eden_epa$WaterLevel    <- c(5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
+  eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
+  eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits))                                   # Reproject dissolved grid to park boundary
+  eden_epa_reclass       <- eden_epaGroupPrj[,"WaterLevel"]
+  
+  # warning message: attribute variables are assumed to be spatially constant throughout all geometries 
+  eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits)                                 # Clip the EDEN EPA hydro using the park boundary
+  # sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
+  
+  
+  ### Combine EDEN EPA hydro and fuel types
+  # edenVegFileName <- paste0("analysis/outcomes/fireRisk_fuelAvailability_", EDEN_date, ".shp")
+  eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass)
+  # sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", EDEN_date, "_vegReclass.shp"), delete_layer = TRUE)
+  eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk ",
+                               ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, "High Fire Spread Risk ",
+                                      ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 4, "High Fire Spread Risk ",
+                                             ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 4, "High Fire Spread Risk ", "Low Fire Spread Risk"))))
+  
+  eden_epaNveg$RX_Use <-ifelse(eden_epaNveg$WF_Use == "High Fire Spread Risk ", "High Fuel Availability", "Low Fuel Availability")
+  # sf::st_write(eden_epaNveg, edenVegFileName, delete_layer = TRUE)
+  
+  
+  ### Combine fireRisk data with planning units
+  # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
+  eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits[, c("PlanningUn", "FMU_Name")])
+  eden_epaNveg_planningUnits$WL_des  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
+  eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
+  sf::st_write(eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE)
+  # rgdal::writeOGR(eden_epaNveg_planningUnits, file = output_shapefile)
+  
+  ### Create a summary table of fire risk area for each planning unit        
+  keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
+  planFMUs   <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(areaHA=sum(area))                 # Summarize data (mean) by planning units
+  is.num     <- sapply(planFMUs, is.numeric)                                                                        
+  planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
+  
+  if (!is.null(csv)) {
+    utils::write.csv(planFMUs, file = csv, row.names = FALSE)       
+  }
+  
+}

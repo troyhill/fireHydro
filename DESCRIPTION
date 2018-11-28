@@ -1,0 +1,24 @@
+Package: fireHydro
+Type: Package
+Title: FireHydro tool
+Version: 0.0.1
+Date: 2018-11-27
+Author: NCSU collaborators
+Maintainer: Troy D. Hill <Hill.Troy@gmail.com>
+Description: Lorem ipsum
+License: file LICENSE
+URL: https://github.com/troyhill/fireHydro
+LazyData: true
+Depends:
+    R (>= 3.0),
+    utils,
+    plyr,
+    dplyr,
+    sf
+RoxygenNote: 6.1.0
+Suggests: 
+    covr,
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

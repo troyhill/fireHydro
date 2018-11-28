@@ -23,7 +23,8 @@ library(here)
 
 
 ### set target date
-targetDate <- "20181018"
+targetDate <- "20170401"
+outputFolder <- "/opt/physical/troy/ESRIDATA/fireHydro_output/NPS_output"
 
 ### Locate all the require data
 # setwd(here())
@@ -42,7 +43,7 @@ vegetation <- sf::st_read("CLC_Veg_exotic_Final_Updated_EDEN_py.shp") # "CLC_Veg
                                                        "Pine Forest"=5,
                                                        "Tall Continuous Grass"=5))                               # Reclassify vegetation/fuel classes into five fule categories
         vegetation_reclass <- vegetation[, c("Veg_Cat", "FuelType")]                                              # Select needed parameters (e.g., vegetation class, fuel ranking etc.)
-          st_write(vegetation_reclass, "analysis/outcomes/vegReclass.shp", delete_layer = TRUE)   
+          # sf::st_write(vegetation_reclass, "analysis/outcomes/vegReclass.shp", delete_layer = TRUE)   
 
 
 ### Read EDEN EPA hydro data                    
@@ -57,35 +58,35 @@ eden_epa                   <- sf::st_read(paste0("/opt/physical/gis/eden/", subs
           
           # warning message: attribute variables are assumed to be spatially constant throughout all geometries 
             eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits)                                 # Clip the EDEN EPA hydro using the park boundary
-            sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
+            # sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
 
 
 ### Combine EDEN EPA hydro and fuel types
 edenVegFileName <- paste0("analysis/outcomes/fireRisk_fuelAvailability_", targetDate, ".shp")
 eden_epaNveg    <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass)
-sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", targetDate, "_vegReclass.shp"), delete_layer = TRUE)
+# sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", targetDate, "_vegReclass.shp"), delete_layer = TRUE)
     eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk ",
                                  ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, "High Fire Spread Risk ",
                                         ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 4, "High Fire Spread Risk ",
                                                ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 4, "High Fire Spread Risk ", "Low Fire Spread Risk"))))
       
       eden_epaNveg$RX_Use <-ifelse(eden_epaNveg$WF_Use == "High Fire Spread Risk ", "High Fuel Availability", "Low Fuel Availability")
-      sf::st_write(eden_epaNveg, edenVegFileName, delete_layer = TRUE)
+      # sf::st_write(eden_epaNveg, edenVegFileName, delete_layer = TRUE)
 
 
 ### Combine fireRisk data with planning units
-combinedFileName <-  paste0("analysis/outcomes/fireRisk_fuelAvailability_planningFMUs_", targetDate, ".shp")
+combinedFileName <-  paste0(outputFolder, "/fireRisk_fuelAvailability_planningFMUs_", targetDate, ".shp")
 BICY_EVER_PlanningUnits                <- sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp") # verify that "_py" version is what they used
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
   eden_epaNveg_planningUnits           <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits[, c("PlanningUn", "FMU_Name")])
     eden_epaNveg_planningUnits$WL_des  <- revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
       eden_epaNveg_planningUnits$area  <- sf::st_area(eden_epaNveg_planningUnits)*0.000247105
       sf::st_write(eden_epaNveg_planningUnits, combinedFileName, delete_layer = TRUE)
-        
+        # rgdal::writeOGR(eden_epaNveg_planningUnits, file = combinedFileName)
 
 ### Create a summary table of fire risk area for each planning unit        
 outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", targetDate, ".csv")
-keyVars_df <- eden_epaNveg_planningUnits %>% st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
+keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
   planFMUs <- keyVars_df %>% group_by(PlanningUn, FMU_Name, WF_Use) %>% summarize(areaHA=sum(area))                 # Summarize data (mean) by planning units
     is.num <- sapply(planFMUs, is.numeric)                                                                        
       planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)

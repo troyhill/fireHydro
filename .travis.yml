@@ -18,4 +18,4 @@
 
  environment:
     global:
-WARNINGS_ARE_ERORRS: 1
+     WARNINGS_ARE_ERORRS: 1

@@ -1,5 +1,21 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
-sudo: false
-cache: packages
+ language: R
+ cache: packages
+ sudo: required
+ r_build_args: --resave-data --no-manual 
+ addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
+
+ r_packages: 
+    - covr
+
+ after_success:
+    - Rscript -e 'covr::codecov()'
+
+ environment:
+    global:
+WARNINGS_ARE_ERORRS: 1

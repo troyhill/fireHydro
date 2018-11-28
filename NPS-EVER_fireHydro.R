@@ -87,7 +87,9 @@ BICY_EVER_PlanningUnits                <- sf::st_read("BICY_EVER_PlanningUnits_E
 ### Create a summary table of fire risk area for each planning unit        
 outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", targetDate, ".csv")
 keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
-  planFMUs <- keyVars_df %>% group_by(PlanningUn, FMU_Name, WF_Use) %>% summarize(areaHA=sum(area))                 # Summarize data (mean) by planning units
+planFMUs <- keyVars_df %>% group_by(PlanningUn, FMU_Name, WF_Use) %>% summarize(area_acres=sum(area))                 # Summarize data (mean) by planning units
+
+# planFMUs <- keyVars_df(group_by(summarize(area_acres=sum(area)), PlanningUn, FMU_Name, WF_Use))                 # Summarize data (mean) by planning units
     is.num <- sapply(planFMUs, is.numeric)                                                                        
       planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
         write.csv(planFMUs, file = outputCsv)        

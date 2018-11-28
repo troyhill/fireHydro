@@ -95,7 +95,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   
   ### Create a summary table of fire risk area for each planning unit        
   keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
-  planFMUs   <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(areaHA=sum(area))                 # Summarize data (mean) by planning units
+  planFMUs   <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(area_acres=sum(area))                 # Summarize data (mean) by planning units
   is.num     <- sapply(planFMUs, is.numeric)                                                                        
   planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
   
@@ -106,8 +106,9 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   if (!is.null(pngExport)) {
   ### output as png using rgdal:
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
-  rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
-  rgdal::writeGDAL(rSpdf[, 'WL_des'], pngExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
-    # png::writePNG() # alternative approach
+    sf::st_write(obj = eden_epaNveg_planningUnits, pngExport, delete_layer = TRUE, driver="PDF")
+    # rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
+    # rgdal::writeGDAL(as(eden_epaNveg_planningUnits, 'SpatialPixelsDataFrame')[, 'WL_des'], pngExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
+    # png::writePNG(eden_epaNveg_planningUnits[, 'WL_des'], pngExport) # alternative approach
   }
 }

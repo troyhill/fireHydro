@@ -4,14 +4,16 @@
 \alias{getFireHydro}
 \title{Generate fire-hydro shapefile}
 \usage{
-getFireHydro(EDEN_date, output_shapefile = paste0(tempDir(), "output.shp"), png = NULL, csv = NULL)
+getFireHydro(EDEN_date, 
+output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+pngExport = NULL, csv = NULL)
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
 
 \item{output_shapefile}{file address for shapefile output}
 
-\item{png}{If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").}
+\item{pngExport}{If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").}
 
 \item{csv}{If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")}
 }

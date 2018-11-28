@@ -2,11 +2,13 @@
 #'
 #' @description Generates shapefile showing fire potential. Presently only works on the SFNRC network (for EDEN data access)
 #' 
-#' @usage getFireHydro(EDEN_date, output_shapefile = paste0(tempDir(), "output.shp"), png = NULL, csv = NULL)
+#' @usage getFireHydro(EDEN_date, 
+#' output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+#' pngExport = NULL, csv = NULL)
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
-#' @param png If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").
+#' @param pngExport If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").
 #' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
@@ -32,8 +34,9 @@
 
 
 getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-                         png = NULL, csv = NULL) {
+                         pngExport = NULL, csv = NULL) {
   
+
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
@@ -83,5 +86,11 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   if (!is.null(csv)) {
     utils::write.csv(planFMUs, file = csv, row.names = FALSE)       
   }
-  
+ 
+  if (!is.null(pngExport)) {
+  ### output as png using rgdal:
+  ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
+  # rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
+  # rgdal::writeGDAL(rSpdf[, 'WL_des'], pngExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
+  }
 }

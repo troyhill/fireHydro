@@ -11,7 +11,7 @@
 #' @param output_shapefile file address for shapefile output
 #' @param pngExport If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").
 #' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")
-#' @param EDEN_GIS_directory parent directory where EDEN water level data can be found. "/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows.
+#' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
@@ -43,19 +43,22 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   
+  if (grepl(x = EDEN_GIS_directory, pattern = ".shp")) {
+    eden_epa               <- sf::st_read(EDEN_GIS_directory)
+  }
+  
   ### adjust EDEN directory for operating system
   if (EDEN_GIS_directory == "detect") {
     switch(Sys.info()[['sysname']],
            Windows= {EDEN_GIS_directory <- "Y:/gis/eden/"},
            Linux  = {EDEN_GIS_directory <- "/opt/physical/gis/eden/"},
            Darwin = {stop("EDEN data parent directory address is not automatically identified for Mac OS.")})
-    
+    eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
   }
 
   ### Read EDEN EPA hydro data                    
   # eden_epa <-st_read("eden_epa20181018.shp") # file not provided. Verify that no processing of EDEN data is necessary. 
   # edenReclassFileName  <- paste0("analysis/outcomes/eden_epa", EDEN_date, "Reclass.shp")
-  eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
   eden_epa$WaterLevel    <- c(5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
   eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits))                                   # Reproject dissolved grid to park boundary

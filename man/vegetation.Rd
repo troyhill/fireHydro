@@ -8,12 +8,12 @@
 \describe{
 \item{NAME_SITE}{tbd}
 \item{NAME_STATE}{tbd}
-\item{Veg_Cat}{tbd}
+\item{Veg_Cat}{vegetation types (e.g., Coastal Forest, Brazilian Pepper/HID, Shrub etc.)}
 \item{Notes}{tbd}
 \item{Shape_Leng}{tbd}
 \item{Shape_Area}{tbd}
 \item{geometry}{tbd}
-\item{FuelType}{tbd}
+\item{FuelType}{Ranges between 1 and 5, where 1 represents low fire and 5 represents high fire risk}
 }}
 \usage{
 vegetation

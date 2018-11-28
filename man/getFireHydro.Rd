@@ -18,7 +18,7 @@ EDEN_GIS_directory = "detect")
 
 \item{csv}{If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")}
 
-\item{EDEN_GIS_directory}{parent directory where EDEN water level data can be found. "/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows.}
+\item{EDEN_GIS_directory}{The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.

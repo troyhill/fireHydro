@@ -30,7 +30,9 @@
 #' @importFrom plyr revalue
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
-#' 
+#' @importFrom rgdal setCPLConfigOption
+#' @importFrom rgdal writeGDAL
+#'  
 #' 
 #' @export
 
@@ -104,7 +106,8 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   if (!is.null(pngExport)) {
   ### output as png using rgdal:
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
-  # rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
-  # rgdal::writeGDAL(rSpdf[, 'WL_des'], pngExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
+  rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
+  rgdal::writeGDAL(rSpdf[, 'WL_des'], pngExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
+    # png::writePNG() # alternative approach
   }
 }

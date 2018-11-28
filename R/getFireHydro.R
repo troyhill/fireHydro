@@ -71,6 +71,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   
   ### Combine EDEN EPA hydro and fuel types
   # edenVegFileName <- paste0("analysis/outcomes/fireRisk_fuelAvailability_", EDEN_date, ".shp")
+  vegetation_reclass <- vegetation[, c("Veg_Cat", "FuelType")]     
   eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass)
   # sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", EDEN_date, "_vegReclass.shp"), delete_layer = TRUE)
   eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk ",

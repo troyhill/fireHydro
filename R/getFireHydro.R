@@ -22,6 +22,7 @@
 #' @importFrom sf st_transform
 #' @importFrom sf st_intersection
 #' @importFrom sf st_write
+#' @importFrom sf st_set_geometry
 #' @importFrom plyr revalue
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize

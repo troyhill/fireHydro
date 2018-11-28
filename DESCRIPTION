@@ -3,7 +3,7 @@ Type: Package
 Title: FireHydro tool
 Version: 0.0.1
 Date: 2018-11-27
-Author: NCSU collaborators
+Author: Justin Shedd, Jelena Vukomanovic, Troy D. Hill
 Maintainer: Troy D. Hill <Hill.Troy@gmail.com>
 Description: Lorem ipsum
 License: file LICENSE

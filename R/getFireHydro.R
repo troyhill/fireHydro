@@ -4,12 +4,14 @@
 #' 
 #' @usage getFireHydro(EDEN_date, 
 #' output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-#' pngExport = NULL, csv = NULL)
+#' pngExport = NULL, csv = NULL,
+#' EDEN_GIS_directory = "detect")
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
 #' @param pngExport If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").
 #' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")
+#' @param EDEN_GIS_directory parent directory where EDEN water level data can be found. "/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows.
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
@@ -34,18 +36,26 @@
 
 
 getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-                         pngExport = NULL, csv = NULL) {
+                         pngExport = NULL, csv = NULL, EDEN_GIS_directory = "detect") {
   
 
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   
-  
+  ### adjust EDEN directory for operating system
+  if (EDEN_GIS_directory == "detect") {
+    switch(Sys.info()[['sysname']],
+           Windows= {EDEN_GIS_directory <- "Y:/gis/eden/"},
+           Linux  = {EDEN_GIS_directory <- "/opt/physical/gis/eden/"},
+           Darwin = {stop("EDEN data parent directory address is not automatically identified for Mac OS.")})
+    
+  }
+
   ### Read EDEN EPA hydro data                    
   # eden_epa <-st_read("eden_epa20181018.shp") # file not provided. Verify that no processing of EDEN data is necessary. 
   # edenReclassFileName  <- paste0("analysis/outcomes/eden_epa", EDEN_date, "Reclass.shp")
-  eden_epa               <- sf::st_read(paste0("/opt/physical/gis/eden/", substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
+  eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
   eden_epa$WaterLevel    <- c(5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
   eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits))                                   # Reproject dissolved grid to park boundary
@@ -74,8 +84,8 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits[, c("PlanningUn", "FMU_Name")])
   eden_epaNveg_planningUnits$WL_des  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
-  sf::st_write(eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE)
-  # rgdal::writeOGR(eden_epaNveg_planningUnits, file = output_shapefile)
+  sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
+  # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
   
   ### Create a summary table of fire risk area for each planning unit        
   keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values

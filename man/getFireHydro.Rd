@@ -6,7 +6,8 @@
 \usage{
 getFireHydro(EDEN_date, 
 output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-pngExport = NULL, csv = NULL)
+pngExport = NULL, csv = NULL,
+EDEN_GIS_directory = "detect")
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
@@ -16,6 +17,8 @@ pngExport = NULL, csv = NULL)
 \item{pngExport}{If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").}
 
 \item{csv}{If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")}
+
+\item{EDEN_GIS_directory}{parent directory where EDEN water level data can be found. "/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows.}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.

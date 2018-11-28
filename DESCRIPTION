@@ -14,7 +14,8 @@ Depends:
     utils,
     plyr,
     dplyr,
-    sf
+    sf,
+    rgdal
 RoxygenNote: 6.1.0
 Suggests: 
     covr,

@@ -14,7 +14,7 @@
 #' 
 #' \dontrun{
 #' ### code used to generate object using shapefile provided by NCSU
-#'  planningUnits            <- sf::st_union(sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp")) # "BICY_EVER_PlanningUnits_EDEN.shp" is not provided. changed to "BICY_EVER_PlanningUnits_EDEN_py.shp"
+#'  planningUnits <- sf::st_union(sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp"))
 #' }
 #' 
 NULL

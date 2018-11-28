@@ -25,7 +25,7 @@ plot(BICY_EVER_PlanningUnits)
 
 \dontrun{
 ### code used to generate object using shapefile provided by NCSU
-BICY_EVER_PlanningUnits                <- sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp") 
+BICY_EVER_PlanningUnits <- sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp") 
 }
 
 }

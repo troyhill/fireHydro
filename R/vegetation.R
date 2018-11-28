@@ -35,6 +35,6 @@
 #'                                                     "Tall Continuous Grass"=5))                               # Reclassify vegetation/fuel classes into five fule categories
 #' vegetation_reclass <- vegetation[, c("Veg_Cat", "FuelType")]                                              # Select needed parameters (e.g., vegetation class, fuel ranking etc.)
 #' sf::st_write(vegetation_reclass, "analysis/outcomes/vegReclass.shp", delete_layer = TRUE)   
-#'} }
+#'}
 #' 
 NULL

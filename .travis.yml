@@ -9,6 +9,7 @@
     packages:
       - libgdal-dev
       - libproj-dev
+      - libudunits2-dev
 
  r_packages: 
     - covr

@@ -9,7 +9,8 @@ output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"),
 imageExport = NULL, csv = NULL,
 EDEN_GIS_directory = "detect",
                          vegetation_shp = vegetation,
-                         BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits)
+                         BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
+                         returnShp = FALSE)
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
@@ -20,11 +21,13 @@ EDEN_GIS_directory = "detect",
 
 \item{csv}{If a .csv table of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")}
 
-\item{EDEN_GIS_directory}{The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.}
+\item{EDEN_GIS_directory}{The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment.}
 
 \item{vegetation_shp}{shapefile of vegetation data in Big Cypress and Everglades}
 
 \item{BICY_EVER_PlanningUnits_shp}{shapefile of polygons representing Big Cypress and Everglades planning units}
+
+\item{returnShp}{TRUE/FALSE determinant of whether output is returned to the working environment}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.
@@ -35,6 +38,9 @@ Generates shapefile showing fire potential. Presently only works on the SFNRC ne
 \examples{
 
 \dontrun{
+getFireHydro(EDEN_date = "20181018", 
+     EDEN_GIS_directory = "EDEN_shp_20181018",
+     output_shapefile = "output.shp", imageExport = "output.png")
 }
 
 }

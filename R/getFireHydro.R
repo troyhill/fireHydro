@@ -7,7 +7,6 @@
 #' imageExport = NULL, csv = NULL,
 #' EDEN_GIS_directory = "detect",
 #'                          vegetation_shp = vegetation,
-#'                          planningUnits_shp = planningUnits,
 #'                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits)
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
@@ -16,7 +15,6 @@
 #' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
 #' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
-#' @param planningUnits_shp an sfc_POLYGON object representing Big Cypress and Everglades planning units. May be derived from BICY_EVER_PlanningUnits_shp
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
@@ -53,10 +51,15 @@
 getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
                          imageExport = NULL, csv = NULL, EDEN_GIS_directory = "detect",
                          vegetation_shp = vegetation,
-                         planningUnits_shp = planningUnits,
                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits) {
+  ### TODO:
+  ### supply example EDEN data for testing
+  ### un-pack piped statements
+  ### user specifies what's displayed in the output?
+  ### what's up with the shapefiles that used to be exported - are they useful? should they have export options? 
   
-
+  planningUnits_shp <- sf::st_union(sf::st_read(BICY_EVER_PlanningUnits))
+  
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
@@ -106,14 +109,18 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")])
   eden_epaNveg_planningUnits$WL_des  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
-  sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
-  # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
+  
   
   ### Create a summary table of fire risk area for each planning unit        
   keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
   planFMUs   <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(area_acres=sum(area))                 # Summarize data (mean) by planning units
   is.num     <- sapply(planFMUs, is.numeric)                                                                        
   planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
+  
+  
+  ### export shapefile
+  sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
+  # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
   
   if (!is.null(csv)) {
     utils::write.csv(planFMUs, file = csv, row.names = FALSE)       

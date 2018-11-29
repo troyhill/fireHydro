@@ -9,7 +9,6 @@ output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"),
 imageExport = NULL, csv = NULL,
 EDEN_GIS_directory = "detect",
                          vegetation_shp = vegetation,
-                         planningUnits_shp = planningUnits,
                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits)
 }
 \arguments{
@@ -24,8 +23,6 @@ EDEN_GIS_directory = "detect",
 \item{EDEN_GIS_directory}{The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.}
 
 \item{vegetation_shp}{shapefile of vegetation data in Big Cypress and Everglades}
-
-\item{planningUnits_shp}{an sfc_POLYGON object representing Big Cypress and Everglades planning units. May be derived from BICY_EVER_PlanningUnits_shp}
 
 \item{BICY_EVER_PlanningUnits_shp}{shapefile of polygons representing Big Cypress and Everglades planning units}
 }

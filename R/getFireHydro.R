@@ -58,7 +58,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   ### user specifies what's displayed in the output?
   ### what's up with the shapefiles that used to be exported - are they useful? should they have export options? 
   
-  planningUnits_shp <- sf::st_union(sf::st_read(BICY_EVER_PlanningUnits))
+  planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
   
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")

@@ -1,6 +1,6 @@
 #' Data: Vegetation shapefile for Big Cypress National Preserve and Everglades National Park
 #'
-#'
+#' @description A shapefile of vegetation data
 #'
 #' @format A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
 #' \describe{

@@ -1,6 +1,6 @@
 #' Data: A shapefile of EDEN water level data for 18 October 2018
 #'
-#'
+#' @description A shapefile of EDEN water level and stage data
 #'
 #' @format A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
 #' \describe{

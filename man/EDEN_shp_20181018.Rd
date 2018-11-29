@@ -16,7 +16,7 @@
 EDEN_shp_20181018
 }
 \description{
-Data: A shapefile of EDEN water level data for 18 October 2018
+A shapefile of EDEN water level and stage data
 }
 \examples{
 summary(EDEN_shp_20181018)

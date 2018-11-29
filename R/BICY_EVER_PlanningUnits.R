@@ -1,6 +1,6 @@
 #' Data: Big Cypress and Everglades planning units
 #'
-#'
+#' @description A shapefile of planning units
 #'
 #' @format A shapefile of planning unit boundaries for Big Cypress National Preserve and Everglades National Park
 #' \describe{

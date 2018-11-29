@@ -19,7 +19,7 @@
 vegetation
 }
 \description{
-Data: Vegetation shapefile for Big Cypress National Preserve and Everglades National Park
+A shapefile of vegetation data
 }
 \examples{
 

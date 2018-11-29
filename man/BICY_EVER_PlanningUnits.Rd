@@ -18,7 +18,7 @@
 BICY_EVER_PlanningUnits
 }
 \description{
-Data: Big Cypress and Everglades planning units
+A shapefile of planning units
 }
 \examples{
 plot(BICY_EVER_PlanningUnits)

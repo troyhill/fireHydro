@@ -19,7 +19,7 @@ EDEN_shp_20181018
 Data: A shapefile of EDEN water level data for 18 October 2018
 }
 \examples{
-plot(EDEN_shp_20181018)
+summary(EDEN_shp_20181018)
 
 \dontrun{
 ### code used to generate object

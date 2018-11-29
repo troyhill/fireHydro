@@ -15,7 +15,7 @@
 #' @name EDEN_shp_20181018
 #' @usage EDEN_shp_20181018
 #' @examples 
-#' plot(EDEN_shp_20181018)
+#' summary(EDEN_shp_20181018)
 #' 
 #' \dontrun{
 #' ### code used to generate object

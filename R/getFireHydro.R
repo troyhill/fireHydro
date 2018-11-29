@@ -5,13 +5,19 @@
 #' @usage getFireHydro(EDEN_date, 
 #' output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
 #' imageExport = NULL, csv = NULL,
-#' EDEN_GIS_directory = "detect")
+#' EDEN_GIS_directory = "detect",
+#'                          vegetation_shp = vegetation,
+#'                          planningUnits_shp = planningUnits,
+#'                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits)
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
 #' @param imageExport If an image output is desired, include a file addess/name here (e.g., "fireHydroOutput.png" or "fireHydroOutput.pdf").
 #' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
 #' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.
+#' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
+#' @param planningUnits_shp an sfc_POLYGON object representing Big Cypress and Everglades planning units. May be derived from BICY_EVER_PlanningUnits_shp
+#' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
@@ -38,14 +44,17 @@
 #' @importFrom ggplot2 ggsave
 #' @importFrom ggplot2 theme_bw
 #' @importFrom ggplot2 labs
-#' @importFrom ggplot2 scale_fill_manual
-#' @importFrom ggplot2 scale_colour_manual
+#' @importFrom ggplot2 scale_fill_brewer
+#' @importFrom ggplot2 scale_colour_brewer
 #' 
 #' @export
 
 
 getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-                         imageExport = NULL, csv = NULL, EDEN_GIS_directory = "detect") {
+                         imageExport = NULL, csv = NULL, EDEN_GIS_directory = "detect",
+                         vegetation_shp = vegetation,
+                         planningUnits_shp = planningUnits,
+                         BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits) {
   
 
   ### argument to auto-generate output 
@@ -70,17 +79,17 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   # edenReclassFileName  <- paste0("analysis/outcomes/eden_epa", EDEN_date, "Reclass.shp")
   eden_epa$WaterLevel    <- c(5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
-  eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits))                                   # Reproject dissolved grid to park boundary
+  eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits_shp))                                   # Reproject dissolved grid to park boundary
   eden_epa_reclass       <- eden_epaGroupPrj[,"WaterLevel"]
   
   # warning message: attribute variables are assumed to be spatially constant throughout all geometries 
-  eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits)                                 # Clip the EDEN EPA hydro using the park boundary
+  eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits_shp)                                 # Clip the EDEN EPA hydro using the park boundary
   # sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
   
   
   ### Combine EDEN EPA hydro and fuel types
   # edenVegFileName <- paste0("analysis/outcomes/fireRisk_fuelAvailability_", EDEN_date, ".shp")
-  vegetation_reclass <- vegetation[, c("Veg_Cat", "FuelType")]     
+  vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass)
   # sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", EDEN_date, "_vegReclass.shp"), delete_layer = TRUE)
   eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk ",
@@ -94,7 +103,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   
   ### Combine fireRisk data with planning units
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
-  eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits[, c("PlanningUn", "FMU_Name")])
+  eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")])
   eden_epaNveg_planningUnits$WL_des  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
@@ -115,7 +124,8 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
     ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = WL_des, colour = WL_des), lwd = 0 ,alpha = 0.8) + 
       ggplot2::theme_bw() + ggplot2::labs(fill = "Water level category") + 
-      ggplot2::scale_fill_manual(values = rainbow(5)) + ggplot2::scale_colour_manual(values = rainbow(5), guide = "none")
+      ggplot2::scale_fill_brewer(palette="Blues", direction=-1) +  ggplot2::scale_colour_brewer(palette="Blues", direction = -1, guide = "none")
+      # ggplot2::scale_fill_manual(values = rev(rainbow(5))) + ggplot2::scale_colour_manual(values = rev(rainbow(5)), guide = "none")
     ggplot2::ggsave(file = imageExport)
     # sf::st_write(obj = eden_epaNveg_planningUnits, imageExport, delete_layer = TRUE, driver="PDF")
     # rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")

@@ -4,13 +4,13 @@
 #' 
 #' @usage getFireHydro(EDEN_date, 
 #' output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-#' pngExport = NULL, csv = NULL,
+#' imageExport = NULL, csv = NULL,
 #' EDEN_GIS_directory = "detect")
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
-#' @param pngExport If a .png output is desired, include a file addess/name here (e.g., "/fireHydroOutput.png").
-#' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "/fireHydroOutput.csv")
+#' @param imageExport If an image output is desired, include a file addess/name here (e.g., "fireHydroOutput.png" or "fireHydroOutput.pdf").
+#' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
 #' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data.
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
@@ -32,20 +32,27 @@
 #' @importFrom dplyr summarize
 #' @importFrom rgdal setCPLConfigOption
 #' @importFrom rgdal writeGDAL
-#'  
+#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 geom_sf
+#' @importFrom ggplot2 aes
+#' @importFrom ggplot2 ggsave
+#' @importFrom ggplot2 theme_bw
+#' @importFrom ggplot2 labs
+#' @importFrom ggplot2 scale_fill_manual
+#' @importFrom ggplot2 scale_colour_manual
 #' 
 #' @export
 
 
 getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-                         pngExport = NULL, csv = NULL, EDEN_GIS_directory = "detect") {
+                         imageExport = NULL, csv = NULL, EDEN_GIS_directory = "detect") {
   
 
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   
-  if (grepl(x = EDEN_GIS_directory, pattern = ".shp")) {
+  if (grepl(x = EDEN_GIS_directory, pattern = "shp$")) {
     eden_epa               <- sf::st_read(EDEN_GIS_directory)
   }
   
@@ -103,12 +110,19 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
     utils::write.csv(planFMUs, file = csv, row.names = FALSE)       
   }
  
-  if (!is.null(pngExport)) {
+  if (!is.null(imageExport)) {
   ### output as png using rgdal:
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
-    sf::st_write(obj = eden_epaNveg_planningUnits, pngExport, delete_layer = TRUE, driver="PDF")
+    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = WL_des, colour = WL_des), lwd = 0 ,alpha = 0.8) + 
+      ggplot2::theme_bw() + ggplot2::labs(fill = "Water level category") + 
+      ggplot2::scale_fill_manual(values = rainbow(5)) + ggplot2::scale_colour_manual(values = rainbow(5), guide = "none")
+    ggplot2::ggsave(file = imageExport)
+    # sf::st_write(obj = eden_epaNveg_planningUnits, imageExport, delete_layer = TRUE, driver="PDF")
     # rgdal::setCPLConfigOption("GDAL_PAM_ENABLED", "FALSE")
-    # rgdal::writeGDAL(as(eden_epaNveg_planningUnits, 'SpatialPixelsDataFrame')[, 'WL_des'], pngExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
-    # png::writePNG(eden_epaNveg_planningUnits[, 'WL_des'], pngExport) # alternative approach
+    # rgdal::writeGDAL(as(eden_epaNveg_planningUnits, 'SpatialPixelsDataFrame')[, 'WL_des'], imageExport, drivername = 'PNG', type = 'Byte', mvFlag = 0, colorTables = list(colorRampPalette(c('black', 'white'))(11)))
+    # png::writePNG(eden_epaNveg_planningUnits[, 'WL_des'], imageExport) # alternative approach
+    # base_family = "Roboto Condensed"
+    
+
   }
 }

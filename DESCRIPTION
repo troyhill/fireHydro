@@ -15,7 +15,8 @@ Depends:
     plyr,
     dplyr,
     sf,
-    rgdal
+    rgdal,
+    ggplot2
 RoxygenNote: 6.1.0
 Suggests: 
     covr,

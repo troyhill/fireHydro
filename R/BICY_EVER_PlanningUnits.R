@@ -16,6 +16,7 @@
 #' @keywords planning units
 #' @name BICY_EVER_PlanningUnits
 #' @usage BICY_EVER_PlanningUnits
+#' @export
 #' @examples 
 #' plot(BICY_EVER_PlanningUnits)
 #' 

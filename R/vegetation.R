@@ -17,6 +17,7 @@
 #' @keywords vegetation, fuel
 #' @name vegetation
 #' @usage vegetation
+#' @export
 #' @examples 
 #' 
 #' \dontrun{

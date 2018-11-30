@@ -8,8 +8,8 @@ getFireHydro(EDEN_date,
     output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
     imageExport = NULL, csvExport = NULL,
     EDEN_GIS_directory = "detect",
-    vegetation_shp = getFireHydro::vegetation,
-    BICY_EVER_PlanningUnits_shp = getFireHydro::BICY_EVER_PlanningUnits,
+    vegetation_shp = fireHydro::vegetation,
+    BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
     returnShp = FALSE,
     dataToPlot = "WL_des")
 }

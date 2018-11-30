@@ -4,20 +4,22 @@
 #' 
 #' @usage getFireHydro(EDEN_date, 
 #' output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-#' imageExport = NULL, csv = NULL,
+#' imageExport = NULL, csvExport = NULL,
 #' EDEN_GIS_directory = "detect",
 #'                          vegetation_shp = vegetation,
 #'                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
-#'                          returnShp = FALSE)
+#'                          returnShp = FALSE,
+#'                          dataToPlot = "WL_des")
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
 #' @param imageExport If an image output is desired, include a file addess/name here (e.g., "fireHydroOutput.png" or "fireHydroOutput.pdf").
-#' @param csv If a .csv table of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
+#' @param csvExport If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
 #' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment. 
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
+#' @param dataToPlot character string identifying the data to be plotted in the exported image. By default, water level categories are used ("WL_des").
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
@@ -54,10 +56,13 @@
 
 
 getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-                         imageExport = NULL, csv = NULL, EDEN_GIS_directory = "detect",
+                         imageExport = NULL, 
+                         csvExport = NULL, 
+                         EDEN_GIS_directory = "detect",
                          vegetation_shp = vegetation,
                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
-                         returnShp = FALSE) {
+                         returnShp = FALSE,
+                         dataToPlot = "WL_des") {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406
@@ -130,22 +135,32 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
   
   
-  ### export shapefile
-  sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
-  # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
-  
-  if (!is.null(csv)) {
-    utils::write.csv(planFMUs, file = csv, row.names = FALSE)       
+  ### export as shapefile
+  if (!is.null(output_shapefile)) { # nocov start
+    sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
+    # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
   }
- 
+  ### export as csv
+  if (!is.null(csvExport)) { # nocov start
+    utils::write.csv(planFMUs, file = csvExport, row.names = FALSE)       
+  }
+  ### export as image
   if (!is.null(imageExport)) {
+    if (!dataToPlot %in% names(eden_epaNveg_planningUnits)) {
+      stop(cat("\n 'dataToPlot' argument does not appear in dataset. Try again, selecting one of these: ", paste(names(eden_epaNveg_planningUnits), collapse = ', '), "\n \n"))
+    }
+    if (dataToPlot == "WL_des") {
+      legendLabel <- paste0("Water level category \n", EDEN_date)
+    } else {
+      legendLabel <- paste0(dataToPlot, "\n", EDEN_date)
+    }
   ### output as png using rgdal:
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
-    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = WL_des, colour = WL_des), lwd = 0 ,alpha = 0.8) + 
-      ggplot2::theme_bw() + ggplot2::labs(fill = "Water level category") + 
+    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = get(dataToPlot), colour = get(dataToPlot)), lwd = 0 ,alpha = 0.8) + 
+      ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
       ggplot2::scale_fill_brewer(palette="Blues", direction=-1) +  ggplot2::scale_colour_brewer(palette="Blues", direction = -1, guide = "none")
     ggplot2::ggsave(file = imageExport)
-  }
+  }  # nocov end
   if (returnShp) {
     invisible(eden_epaNveg_planningUnits)
   }

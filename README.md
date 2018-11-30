@@ -13,7 +13,7 @@ devtools::install_github("troyhill/fireHydro")
 
 ## fireHydro usage
 
-fireHydro can be used to create shapefiles and/or images providing an integrative measure of fire risk.
+fireHydro can be used to create shapefiles and/or images providing an integrative measure of fire risk in Big Cypress National Preserve and Everglades National Park.
 
 ```
 library(fireHydro)

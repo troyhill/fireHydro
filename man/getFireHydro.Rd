@@ -5,13 +5,13 @@
 \title{Generate fire-hydro shapefile}
 \usage{
 getFireHydro(EDEN_date, 
-output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-imageExport = NULL, csvExport = NULL,
-EDEN_GIS_directory = "detect",
-                         vegetation_shp = vegetation,
-                         BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
-                         returnShp = FALSE,
-                         dataToPlot = "WL_des")
+    output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+    imageExport = NULL, csvExport = NULL,
+    EDEN_GIS_directory = "detect",
+    vegetation_shp = vegetation,
+    BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
+    returnShp = FALSE,
+    dataToPlot = "WL_des")
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}

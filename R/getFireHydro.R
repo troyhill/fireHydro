@@ -3,13 +3,13 @@
 #' @description Generates shapefile showing fire potential. Presently only works on the SFNRC network (for EDEN data access)
 #' 
 #' @usage getFireHydro(EDEN_date, 
-#' output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-#' imageExport = NULL, csvExport = NULL,
-#' EDEN_GIS_directory = "detect",
-#'                          vegetation_shp = vegetation,
-#'                          BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
-#'                          returnShp = FALSE,
-#'                          dataToPlot = "WL_des")
+#'     output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+#'     imageExport = NULL, csvExport = NULL,
+#'     EDEN_GIS_directory = "detect",
+#'     vegetation_shp = vegetation,
+#'     BICY_EVER_PlanningUnits_shp = BICY_EVER_PlanningUnits,
+#'     returnShp = FALSE,
+#'     dataToPlot = "WL_des")
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
@@ -89,8 +89,10 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
     eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
   }
   
-  if (typeof(get(EDEN_GIS_directory)) %in% c("list", "S4") ) {
-    eden_epa               <- get(EDEN_GIS_directory)
+  if (exists(EDEN_GIS_directory)) {
+    if (any(class(get(EDEN_GIS_directory)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
+      eden_epa               <- get(EDEN_GIS_directory)
+    }
   }
   
 

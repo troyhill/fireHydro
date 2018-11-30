@@ -14,9 +14,6 @@
 \item{Shape_Area}{tbd}
 \item{geometry}{tbd}
 }}
-\usage{
-BICY_EVER_PlanningUnits
-}
 \description{
 A shapefile of planning units
 }

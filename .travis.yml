@@ -13,8 +13,8 @@
 
  script: 
   - | 
-    R CMD build --no-build-vignettes --resave-data .
-    travis_wait 40 R CMD check --no--vignettes fireHydro*tar.gz
+    travis_wait 60 R CMD build --no-build-vignettes --resave-data .
+    travis_wait 60 R CMD check --no--vignettes fireHydro*tar.gz
     
  r_packages: 
     - covr

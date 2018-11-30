@@ -1,3 +1,5 @@
+^tests/testthat\.R$
+^tests/testthat/test-getFireHydro\.R$
 ^tests$
 ^codecov\.yml$
 ^\.travis\.yml$

@@ -10,3 +10,21 @@ install.packages("devtools")
 devtools::install_github("troyhill/fireHydro")
 ```
 
+
+## fireHydro usage
+
+fireHydro can be used to create shapefiles and/or images providing an integrative measure of fire risk in Big Cypress National Preserve and Everglades National Park.
+
+```
+library(fireHydro)
+
+getFireHydro(EDEN_date = "20181018", 
+  dataToPlot = "WL_des",
+  output_shapefile = NULL, # this can be a file address if shapefile output is desired
+  imageExport = "output.png")
+```
+
+<img src="https://github.com/troyhill/images/blob/master/WL_des_20181018.png" width="600" height="500" />
+Figure 1. Example output 
+
+      

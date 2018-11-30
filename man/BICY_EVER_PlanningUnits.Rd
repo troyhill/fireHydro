@@ -21,7 +21,7 @@ BICY_EVER_PlanningUnits
 A shapefile of planning units
 }
 \examples{
-plot(BICY_EVER_PlanningUnits)
+names(BICY_EVER_PlanningUnits)
 
 \dontrun{
 ### code used to generate object using shapefile provided by NCSU

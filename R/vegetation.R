@@ -17,7 +17,6 @@
 #' @keywords vegetation, fuel
 #' @name vegetation
 #' @usage vegetation
-#' @export
 #' @examples 
 #' 
 #' \dontrun{
@@ -39,4 +38,5 @@
 #' sf::st_write(vegetation_reclass, "analysis/outcomes/vegReclass.shp", delete_layer = TRUE)
 #'}
 #' 
+#' @export
 NULL

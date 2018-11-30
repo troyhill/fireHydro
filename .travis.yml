@@ -19,9 +19,7 @@
  r_packages: 
     - covr
 
- after_success:
-    - Rscript -e 'covr::codecov()'
-
+ 
  environment:
     global:
      WARNINGS_ARE_ERORRS: 1

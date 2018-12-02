@@ -19,6 +19,7 @@ fireHydro can be used to create shapefiles and/or images providing an integrativ
 library(fireHydro)
 
 getFireHydro(EDEN_date = "20181018", 
+  EDEN_GIS_directory = "EDEN_shp_20181018", # EDEN data already in the working environment can be used
   dataToPlot = "WL_des",
   output_shapefile = NULL, # this can be a file address if shapefile output is desired
   imageExport = "output.png")

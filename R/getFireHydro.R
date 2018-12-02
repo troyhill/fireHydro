@@ -106,7 +106,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   
   # warning message: attribute variables are assumed to be spatially constant throughout all geometries 
   withCallingHandlers(
-    eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits_shp), warning = intersectionWarningHandler)                                 # Clip the EDEN EPA hydro using the park boundary
+    eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits_shp), warning = fireHydro::intersectionWarningHandler)                                 # Clip the EDEN EPA hydro using the park boundary
   # sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
   
   
@@ -114,7 +114,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   # edenVegFileName <- paste0("analysis/outcomes/fireRisk_fuelAvailability_", EDEN_date, ".shp")
   vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   withCallingHandlers(
-    eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = intersectionWarningHandler)
+    eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
   # sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", EDEN_date, "_vegReclass.shp"), delete_layer = TRUE)
   eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk ",
                                ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, "High Fire Spread Risk ",
@@ -128,7 +128,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   ### Combine fireRisk data with planning units
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
   withCallingHandlers(
-    eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")]), warning = intersectionWarningHandler)
+    eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")]), warning = fireHydro::intersectionWarningHandler)
   eden_epaNveg_planningUnits$WL_des  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   

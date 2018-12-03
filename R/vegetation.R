@@ -38,4 +38,4 @@
 #' sf::st_write(vegetation_reclass, "analysis/outcomes/vegReclass.shp", delete_layer = TRUE)
 #'}
 #' 
-NULL
+"vegetation"

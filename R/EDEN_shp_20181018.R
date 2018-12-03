@@ -4,16 +4,12 @@
 #'
 #' @format A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
 #' \describe{
-#' \item{row}{tbd}
-#' \item{col}{tbd}
-#' \item{WaterDepth}{Water depth (ft above surface)}
-#' \item{Stage}{Water depth (ft NGVD29?)}
-#' \item{geometry}{tbd}
+#'   \item{row}{tbd}
+#'   \item{col}{tbd}
+#'   \item{WaterDepth}{Water depth (ft above surface)}
+#'   \item{Stage}{Water depth (ft NGVD29?)}
+#'   \item{geometry}{tbd}
 #'}
-#' @docType data
-#' @keywords EDEN data, water level
-#' @name EDEN_shp_20181018
-#' @usage EDEN_shp_20181018
 #' @examples 
 #' summary(EDEN_shp_20181018)
 #' 
@@ -23,4 +19,4 @@
 #'  
 #'}
 #' 
-NULL
+"EDEN_shp_20181018"

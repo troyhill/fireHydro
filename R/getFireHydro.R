@@ -156,6 +156,10 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
     }
     if (dataToPlot == "WL_des") {
       legendLabel <- paste0("Water level category \n", EDEN_date)
+      legendPalette <- "Blues"
+    } else if (dataToPlot == "WF_Use") {
+      legendLabel <- paste0("Fire Spread Risk \n", EDEN_date)
+      legendPalette <- "Reds"
     } else {
       legendLabel <- paste0(dataToPlot, "\n", EDEN_date)
     }
@@ -163,7 +167,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
     ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = get(dataToPlot), colour = get(dataToPlot)), lwd = 0 ,alpha = 0.8) + 
       ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
-      ggplot2::scale_fill_brewer(palette="Blues", direction=-1) +  ggplot2::scale_colour_brewer(palette="Blues", direction = -1, guide = "none")
+      ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
     ggplot2::ggsave(file = imageExport)
   }  # nocov end
   if (returnShp) {

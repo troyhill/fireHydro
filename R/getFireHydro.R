@@ -162,6 +162,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
       legendPalette <- "Reds"
     } else {
       legendLabel <- paste0(dataToPlot, "\n", EDEN_date)
+      legendPalette <- "Blues"
     }
   ### output as png using rgdal:
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml

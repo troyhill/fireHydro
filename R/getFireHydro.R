@@ -19,7 +19,7 @@
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
-#' @param dataToPlot character string identifying the data to be plotted in the exported image. By default, water level categories are used ("WL_des").
+#' @param dataToPlot character string identifying the data to be plotted in the exported image. By default, water level categories are used ("WL_des") although fire spread risk ("WF_Use") is also likely to be commonly used.
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
@@ -28,7 +28,6 @@
 #' 
 #' \dontrun{
 #' getFireHydro(EDEN_date = "20181018", 
-#'      EDEN_GIS_directory = "EDEN_shp_20181018",
 #'      output_shapefile = "output.shp", imageExport = "output.png")
 #' }
 #' 
@@ -76,9 +75,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   
-  if (grepl(x = EDEN_GIS_directory, pattern = "shp$")) {
-    eden_epa               <- sf::st_read(EDEN_GIS_directory)
-  }
+  
   
   ### adjust EDEN directory for operating system
   if (EDEN_GIS_directory == "detect") {
@@ -87,25 +84,27 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
            Linux  = {EDEN_GIS_directory <- "/opt/physical/gis/eden/"},
            Darwin = {stop("EDEN data parent directory address is not automatically identified for Mac OS.")})
     eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
-  }
-  
-  if (exists(EDEN_GIS_directory)) {
+  } else if (grepl(x = EDEN_GIS_directory, pattern = "shp$")) {
+    eden_epa               <- sf::st_read(EDEN_GIS_directory)
+  } else if (exists(EDEN_GIS_directory)) {
     if (any(class(get(EDEN_GIS_directory)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
       eden_epa               <- get(EDEN_GIS_directory)
     }
+  } else {
+   stop("EDEN_GIS_DIRECTORY argument appears to be invalid. It is not an sf object in current working environment")
   }
   
 
   ### Read EDEN EPA hydro data                    
   # eden_epa <-st_read("eden_epa20181018.shp") # file not provided. Verify that no processing of EDEN data is necessary. 
   # edenReclassFileName  <- paste0("analysis/outcomes/eden_epa", EDEN_date, "Reclass.shp")
-  eden_epa$WaterLevel    <- c(5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
+  eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
   eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits_shp))                                   # Reproject dissolved grid to park boundary
   eden_epa_reclass       <- eden_epaGroupPrj[,"WaterLevel"]
   
   # warning message: attribute variables are assumed to be spatially constant throughout all geometries 
-  withCallingHandlers(
+  withCallingHandlers( # takes a long time
     eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits_shp), warning = fireHydro::intersectionWarningHandler)                                 # Clip the EDEN EPA hydro using the park boundary
   # sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
   
@@ -116,10 +115,10 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   withCallingHandlers(
     eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
   # sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", EDEN_date, "_vegReclass.shp"), delete_layer = TRUE)
-  eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk ",
-                               ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, "High Fire Spread Risk ",
-                                      ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 4, "High Fire Spread Risk ",
-                                             ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 4, "High Fire Spread Risk ", "Low Fire Spread Risk"))))
+  eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk",
+                               ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, "High Fire Spread Risk",
+                                      ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 4, "High Fire Spread Risk",
+                                             ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 4, "High Fire Spread Risk", "Low Fire Spread Risk"))))
   
   eden_epaNveg$RX_Use <-ifelse(eden_epaNveg$WF_Use == "High Fire Spread Risk ", "High Fuel Availability", "Low Fuel Availability")
   # sf::st_write(eden_epaNveg, edenVegFileName, delete_layer = TRUE)
@@ -127,9 +126,10 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   
   ### Combine fireRisk data with planning units
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
-  withCallingHandlers(
+  withCallingHandlers( # takes a long time
     eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")]), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg_planningUnits$WL_des  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high", "1" = "High", "2" = "Low", "3" = "Very low", "4" = "Just below surface ", "5" = "Well below surface" ))
+  eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high",      "1" = "High",          "2" = "Low",    "3" = "Very low", "4" = "Water just below surface", "5" = "No water just below surface", "6" = "Well below surface" ))
+  eden_epaNveg_planningUnits$WL_des_colors  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "cornflowerblue", "1" = "lightseagreen", "2" = "green4", "3" = "yellow2",  "4" = "orange",                   "5" = "orangered3",                  "6" = "firebrickred" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   
   
@@ -155,20 +155,39 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
       stop(cat("\n 'dataToPlot' argument does not appear in dataset. Try again, selecting one of these: ", paste(names(eden_epaNveg_planningUnits), collapse = ', '), "\n \n"))
     }
     if (dataToPlot == "WL_des") {
-      legendLabel <- paste0("Water level category \n", EDEN_date)
+      group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
+      dataToPlot    <- "WaterLevel"
+      dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+      legendLabel   <- paste0("Water level category \n", EDEN_date)
       legendPalette <- "Blues"
+      group.colors  <- c("6" = "firebrick",
+                         "5" = "orangered3",
+                         "4" = "orange",
+                         "3" = "yellow2",
+                         "2" = "green4",
+                         "1" = "lightseagreen",
+                         "0" = "cornflowerblue")
+      # group.colors$WaterLevel <- factor(eden_epaNveg_planningUnits$WaterLevel, levels=unique(eden_epaNveg_planningUnits$WaterLevel[order(eden_epaNveg_planningUnits$WaterLevel)]), ordered=TRUE)
+      # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+      
     } else if (dataToPlot == "WF_Use") {
-      legendLabel <- paste0("Fire Spread Risk \n", EDEN_date)
+      legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date)
       legendPalette <- "Reds"
+      group.colors  <- c(`High Fire Spread Risk` = "firebrick", `Low Fire Spread Risk` = "ivory3")
+      dataLabels    <- names(group.colors)
+      
     } else {
-      legendLabel <- paste0(dataToPlot, "\n", EDEN_date)
+      legendLabel   <- paste0(dataToPlot, "\n", EDEN_date)
       legendPalette <- "Blues"
     }
   ### output as png using rgdal:
   ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
-    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = get(dataToPlot), colour = get(dataToPlot)), lwd = 0 ,alpha = 0.8) + 
+    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = get(dataToPlot)), lwd = 0, alpha = 1, show.legend = "polygon") + 
+      ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
       ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
-      ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
+      ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels) + ggplot2::scale_colour_manual(values=group.colors)
+      
+      # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
     ggplot2::ggsave(file = imageExport)
   }  # nocov end
   if (returnShp) {

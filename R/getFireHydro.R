@@ -189,7 +189,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
       ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
     
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-    ggplot2::ggsave(file = imageExport)
+    ggplot2::ggsave(file = imageExport, width = 6, height = 4.5, units = "in")
   }  # nocov end
   if (returnShp) {
     invisible(eden_epaNveg_planningUnits)

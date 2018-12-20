@@ -185,7 +185,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
     ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
       ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
       ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
-      ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels)  + 
+      ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
       ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
     
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")

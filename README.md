@@ -26,6 +26,6 @@ getFireHydro(EDEN_date = "20181018",
 ```
 
 <img src="https://github.com/troyhill/images/blob/master/output_WLdes_20181018.png" width="600" height="500" />
-Figure 1. Example output 
+Figure 1. Example output: water level categories  
 
       

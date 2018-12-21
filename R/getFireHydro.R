@@ -158,7 +158,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
       group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
       dataToPlot    <- "WaterLevel"
       dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
-      legendLabel   <- paste0("Water level category \n", EDEN_date)
+      legendLabel   <- paste0("Water Level\n", EDEN_date)
       legendPalette <- "Blues"
       group.colors  <- c("6" = "firebrick",
                          "5" = "orangered3",

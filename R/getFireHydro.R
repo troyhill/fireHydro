@@ -4,22 +4,21 @@
 #' 
 #' @usage getFireHydro(EDEN_date, 
 #'     output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-#'     imageExport = NULL, csvExport = NULL,
+#'     csvExport = NULL,
 #'     EDEN_GIS_directory = "detect",
 #'     vegetation_shp = fireHydro::vegetation,
 #'     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-#'     returnShp = FALSE,
-#'     dataToPlot = "WL_des")
+#'     returnShp = FALSE)
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
-#' @param imageExport If an image output is desired, include a file addess/name here (e.g., "fireHydroOutput.png" or "fireHydroOutput.pdf").
+#' @param waterLevelExport NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).
+#' @param fireSpreadExport NULL or a character vector specifying the file address/name used for exporting an image file of fire spread risk (e.g., /home/fireSpreadRisk.pdf).
 #' @param csvExport If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
 #' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment. 
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
-#' @param dataToPlot character string identifying the data to be plotted in the exported image. By default, water level categories are used ("WL_des") although fire spread risk ("WF_Use") is also likely to be commonly used.
 #' 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
@@ -28,7 +27,8 @@
 #' 
 #' \dontrun{
 #' getFireHydro(EDEN_date = "20181018", 
-#'      output_shapefile = "output.shp", imageExport = "output.png")
+#'      output_shapefile = NULL,
+#'      fireSpreadExport = "fireRisk.pdf", waterLevelExport = "waterLevels.pdf")
 #' }
 #' 
 #' @importFrom utils write.csv
@@ -54,14 +54,15 @@
 #' @export
 
 
-getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-                         imageExport = NULL, 
+getFireHydro <- function(EDEN_date, 
+                         output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+                         waterLevelExport = NULL,
+                         fireSpreadExport = NULL,
                          csvExport = NULL, 
                          EDEN_GIS_directory = "detect",
                          vegetation_shp = fireHydro::vegetation,
                          BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-                         returnShp = FALSE,
-                         dataToPlot = "WL_des") {
+                         returnShp = FALSE) {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406
@@ -150,11 +151,8 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
     utils::write.csv(planFMUs, file = csvExport, row.names = FALSE)       
   }
   ### export as image
-  if (!is.null(imageExport)) {
-    if (!dataToPlot %in% names(eden_epaNveg_planningUnits)) {
-      stop(cat("\n 'dataToPlot' argument does not appear in dataset. Try again, selecting one of these: ", paste(names(eden_epaNveg_planningUnits), collapse = ', '), "\n \n"))
-    }
-    if (dataToPlot == "WL_des") {
+   if (!is.null(waterLevelExport)) {
+      dataToPlot <- "WL_des"
       group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
       dataToPlot    <- "WaterLevel"
       dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
@@ -170,27 +168,37 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
       # group.colors$WaterLevel <- factor(eden_epaNveg_planningUnits$WaterLevel, levels=unique(eden_epaNveg_planningUnits$WaterLevel[order(eden_epaNveg_planningUnits$WaterLevel)]), ordered=TRUE)
       # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
       
-    } else if (dataToPlot == "WF_Use") {
+      ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
+        ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
+        ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
+        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
+      
+      # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
+      ggplot2::ggsave(file = waterLevelExport, width = 6, height = 4.5, units = "in")
+      
+    } 
+    
+      
+    if (!is.null(fireSpreadExport)) {
+      dataToPlot <- "WF_Use"
       legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date)
       legendPalette <- "Reds"
       group.colors  <- c(`High Fire Spread Risk` = "firebrick", `Low Fire Spread Risk` = "ivory3")
       dataLabels    <- names(group.colors)
       
-    } else {
-      legendLabel   <- paste0(dataToPlot, "\n", EDEN_date)
-      legendPalette <- "Blues"
-    }
-  ### output as png using rgdal:
-  ### https://stackoverflow.com/questions/44547626/create-png-using-writegdal-without-georeference-aux-xml
-    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
-      ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
-      ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
-      ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
-      ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
-    
+      ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
+        ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
+        ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
+        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
+      
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-    ggplot2::ggsave(file = imageExport, width = 6, height = 4.5, units = "in")
-  }  # nocov end
+      ggplot2::ggsave(file = fireSpreadExport, width = 6, height = 4.5, units = "in")
+      
+    }
+      
+  # nocov end
   if (returnShp) {
     invisible(eden_epaNveg_planningUnits)
   }

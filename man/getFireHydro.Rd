@@ -6,19 +6,20 @@
 \usage{
 getFireHydro(EDEN_date, 
     output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
-    imageExport = NULL, csvExport = NULL,
+    csvExport = NULL,
     EDEN_GIS_directory = "detect",
     vegetation_shp = fireHydro::vegetation,
     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-    returnShp = FALSE,
-    dataToPlot = "WL_des")
+    returnShp = FALSE)
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
 
 \item{output_shapefile}{file address for shapefile output}
 
-\item{imageExport}{If an image output is desired, include a file addess/name here (e.g., "fireHydroOutput.png" or "fireHydroOutput.pdf").}
+\item{waterLevelExport}{NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).}
+
+\item{fireSpreadExport}{NULL or a character vector specifying the file address/name used for exporting an image file of fire spread risk (e.g., /home/fireSpreadRisk.pdf).}
 
 \item{csvExport}{If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")}
 
@@ -29,8 +30,6 @@ getFireHydro(EDEN_date,
 \item{BICY_EVER_PlanningUnits_shp}{shapefile of polygons representing Big Cypress and Everglades planning units}
 
 \item{returnShp}{TRUE/FALSE determinant of whether output is returned to the working environment}
-
-\item{dataToPlot}{character string identifying the data to be plotted in the exported image. By default, water level categories are used ("WL_des").}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.
@@ -42,8 +41,8 @@ Generates shapefile showing fire potential. Presently only works on the SFNRC ne
 
 \dontrun{
 getFireHydro(EDEN_date = "20181018", 
-     EDEN_GIS_directory = "EDEN_shp_20181018",
-     output_shapefile = "output.shp", imageExport = "output.png")
+     output_shapefile = NULL,
+     fireSpreadExport = "fireRisk.pdf", waterLevelExport = "waterLevels.pdf")
 }
 
 }

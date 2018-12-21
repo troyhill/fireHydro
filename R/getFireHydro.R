@@ -128,7 +128,7 @@ getFireHydro <- function(EDEN_date, output_shapefile = paste0(tempdir(), "/outpu
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
   withCallingHandlers( # takes a long time
     eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")]), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Very high",      "1" = "High",          "2" = "Low",    "3" = "Very low", "4" = "Water just below surface", "5" = "No water just below surface", "6" = "Well below surface" ))
+  eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Above Surface: >4 ft",      "1" = "Above Surface: 3-4 ft",          "2" = "Above Surface: 1.6-3 ft",    "3" = "Above Surface: 0-1.6 ft", "4" = "Below Surface: -0.6-0 ft", "5" = "Below Surface: -1 to -0.6 ft", "6" = "Below Surface: < -1 ft" ))
   eden_epaNveg_planningUnits$WL_des_colors  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "cornflowerblue", "1" = "lightseagreen", "2" = "green4", "3" = "yellow2",  "4" = "orange",                   "5" = "orangered3",                  "6" = "firebrickred" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   

@@ -1,11 +1,16 @@
 Package: fireHydro
 Type: Package
 Title: FireHydro tool
-Version: 0.0.1
-Date: 2018-11-27
-Author: Justin Shedd, Jelena Vukomanovic, Troy D. Hill
-Maintainer: Troy D. Hill <Hill.Troy@gmail.com>
-Description: An R package integrating EDEN water level data and vegetation data to estimate fire risk in Big Cypress National Preserve and Everglades National Park.
+Version: 0.0.2
+Date: 2019-01-03
+Authors@R: c(
+    person("Justin", "Shedd", role = "ctb"),
+    person("Jelena", "Vukomanovic", role = "ctb"),
+    person("Troy", "Hill", role = c("ctb", "cre"), email = "Hill.Troy@gmail.com", comment = c(ORCID = "0000-0003-2980-4099")),
+    person()
+    )
+BugReports: https://github.com/troyhill/fireHydro/issues
+Description: An R package integrating USGS-EDEN water level data and vegetation data to estimate fire risk in Big Cypress National Preserve and Everglades National Park.
 License: file LICENSE
 URL: https://github.com/troyhill/fireHydro
 LazyData: true

@@ -86,7 +86,7 @@ getFireHydro <- function(EDEN_date,
            Windows= {EDEN_GIS_directory <- "Y:/gis/eden/"},
            Linux  = {EDEN_GIS_directory <- "/opt/physical/gis/eden/"},
            Darwin = {stop("EDEN data parent directory address is not automatically identified for Mac OS.")})
-    eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
+    eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "eden_epa", EDEN_date, ".shp"))
   } else if (grepl(x = EDEN_GIS_directory, pattern = "shp$")) {
     eden_epa               <- sf::st_read(EDEN_GIS_directory)
   } else if (exists(EDEN_GIS_directory)) {

@@ -10,7 +10,10 @@
 #'     EDEN_GIS_directory = "detect",
 #'     vegetation_shp = fireHydro::vegetation,
 #'     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-#'     returnShp = FALSE)
+#'     returnShp = FALSE,
+#'     figureWidth = 6,
+#'     figureHeight = 4.5,
+#'     ggBaseSize = 20)
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output
@@ -21,7 +24,9 @@
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
-#' 
+#' @param figureWidth width of output figure, in inches
+#' @param figureHeight height of output figure, in inches 
+#' @param ggBaseSize base_size argument passed to ggplot theme. 
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
 #' 
@@ -64,7 +69,8 @@ getFireHydro <- function(EDEN_date,
                          EDEN_GIS_directory = "detect",
                          vegetation_shp = fireHydro::vegetation,
                          BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-                         returnShp = FALSE) {
+                         returnShp = FALSE, figureWidth = 6, figureHeight = 4.5, 
+                         ggBaseSize = 20) {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406
@@ -172,12 +178,12 @@ getFireHydro <- function(EDEN_date,
       
       ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
-        ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
+        ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
       
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-      ggplot2::ggsave(file = waterLevelExport, width = 6, height = 4.5, units = "in")
+      ggplot2::ggsave(file = waterLevelExport, width = figureWidth, height = figureHeight, units = "in")
       
     } 
     
@@ -191,12 +197,12 @@ getFireHydro <- function(EDEN_date,
       
       ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
-        ggplot2::theme_bw() + ggplot2::labs(fill = legendLabel) + 
+        ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
       
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-      ggplot2::ggsave(file = fireSpreadExport, width = 6, height = 4.5, units = "in")
+      ggplot2::ggsave(file = fireSpreadExport, width = figureWidth, height = figureHeight, units = "in")
       
     }
       

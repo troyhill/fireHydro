@@ -53,7 +53,7 @@ Generates shapefile showing fire potential. Presently only works on the SFNRC ne
 \dontrun{
 getFireHydro(EDEN_date = "20181018", 
      output_shapefile = NULL,
-     fireSpreadExport = "fireRisk.pdf", waterLevelExport = "waterLevels.pdf")
+     fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png")
 }
 
 }

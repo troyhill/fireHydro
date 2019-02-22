@@ -35,7 +35,7 @@
 #' \dontrun{
 #' getFireHydro(EDEN_date = "20181018", 
 #'      output_shapefile = NULL,
-#'      fireSpreadExport = "fireRisk.pdf", waterLevelExport = "waterLevels.pdf")
+#'      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png")
 #' }
 #' 
 #' @importFrom utils write.csv
@@ -69,8 +69,8 @@ getFireHydro <- function(EDEN_date,
                          EDEN_GIS_directory = "detect",
                          vegetation_shp = fireHydro::vegetation,
                          BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-                         returnShp = FALSE, figureWidth = 6, figureHeight = 4.5, 
-                         ggBaseSize = 20) {
+                         returnShp = FALSE, figureWidth = 6, figureHeight = 4, 
+                         ggBaseSize = 12) {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406
@@ -105,9 +105,8 @@ getFireHydro <- function(EDEN_date,
   
 
   ### Read EDEN EPA hydro data                    
-  # eden_epa <-st_read("eden_epa20181018.shp") # file not provided. Verify that no processing of EDEN data is necessary. 
-  # edenReclassFileName  <- paste0("analysis/outcomes/eden_epa", EDEN_date, "Reclass.shp")
-  eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
+  # ye olde version (pre-20190222): eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
+  eden_epa$WaterLevel    <- c(7, 6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 18.288, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
   eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits_shp))                                   # Reproject dissolved grid to park boundary
   eden_epa_reclass       <- eden_epaGroupPrj[,"WaterLevel"]
@@ -115,30 +114,25 @@ getFireHydro <- function(EDEN_date,
   # warning message: attribute variables are assumed to be spatially constant throughout all geometries 
   withCallingHandlers( # takes a long time
     eden_epa_reclass <- sf::st_intersection(eden_epa_reclass, planningUnits_shp), warning = fireHydro::intersectionWarningHandler)                                 # Clip the EDEN EPA hydro using the park boundary
-  # sf::st_write(eden_epa_reclass, edenReclassFileName, delete_layer = TRUE)
-  
   
   ### Combine EDEN EPA hydro and fuel types
-  # edenVegFileName <- paste0("analysis/outcomes/fireRisk_fuelAvailability_", EDEN_date, ".shp")
   vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   withCallingHandlers(
     eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
-  # sf::st_write(eden_epaNveg, paste0("analysis/outcomes/eden_epa", EDEN_date, "_vegReclass.shp"), delete_layer = TRUE)
   eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, "High Fire Spread Risk",
                                ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, "High Fire Spread Risk",
-                                      ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 4, "High Fire Spread Risk",
-                                             ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 4, "High Fire Spread Risk", "Low Fire Spread Risk"))))
+                                      ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 5, "High Fire Spread Risk", # changed  waterLevel threshold from 4 to 5 on 20190222
+                                             ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 5, "High Fire Spread Risk", "Low Fire Spread Risk")))) # changed  waterLevel threshold from 4 to 5 on 20190222
   
   eden_epaNveg$RX_Use <-ifelse(eden_epaNveg$WF_Use == "High Fire Spread Risk ", "High Fuel Availability", "Low Fuel Availability")
-  # sf::st_write(eden_epaNveg, edenVegFileName, delete_layer = TRUE)
   
   
   ### Combine fireRisk data with planning units
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
   withCallingHandlers( # takes a long time
     eden_epaNveg_planningUnits         <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")]), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Above Surface: >4 ft",      "1" = "Above Surface: 3-4 ft",          "2" = "Above Surface: 1.6-3 ft",    "3" = "Above Surface: 0-1.6 ft", "4" = "Below Surface: -0.6-0 ft", "5" = "Below Surface: -1 to -0.6 ft", "6" = "Below Surface: < -1 ft" ))
-  eden_epaNveg_planningUnits$WL_des_colors  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "cornflowerblue", "1" = "lightseagreen", "2" = "green4", "3" = "yellow2",  "4" = "orange",                   "5" = "orangered3",                  "6" = "firebrickred" ))
+  eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "Above Surface: >4 ft",      "1" = "Above Surface: 3-4 ft",          "2" = "Above Surface: 1.6-3 ft",    "3" = "Above Surface: 0.6-1.6 ft",    "4" = "Above Surface: 0-0.6 ft", "5" = "Below Surface: -0.6-0 ft", "6" = "Below Surface: -1 to -0.6 ft", "7" = "Below Surface: < -1 ft" ))
+  eden_epaNveg_planningUnits$WL_des_colors  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), c("0" = "cornflowerblue", "1" = "lightseagreen", "2" = "green4", "3" = "yellow1", "4" = "yellow3",  "5" = "orange",                   "6" = "orangered3",                  "7" = "firebrickred" ))
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   
   
@@ -166,10 +160,11 @@ getFireHydro <- function(EDEN_date,
       dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
       legendLabel   <- paste0("Water Levels\n", EDEN_date)
       legendPalette <- "Blues"
-      group.colors  <- c("6" = "firebrick",
-                         "5" = "orangered3",
-                         "4" = "orange",
-                         "3" = "yellow2",
+      group.colors  <- c("7" = "firebrick",
+                         "6" = "orangered3",
+                         "5" = "orange",
+                         "4" = "yellow3",  # new category introduced 20190222
+                         "3" = "yellow1",
                          "2" = "green4",
                          "1" = "lightseagreen",
                          "0" = "cornflowerblue")

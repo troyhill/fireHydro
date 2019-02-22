@@ -23,6 +23,9 @@ A curl error occasionally appears when using googledrive::drive_upload, but appe
 ### error message:
 # Error in curl::curl_fetch_memory(url, handle = handle) : 
 #   Error in the HTTP2 framing layer
+# drive_upload_mod(
+#  mediaInput = waterLevelPdf,
+#  pathInput = "FireHydro output/pdf/")
 
 
 }

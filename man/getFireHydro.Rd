@@ -12,7 +12,10 @@ getFireHydro(EDEN_date,
     EDEN_GIS_directory = "detect",
     vegetation_shp = fireHydro::vegetation,
     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-    returnShp = FALSE)
+    returnShp = FALSE,
+    figureWidth = 6,
+    figureHeight = 4.5,
+    ggBaseSize = 20)
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
@@ -32,6 +35,12 @@ getFireHydro(EDEN_date,
 \item{BICY_EVER_PlanningUnits_shp}{shapefile of polygons representing Big Cypress and Everglades planning units}
 
 \item{returnShp}{TRUE/FALSE determinant of whether output is returned to the working environment}
+
+\item{figureWidth}{width of output figure, in inches}
+
+\item{figureHeight}{height of output figure, in inches}
+
+\item{ggBaseSize}{base_size argument passed to ggplot theme.}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.

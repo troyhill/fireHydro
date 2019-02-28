@@ -145,8 +145,10 @@ getFireHydro <- function(EDEN_date,
   
   ### export as shapefile
   if (!is.null(output_shapefile)) { # nocov start
-    sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile")
+    # sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile") 
+    sf::st_write(obj = eden_epaNveg_planningUnits, dsn = output_shapefile, delete_layer = TRUE, update = FALSE, delete_dsn = TRUE)
     # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
+    # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="GPKG")
   }
   ### export as csv
   if (!is.null(csvExport)) { # nocov start

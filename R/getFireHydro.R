@@ -180,8 +180,9 @@ getFireHydro <- function(EDEN_date,
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
       
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-      ggplot2::ggsave(file = waterLevelExport, width = figureWidth, height = figureHeight, units = "in")
-      
+      for (i in 1:length(waterLevelExport)) {
+        ggplot2::ggsave(file = waterLevelExport[i], width = figureWidth, height = figureHeight, units = "in")
+      }
     } 
     
       
@@ -199,8 +200,9 @@ getFireHydro <- function(EDEN_date,
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
       
       # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-      ggplot2::ggsave(file = fireSpreadExport, width = figureWidth, height = figureHeight, units = "in")
-      
+      for (i in 1:length(fireSpreadExport)) {
+        ggplot2::ggsave(file = fireSpreadExport[i], width = figureWidth, height = figureHeight, units = "in")
+      }
     }
       
   # nocov end

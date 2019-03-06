@@ -79,6 +79,7 @@ getFireHydro <- function(EDEN_date,
   ### what's up with the shapefiles that used to be exported - are they useful? should they have export options? 
   
   planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
+  EDEN_date2    <- format(x = strptime(x = as.character(EDEN_date), format = "%Y%m%d"), "%d-%b-%Y")
   
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
@@ -160,7 +161,7 @@ getFireHydro <- function(EDEN_date,
       group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
       dataToPlot    <- "WaterLevel"
       dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
-      legendLabel   <- paste0("Water Levels\n", EDEN_date)
+      legendLabel   <- paste0("Water Levels\n", EDEN_date2)
       legendPalette <- "Blues"
       group.colors  <- c("7" = "firebrick",
                          "6" = "orangered3",
@@ -188,7 +189,7 @@ getFireHydro <- function(EDEN_date,
       
     if (!is.null(fireSpreadExport)) {
       dataToPlot <- "WF_Use"
-      legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date)
+      legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date2)
       legendPalette <- "Reds"
       group.colors  <- c(`High Fire Spread Risk` = "firebrick", `Low Fire Spread Risk` = "ivory3")
       dataLabels    <- names(group.colors)

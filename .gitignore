@@ -4,6 +4,10 @@
 
 # Session Data files
 .RData
+/*.Rproj
+.Rhistory
+.RData
+.Ruserdata
 
 # Example code in package build process
 *-Ex.R

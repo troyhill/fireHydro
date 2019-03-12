@@ -9,6 +9,11 @@
 .RData
 .Ruserdata
 
+# Output files from getFireHydro()
+/*.png
+/*.pdf
+/*.gpkg
+
 # Example code in package build process
 *-Ex.R
 

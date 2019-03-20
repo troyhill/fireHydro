@@ -175,7 +175,10 @@ getFireHydro <- function(EDEN_date,
       # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
       
       ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
-        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
+                         lwd = 0.05, show.legend = FALSE) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
+                         lwd = 0.25, show.legend = FALSE) + 
         ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
@@ -195,7 +198,10 @@ getFireHydro <- function(EDEN_date,
       dataLabels    <- names(group.colors)
       
       ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
-        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", lwd = 0.5, show.legend = FALSE) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
+                         lwd = 0.05, show.legend = FALSE) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
+                         lwd = 0.25, show.legend = FALSE) + 
         ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 

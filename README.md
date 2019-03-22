@@ -30,7 +30,7 @@ getFireHydro(EDEN_date = "20181018",
   fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), waterLevelExport = c("waterLevels.png", "waterLevels.pdf")) 
 ```
 
-<img src="https://github.com/troyhill/images/blob/master/WaterLevels_20190320.png" width="600" height="450" />
+<img src="https://github.com/troyhill/images/blob/master/WaterLevels_20190320.png" width="650" height="450" />
 Figure 1. Example output: water level categories  
 
       

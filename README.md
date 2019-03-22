@@ -18,14 +18,19 @@ fireHydro can be used to create shapefiles and/or images providing an integrativ
 ```
 library(fireHydro)
 
+shp <- getFireHydro(EDEN_date = "20181018", 
+     output_shapefile = NULL) # this can be a file address if shapefile output is desired
+          
 getFireHydro(EDEN_date = "20181018", 
-  EDEN_GIS_directory = "EDEN_shp_20181018", # EDEN data already in the working environment can be used
+  # EDEN data already in the working environment can be used
+  EDEN_GIS_directory = "EDEN_shp_20181018", 
   dataToPlot = "WL_des",
-  output_shapefile = NULL, # this can be a file address if shapefile output is desired
-  imageExport = "output.png")
+  output_shapefile = NULL, 
+  # simultaneously export as pdf and png
+  fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), waterLevelExport = c("waterLevels.png", "waterLevels.pdf")) 
 ```
 
-<img src="https://github.com/troyhill/images/blob/master/output_WLdes_20181018.png" width="600" height="500" />
+<img src="https://github.com/troyhill/images/blob/master/WaterLevels_20190320.png" width="600" height="500" />
 Figure 1. Example output: water level categories  
 
       

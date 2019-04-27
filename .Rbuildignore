@@ -5,6 +5,11 @@
 ^\.travis\.yml$
 ^appveyor\.yml$
 ^.*\.Rproj$
+^\.R$
+^\.shp$
+^\.shx$
+^\.prj$
+^\.dbf$
 ^\.Rproj\.user$
 ^\\vignettes\\NPS-EVER_fireHydro\.R$
 ^vignettes\\.*\.R$

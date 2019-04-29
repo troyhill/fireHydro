@@ -137,13 +137,6 @@ getFireHydro <- function(EDEN_date,
   eden_epaNveg_planningUnits$area    <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   
   
-  ### Create a summary table of fire risk area for each planning unit        
-  keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
-  planFMUs   <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(area_acres=sum(area))                 # Summarize data (mean) by planning units
-  is.num     <- sapply(planFMUs, is.numeric)                                                                        
-  planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
-  
-  
   ### export as shapefile
   if (!is.null(output_shapefile)) { # nocov start
     # sf::st_write(obj = eden_epaNveg_planningUnits, output_shapefile, delete_layer = TRUE, driver="ESRI Shapefile") 
@@ -151,8 +144,15 @@ getFireHydro <- function(EDEN_date,
     # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="ESRI Shapefile")
     # rgdal::writeOGR(eden_epaNveg_planningUnits, output_shapefile, driver="GPKG")
   }
-  ### export as csv
+  
   if (!is.null(csvExport)) { # nocov start
+    ### Create a summary table of fire risk area for each planning unit
+    ### and export as csv
+    keyVars_df <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
+    planFMUs   <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(area_acres=sum(area))                 # Summarize data (mean) by planning units
+    is.num     <- sapply(planFMUs, is.numeric)                                                                        
+    planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
+    
     utils::write.csv(planFMUs, file = csvExport, row.names = FALSE)       
   }
   ### export as image

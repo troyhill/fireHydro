@@ -14,8 +14,8 @@ getFireHydro(EDEN_date,
     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
     returnShp = FALSE,
     figureWidth = 6,
-    figureHeight = 4.5,
-    ggBaseSize = 20)
+    figureHeight = 4,
+    ggBaseSize = 12)
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}

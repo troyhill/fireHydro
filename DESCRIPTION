@@ -1,8 +1,8 @@
 Package: fireHydro
 Type: Package
 Title: FireHydro tool
-Version: 0.0.5
-Date: 2019-02-22
+Version: 0.0.6
+Date: 2019-04-27
 Authors@R: c(
     person("Justin", "Shedd", role = "ctb"),
     person("Jelena", "Vukomanovic", role = "ctb"),

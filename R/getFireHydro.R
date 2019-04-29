@@ -12,8 +12,8 @@
 #'     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
 #'     returnShp = FALSE,
 #'     figureWidth = 6,
-#'     figureHeight = 4.5,
-#'     ggBaseSize = 20)
+#'     figureHeight = 4,
+#'     ggBaseSize = 12)
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output

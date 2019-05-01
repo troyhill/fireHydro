@@ -32,6 +32,7 @@
 #' @importFrom utils unzip
 #' @importFrom rgdal setCPLConfigOption
 #' @importFrom rgdal writeGDAL
+#' @importFrom graphics plot
 #' 
 #' @export
 
@@ -61,6 +62,6 @@ getEDEN <- function(EDEN_date) {
   a.ras2 <- sf::st_read(shp_file)
   g <- as(a.ras, 'SpatialGridDataFrame')
   summary(g)
-  plot(g)
+  graphics::plot(g)
   
   }

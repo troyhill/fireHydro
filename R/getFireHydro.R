@@ -82,7 +82,7 @@ getFireHydro <- function(EDEN_date,
   ### what's up with the shapefiles that used to be exported - are they useful? should they have export options? 
   
   planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
-  EDEN_date2    <- format(x = strptime(x = as.character(EDEN_date), format = "%Y%m%d"), "%d-%b-%Y")
+  EDEN_date2    <- format(x = strptime(x = as.character(EDEN_date), format = "%Y%m%d"), "%d %b %Y")
   
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")

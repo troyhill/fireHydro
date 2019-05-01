@@ -15,7 +15,8 @@ getFireHydro(EDEN_date,
     returnShp = FALSE,
     figureWidth = 6,
     figureHeight = 4,
-    ggBaseSize = 12)
+    ggBaseSize = 12,
+    burnHist = FALSE)
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
@@ -41,6 +42,8 @@ getFireHydro(EDEN_date,
 \item{figureHeight}{height of output figure, in inches}
 
 \item{ggBaseSize}{base_size argument passed to ggplot theme.}
+
+\item{burnHist}{logical, indicates whether burn history should be included to create a gradient of fire spread risk. If this is set to TRUE, the past three years of burn history will be used to identify zones of moderately low spread risk (high present-day risk but burned in current calendar year), moderate risk (high present-day risk but burned in previous calendar year) and moderately high risk (high present-day risk but burned two years ago).}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.

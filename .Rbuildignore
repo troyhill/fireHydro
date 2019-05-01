@@ -10,6 +10,8 @@
 ^\.shx$
 ^\.prj$
 ^\.dbf$
+^\.png$
+^\.R$
 ^\.Rproj\.user$
 ^\\vignettes\\NPS-EVER_fireHydro\.R$
 ^vignettes\\.*\.R$

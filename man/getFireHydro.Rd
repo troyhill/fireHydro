@@ -43,7 +43,7 @@ getFireHydro(EDEN_date,
 
 \item{ggBaseSize}{base_size argument passed to ggplot theme.}
 
-\item{burnHist}{logical, indicates whether burn history should be included to create a gradient of fire spread risk. If this is set to TRUE, the past three years of burn history will be used to identify zones of moderately low spread risk (high present-day risk but burned in current calendar year), moderate risk (high present-day risk but burned in previous calendar year) and moderately high risk (high present-day risk but burned two years ago).}
+\item{burnHist}{logical; if FALSE, fire spread risk is a binary variable (high/low); if TRUE, fire history during the preceding three years is used to split fire spread risk into a gradient of risk: High = high current fire spread risk and no burn history in past 3 years; Moderately High = high current fire spread risk and burned three years ago; Moderate = high current fire spread risk and burned two years ago; Moderately Low = high current fire spread risk and burned in the past year; Low = low current fire spread risk (regardless of burn history)}
 }
 \value{
 dataframe \code{getFireHydro} produces a shapefile.

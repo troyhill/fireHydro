@@ -28,7 +28,7 @@
 #' @param figureWidth width of output figure, in inches
 #' @param figureHeight height of output figure, in inches 
 #' @param ggBaseSize base_size argument passed to ggplot theme. 
-#' @param burnHist logical, indicates whether burn history should be included to create a gradient of fire spread risk. If this is set to TRUE, the past three years of burn history will be used to identify zones of moderately low spread risk (high present-day risk but burned in current calendar year), moderate risk (high present-day risk but burned in previous calendar year) and moderately high risk (high present-day risk but burned two years ago).
+#' @param burnHist logical; if FALSE, fire spread risk is a binary variable (high/low); if TRUE, fire history during the preceding three years is used to split fire spread risk into a gradient of risk: High = high current fire spread risk and no burn history in past 3 years; Moderately High = high current fire spread risk and burned three years ago; Moderate = high current fire spread risk and burned two years ago; Moderately Low = high current fire spread risk and burned in the past year; Low = low current fire spread risk (regardless of burn history)
 #' @return dataframe \code{getFireHydro} produces a shapefile.
 #' 
 #' 
@@ -213,20 +213,20 @@ getFireHydro <- function(EDEN_date,
       
       if (burnHist) {
         ### do some additional processing
-        a2 <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
+        eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
         
         withCallingHandlers(
-        high17                <- st_intersection(eden_epaNveg_planningUnits, fireHydro::fire172), warning = fireHydro::intersectionWarningHandler)  
+        high17                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::fire172), warning = fireHydro::intersectionWarningHandler)  
         high17$WF_Use         <- factor(high17$WF_Use)
         levels(high17$WF_Use) <- c(riskNames[2], riskNames[length(riskNames)])
         
         withCallingHandlers( # if an error occurs, may need to change other years to use a2 
-          high18                <- st_intersection(a2, fireHydro::fire182), warning = fireHydro::intersectionWarningHandler)  
+          high18                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::fire182), warning = fireHydro::intersectionWarningHandler)  
         high18$WF_Use         <- factor(high18$WF_Use)
         levels(high18$WF_Use) <- c(riskNames[3], riskNames[length(riskNames)])
         
         withCallingHandlers(
-          high19                <- st_intersection(eden_epaNveg_planningUnits, fireHydro::fire192), warning = fireHydro::intersectionWarningHandler)  
+          high19                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::fire192), warning = fireHydro::intersectionWarningHandler)  
         high19$WF_Use         <- factor(high19$WF_Use)
         levels(high19$WF_Use) <- c(riskNames[4], riskNames[length(riskNames)])
         
@@ -236,6 +236,16 @@ getFireHydro <- function(EDEN_date,
         eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use, levels = riskNames)
         
         ### TODO: merge fire history maps back into main object
+        burn <- do.call(rbind, list(
+          sf::st_buffer(high17, dist = 1),
+          sf::st_buffer(high18, dist = 1),
+          sf::st_buffer(high19, dist = 1)
+        ))
+        # table(burn$WF_Use)
+        
+        eden_epaNveg_planningUnits <- rbind(eden_epaNveg_planningUnits, burn[, names(eden_epaNveg_planningUnits)])
+        ###
+        
         
         group.colors  <- c(
           `High`            = "brown4",
@@ -255,15 +265,15 @@ getFireHydro <- function(EDEN_date,
         dataLabels    <- names(group.colors)
         
         ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot), col = get(dataToPlot)), alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
-          ggplot2::geom_sf(data = high17, alpha = 1,
-                           aes(fill = get(dataToPlot), col = get(dataToPlot)),
-                           lwd = 0.0, show.legend = FALSE)  +
-          ggplot2::geom_sf(data = high18, alpha = 1,
-                           aes(fill = get(dataToPlot), col = get(dataToPlot)),
-                           lwd = 0.0, show.legend = FALSE)  +
-          ggplot2::geom_sf(data = high19, alpha = 1,
-                           aes(fill = get(dataToPlot), col = get(dataToPlot)),
-                           lwd = 0.0, show.legend = FALSE) +
+          # ggplot2::geom_sf(data = high17, alpha = 1,
+          #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
+          #                  lwd = 0.0, show.legend = FALSE)  +
+          # ggplot2::geom_sf(data = high18, alpha = 1,
+          #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
+          #                  lwd = 0.0, show.legend = FALSE)  +
+          # ggplot2::geom_sf(data = high19, alpha = 1,
+          #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
+          #                  lwd = 0.0, show.legend = FALSE) +
           ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
                            lwd = 0.05, show.legend = FALSE) + 
           ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 

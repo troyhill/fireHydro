@@ -33,6 +33,23 @@
 
 
 getEDEN <- function(EDEN_date) {
+  
+  if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
+    stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))
+  }
+  
+  # if date isn't present on USGS site, find and use most recent date, inform user
+  url  <- "https://sofia.usgs.gov/eden/models/real-time.php"
+  html <- paste(readLines(url), collapse="\n")
+  
+  txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
+  txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
+  
+  if(!EDEN_date %in% txt) {
+    cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+    EDEN_date <- txt[1]
+  }
+  
   # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
   base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", EDEN_date ,"_geotif_v2rt.zip")
   

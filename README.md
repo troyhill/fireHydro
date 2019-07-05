@@ -18,19 +18,25 @@ fireHydro can be used to create shapefiles and/or images providing an integrativ
 ```
 library(fireHydro)
 
-shp <- getFireHydro(EDEN_date = "20181018", 
-     output_shapefile = NULL) # this can be a file address if shapefile output is desired
-          
-getFireHydro(EDEN_date = "20181018", 
-  # EDEN data already in the working environment can be used
-  EDEN_GIS_directory = "EDEN_shp_20181018", 
-  dataToPlot = "WL_des",
-  output_shapefile = NULL, 
-  # simultaneously export as pdf and png
-  fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), waterLevelExport = c("waterLevels.png", "waterLevels.pdf")) 
+EDEN_date_target <- "20190606"
+edenDat <- getEDEN(EDEN_date = EDEN_date_target)
+ 
+### getEDEN output can then be used in getFireHydro
+fireDat <- getFireHydro(EDEN_date = EDEN_date_target, 
+     EDEN_GIS_directory = "edenDat",
+     output_shapefile = NULL,
+     burnHist = TRUE, # option to include the previous three years of burn history in estimating fire risk
+     fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), # multiple outputs can be created simultaneously
+     waterLevelExport = c("waterLevels.png", "waterLevels.pdf"))
+
+
+
 ```
 
-<img src="https://github.com/troyhill/images/blob/master/WaterLevels_20190320.png" width="650" height="425" />
-Figure 1. Example output: water level categories  
+<img src="https://github.com/troyhill/images/blob/master/waterLevels.png" width="650" height="425" />
+Figure 1. Water level categories  
+
+<img src="https://github.com/troyhill/images/blob/master/fireRisk.png" width="650" height="425" />
+Figure 2. Fire spread risk categories. Risk estimates include water levels, vegetation type, and the burn history over the preceding three years.
 
       

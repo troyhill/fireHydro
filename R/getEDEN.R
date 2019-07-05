@@ -57,7 +57,7 @@ getEDEN <- function(EDEN_date) {
   # plot(a.sf)
   
   ### cleanup
-  #file.remove(c(geotiff_file, a))
+  # file.remove(c(geotiff_file, a))
   
   invisible(a.sf)
 }

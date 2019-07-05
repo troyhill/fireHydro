@@ -7,10 +7,10 @@
 getEDEN(EDEN_date)
 }
 \arguments{
-\item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018"}
+\item{EDEN_date}{eight-digit character string identifying the date to be used for water levels (e.g., "20181018").}
 }
 \value{
-sf \code{getEDEN} returns an sf object.
+sf \code{getEDEN} returns an sf object. Units reported are water depth in centimeters relative to the ground surface.
 }
 \description{
 Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").

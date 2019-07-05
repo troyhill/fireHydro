@@ -1,8 +1,8 @@
 Package: fireHydro
 Type: Package
 Title: FireHydro tool
-Version: 0.0.8
-Date: 2019-04-29
+Version: 0.0.9
+Date: 2019-07-05
 Authors@R: c(
     person("Justin", "Shedd", role = "ctb"),
     person("Jelena", "Vukomanovic", role = "ctb"),
@@ -23,8 +23,7 @@ Depends:
     rgdal,
     httr,
     raster,
-    ggplot2,
-    googledrive
+    ggplot2
 RoxygenNote: 6.1.1
 Suggests: 
     covr,

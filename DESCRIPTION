@@ -23,7 +23,8 @@ Depends:
     rgdal,
     httr,
     raster,
-    ggplot2
+    ggplot2,
+    googledrive
 RoxygenNote: 6.1.1
 Suggests: 
     covr,

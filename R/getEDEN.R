@@ -2,12 +2,11 @@
 #'
 #' @description Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 #' 
-#' @usage getEDEN(EDEN_date, DEM = fireHydro::edenDEM)
+#' @usage getEDEN(EDEN_date)
 #' 
-#' @param EDEN_date eight-digit character string identifying the date to be used for water levels (e.g., "20181018"). 
-#' @param DEM digital elevation model to be used for converting water surface elevations to water depths.
+#' @param EDEN_date EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018"
 #' 
-#' @return sf \code{getEDEN} returns an sf object. Units reported are water depth in centimeters relative to the ground surface.
+#' @return sf \code{getEDEN} returns an sf object.
 #' 
 #' 
 #' @examples
@@ -33,46 +32,32 @@
 #' @export
 
 
-getEDEN <- function(EDEN_date, DEM = fireHydro::edenDEM) {
-  
-  if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
-    stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))
-  }
-  
-  # if date isn't present on USGS site, find and use most recent date, inform user
-  url  <- "https://sofia.usgs.gov/eden/models/real-time.php"
-  html <- paste(readLines(url), collapse="\n")
-  
-  txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
-  txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
-  
-  if(!EDEN_date %in% txt) {
-    cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
-    EDEN_date <- txt[1]
-  }
-  
-
+getEDEN <- function(EDEN_date) {
   # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
   base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", EDEN_date ,"_geotif_v2rt.zip")
   
   geotiff_file <- tempfile(fileext='.tif')
-  httr::GET(base_url, httr::write_disk(path=geotiff_file)) ### this is a zip file so can't be loaded directly
-
+  httr::GET(base_url, httr::write_disk(path=geotiff_file))
+  
+  # TODO: if no file returned (file size < 100 kb), find most recent date, inform user, and use most recent date
+  
+  
   # 2: download and unzip zip file
-  tempDirContents <- list.files(tempdir(), full.names = TRUE) # record contents of temp folder
   utils::unzip(geotiff_file, overwrite = TRUE, exdir = tempdir())
-
+  
+  
   # 3: load geotiff as sf, set projection
   a <- paste0(tempdir(), "/s_", EDEN_date, "_v2rt.tif")
   
-  a.poly <- raster::rasterToPolygons(raster::raster(a) - (DEM * 100), # apply DEM to convert water surfaces to depths in cm 
-                                     dissolve = TRUE) #dissolve option requires rgeos
+  a.ras  <- raster::raster(a)
+  a.ras <- a.ras - (fireHydro::edenDEM * 100) # apply DEM to convert water surfaces to depths
+  a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
   a.sf <- sf::st_as_sf(a.poly)
   names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
   # plot(a.sf)
   
   ### cleanup
-  file.remove(c(geotiff_file, a, list.files(tempdir(), full.names = TRUE)[!list.files(tempdir(), full.names = TRUE) %in% tempDirContents]))
+  #file.remove(c(geotiff_file, a))
   
   invisible(a.sf)
-  }
+}

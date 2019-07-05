@@ -4,10 +4,12 @@
 \alias{getEDEN}
 \title{Downloads and imports EDEN data}
 \usage{
-getEDEN(EDEN_date)
+getEDEN(EDEN_date, DEM = fireHydro::edenDEM)
 }
 \arguments{
 \item{EDEN_date}{eight-digit character string identifying the date to be used for water levels (e.g., "20181018").}
+
+\item{DEM}{digital elevation model to be used for converting water surface elevations to water depths.}
 }
 \value{
 sf \code{getEDEN} returns an sf object. Units reported are water depth in centimeters relative to the ground surface.

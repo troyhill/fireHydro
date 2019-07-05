@@ -20,4 +20,7 @@ save(edenDEM, file = "C:/RDATA/fireHydro/data/edenDEM.RData")
 }
 
 }
-\keyword{datasets}
+\keyword{DEM}
+\keyword{digital}
+\keyword{elevation}
+\keyword{model}

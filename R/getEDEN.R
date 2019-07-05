@@ -2,9 +2,10 @@
 #'
 #' @description Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 #' 
-#' @usage getEDEN(EDEN_date)
+#' @usage getEDEN(EDEN_date, DEM = fireHydro::edenDEM)
 #' 
 #' @param EDEN_date eight-digit character string identifying the date to be used for water levels (e.g., "20181018"). 
+#' @param DEM digital elevation model to be used for converting water surface elevations to water depths.
 #' 
 #' @return sf \code{getEDEN} returns an sf object. Units reported are water depth in centimeters relative to the ground surface.
 #' 
@@ -32,7 +33,7 @@
 #' @export
 
 
-getEDEN <- function(EDEN_date) {
+getEDEN <- function(EDEN_date, DEM = fireHydro::edenDEM) {
   
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
     stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))
@@ -64,7 +65,7 @@ getEDEN <- function(EDEN_date) {
   # 3: load geotiff as sf, set projection
   a <- paste0(tempdir(), "/s_", EDEN_date, "_v2rt.tif")
   
-  a.poly <- raster::rasterToPolygons(raster::raster(a) - (fireHydro::edenDEM * 100), # apply DEM to convert water surfaces to depths in cm 
+  a.poly <- raster::rasterToPolygons(raster::raster(a) - (DEM * 100), # apply DEM to convert water surfaces to depths in cm 
                                      dissolve = TRUE) #dissolve option requires rgeos
   a.sf <- sf::st_as_sf(a.poly)
   names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"

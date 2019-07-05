@@ -33,8 +33,13 @@
 
 
 getEDEN <- function(EDEN_date) {
-  # TODO: if date isn't present on USGS site, find and use most recent date, inform user
-  url <- "https://sofia.usgs.gov/eden/models/real-time.php"
+  
+  if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
+    stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))
+  }
+  
+  # if date isn't present on USGS site, find and use most recent date, inform user
+  url  <- "https://sofia.usgs.gov/eden/models/real-time.php"
   html <- paste(readLines(url), collapse="\n")
   
   txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
@@ -50,25 +55,23 @@ getEDEN <- function(EDEN_date) {
   base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", EDEN_date ,"_geotif_v2rt.zip")
   
   geotiff_file <- tempfile(fileext='.tif')
-  shp_file <- tempfile(fileext='.tif')
-  httr::GET(base_url, httr::write_disk(path=geotiff_file))
+  httr::GET(base_url, httr::write_disk(path=geotiff_file)) ### this is a zip file so can't be loaded directly
 
   # 2: download and unzip zip file
+  tempDirContents <- list.files(tempdir(), full.names = TRUE) # record contents of temp folder
   utils::unzip(geotiff_file, overwrite = TRUE, exdir = tempdir())
-  
-  
+
   # 3: load geotiff as sf, set projection
   a <- paste0(tempdir(), "/s_", EDEN_date, "_v2rt.tif")
   
-  a.ras  <- raster::raster(a)
-  a.ras <- a.ras - (fireHydro::edenDEM * 100) # apply DEM to convert water surfaces to depths in cm
-  a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
+  a.poly <- raster::rasterToPolygons(raster::raster(a) - (fireHydro::edenDEM * 100), # apply DEM to convert water surfaces to depths in cm 
+                                     dissolve = TRUE) #dissolve option requires rgeos
   a.sf <- sf::st_as_sf(a.poly)
   names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
   # plot(a.sf)
   
   ### cleanup
-  file.remove(c(geotiff_file, shp_file, a))
+  file.remove(c(geotiff_file, a, list.files(tempdir(), full.names = TRUE)[!list.files(tempdir(), full.names = TRUE) %in% tempDirContents]))
   
   invisible(a.sf)
   }

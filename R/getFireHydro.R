@@ -21,7 +21,7 @@
 #' @param waterLevelExport NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).
 #' @param fireSpreadExport NULL or a character vector specifying the file address/name used for exporting an image file of fire spread risk (e.g., /home/fireSpreadRisk.pdf).
 #' @param csvExport If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
-#' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment. 
+#' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error. 
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
@@ -35,9 +35,21 @@
 #' @examples
 #' 
 #' \dontrun{
+#' 
 #' getFireHydro(EDEN_date = "20181018", 
 #'      output_shapefile = NULL,
 #'      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png")
+#' 
+#' # save output in multiple file types
+#' getFireHydro(EDEN_date = "20181018", 
+#'      output_shapefile = NULL,
+#'      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"))
+#'      
+#' # incorportate burn history to fire spread risk maps
+#' getFireHydro(EDEN_date = "20181018", 
+#'      output_shapefile = NULL,
+#'      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), burnHist = TRUE)
+#' 
 #' }
 #' 
 #' @importFrom utils write.csv

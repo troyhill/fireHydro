@@ -15,7 +15,7 @@ License: file LICENSE
 URL: https://github.com/troyhill/fireHydro
 LazyData: true
 Depends:
-    R (>= 3.0),
+    R (>= 3.5.0),
     utils,
     plyr,
     dplyr,

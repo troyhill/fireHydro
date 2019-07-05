@@ -10,21 +10,22 @@ getEDEN(EDEN_date)
 \item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018"}
 }
 \value{
-sf \code{getEDEN} produces an sf shapefile.
+sf \code{getEDEN} returns an sf object.
 }
 \description{
-Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers.
+Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 }
 \examples{
 
 \dontrun{
-a <- getEDEN(EDEN_date = "20181018")
+EDEN_date_target <- "20190606"
+a <- getEDEN(EDEN_date = EDEN_date_target)
 
 ### getEDEN output can then be used in getFireHydro
-getFireHydro(EDEN_date = "20181018", 
-     EDEN_GIS_directory = a,
+a.fire <- getFireHydro(EDEN_date = EDEN_date_target, 
+     EDEN_GIS_directory = "a",
      output_shapefile = NULL,
-     fireSpreadExport = "fireRisk.pdf", waterLevelExport = "waterLevels.pdf")
+     fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
 }
 
 }

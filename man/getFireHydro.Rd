@@ -29,7 +29,7 @@ getFireHydro(EDEN_date,
 
 \item{csvExport}{If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")}
 
-\item{EDEN_GIS_directory}{The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment.}
+\item{EDEN_GIS_directory}{The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error.}
 
 \item{vegetation_shp}{shapefile of vegetation data in Big Cypress and Everglades}
 
@@ -54,9 +54,21 @@ Generates shapefile showing fire potential. Presently only works on the SFNRC ne
 \examples{
 
 \dontrun{
+
 getFireHydro(EDEN_date = "20181018", 
      output_shapefile = NULL,
      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png")
+
+# save output in multiple file types
+getFireHydro(EDEN_date = "20181018", 
+     output_shapefile = NULL,
+     fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"))
+     
+# incorportate burn history to fire spread risk maps
+getFireHydro(EDEN_date = "20181018", 
+     output_shapefile = NULL,
+     fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), burnHist = TRUE)
+
 }
 
 }

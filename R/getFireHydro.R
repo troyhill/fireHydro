@@ -223,6 +223,25 @@ getFireHydro <- function(EDEN_date,
       dataToPlot    <- "WF_Use"
       legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date2)
       
+      
+      
+      group.colors  <- c(
+        `High`            = "brown4",
+        `Moderately High` = "darkorange1",
+        `Moderate`        = "yellow3",
+        `Moderately Low`  = "deepskyblue2",
+        `Low`             = "chartreuse4"
+      )
+      # group.colors  <- c(
+      #   "1"  = RColorBrewer::brewer.pal(9, "Reds")[4],
+      #   "2"  = RColorBrewer::brewer.pal(9, "Oranges")[4],
+      #   "3"  = RColorBrewer::brewer.pal(9, "YlOrBr")[2],
+      #   "4"  = RColorBrewer::brewer.pal(9, "Blues")[4],
+      #   "5"  = RColorBrewer::brewer.pal(9, "Greens")[4]
+      # )
+      # dataLabels    <- names(group.colors) <- riskNames
+      dataLabels    <- names(group.colors)
+      
       if (burnHist) {
         ### do some additional processing
         eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
@@ -258,23 +277,6 @@ getFireHydro <- function(EDEN_date,
         eden_epaNveg_planningUnits <- rbind(eden_epaNveg_planningUnits, burn[, names(eden_epaNveg_planningUnits)])
         ###
         
-        
-        group.colors  <- c(
-          `High`            = "brown4",
-          `Moderately High` = "darkorange1",
-          `Moderate`        = "yellow3",
-          `Moderately Low`  = "deepskyblue2",
-          `Low`             = "chartreuse4"
-        )
-        # group.colors  <- c(
-        #   "1"  = RColorBrewer::brewer.pal(9, "Reds")[4],
-        #   "2"  = RColorBrewer::brewer.pal(9, "Oranges")[4],
-        #   "3"  = RColorBrewer::brewer.pal(9, "YlOrBr")[2],
-        #   "4"  = RColorBrewer::brewer.pal(9, "Blues")[4],
-        #   "5"  = RColorBrewer::brewer.pal(9, "Greens")[4]
-        # )
-        # dataLabels    <- names(group.colors) <- riskNames
-        dataLabels    <- names(group.colors)
         
         ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot), col = get(dataToPlot)), alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
           # ggplot2::geom_sf(data = high17, alpha = 1,

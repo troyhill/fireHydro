@@ -37,6 +37,9 @@ getEDEN <- function(EDEN_date) {
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
     stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))
   }
+
+  # on.exit(close(base_url))
+  # on.exit(close(url))
   
   # if date isn't present on USGS site, find and use most recent date, inform user
   url  <- "https://sofia.usgs.gov/eden/models/real-time.php"
@@ -75,6 +78,7 @@ getEDEN <- function(EDEN_date) {
   
   ### cleanup
   # file.remove(c(geotiff_file, a))
+  unlink(c(geotiff_file, a))
   
   invisible(a.sf)
 }

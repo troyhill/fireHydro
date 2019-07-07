@@ -25,6 +25,7 @@ edenDat <- getEDEN(EDEN_date = EDEN_date_target)
 fireDat <- getFireHydro(EDEN_date = EDEN_date_target, 
      EDEN_GIS_directory = "edenDat",
      output_shapefile = NULL,
+     returnShp = TRUE, # returns an sf object
      burnHist = TRUE, # option to include the previous three years of burn history in estimating fire risk
      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), # multiple outputs can be created simultaneously
      waterLevelExport = c("waterLevels.png", "waterLevels.pdf"))

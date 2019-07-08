@@ -21,6 +21,7 @@ Depends:
     dplyr,
     sf,
     rgdal,
+    rgeos,
     httr,
     raster,
     ggplot2,

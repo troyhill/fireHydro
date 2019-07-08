@@ -16,7 +16,7 @@ getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""),
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
 }
 \value{
-sf \code{getEDEN} returns an sf object.
+list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
 }
 \description{
 Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
@@ -28,8 +28,8 @@ EDEN_date_target <- "20190606"
 a <- getEDEN(EDEN_date = EDEN_date_target)
 
 ### getEDEN output can then be used in getFireHydro
-a.fire <- getFireHydro(EDEN_date = EDEN_date_target, 
-     EDEN_GIS_directory = "a",
+a.fire <- getFireHydro(EDEN_date = a$date, 
+     EDEN_GIS_directory = a$data,
      output_shapefile = NULL,
      returnShp = TRUE,
      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
@@ -40,7 +40,8 @@ edenDat.false <- getEDEN(EDEN_date = "20180101", exact = FALSE)
 edenDat.true  <- getEDEN(EDEN_date = "20180101", exact = TRUE)
 
 edenDat.false
-edenDat.true
+edenDat.true 
+# reporting the date with the output is particularly useful if the requested date is unavailable
 }
 
 }

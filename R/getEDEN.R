@@ -10,7 +10,7 @@
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
 #' 
-#' @return sf \code{getEDEN} returns an sf object.
+#' @return list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
 #' 
 #' 
 #' @examples
@@ -20,8 +20,8 @@
 #' a <- getEDEN(EDEN_date = EDEN_date_target)
 #' 
 #' ### getEDEN output can then be used in getFireHydro
-#' a.fire <- getFireHydro(EDEN_date = EDEN_date_target, 
-#'      EDEN_GIS_directory = "a",
+#' a.fire <- getFireHydro(EDEN_date = a$date, 
+#'      EDEN_GIS_directory = a$data,
 #'      output_shapefile = NULL,
 #'      returnShp = TRUE,
 #'      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
@@ -32,7 +32,8 @@
 #' edenDat.true  <- getEDEN(EDEN_date = "20180101", exact = TRUE)
 #' 
 #' edenDat.false
-#' edenDat.true
+#' edenDat.true 
+#' # reporting the date with the output is particularly useful if the requested date is unavailable
 #' }
 #' 
 #' @importFrom httr GET
@@ -101,6 +102,6 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     # file.remove(c(geotiff_file, a))
     unlink(c(geotiff_file, a))
     
-    invisible(a.sf)
+    invisible(list(date = EDEN_date, data = a.sf))
   }
 }

@@ -21,7 +21,7 @@
 #' @param waterLevelExport NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).
 #' @param fireSpreadExport NULL or a character vector specifying the file address/name used for exporting an image file of fire spread risk (e.g., /home/fireSpreadRisk.pdf).
 #' @param csvExport If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
-#' @param EDEN_GIS_directory The source for EDEN data. For users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error. 
+#' @param EDEN_GIS_directory The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \link{\code{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error. 
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
@@ -101,20 +101,26 @@ getFireHydro <- function(EDEN_date,
   # outputCsv  <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
   
   
+  # EDEN_GIS_directory_main <- gsub(x = EDEN_GIS_directory, pattern = "\\$.*", replacement = "")
+  # get(paste0(EDEN_GIS_directory_main, "$", gsub(x = EDEN_GIS_directory, pattern = ".*\\$", replacement = "")))
   
   ### adjust EDEN directory for operating system
-  if (EDEN_GIS_directory == "detect") {
+  
+  if ((length(EDEN_GIS_directory) == 1) && (class(EDEN_GIS_directory)[1] %in% "character") && (EDEN_GIS_directory[1] == "detect")) {
     switch(Sys.info()[['sysname']],
            Windows= {EDEN_GIS_directory <- "Y:/gis/eden/"},
            Linux  = {EDEN_GIS_directory <- "/opt/physical/gis/eden/"},
            Darwin = {stop("EDEN data parent directory address is not automatically identified for Mac OS.")})
     eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
-  } else if (grepl(x = EDEN_GIS_directory, pattern = "shp$")) {
+  } else if ((length(EDEN_GIS_directory) == 1) && (class(EDEN_GIS_directory)[1] %in% "character") && (grepl(x = EDEN_GIS_directory, pattern = "shp$"))) {
     eden_epa               <- sf::st_read(EDEN_GIS_directory)
-  } else if (exists(EDEN_GIS_directory)) {
-    if (any(class(get(EDEN_GIS_directory)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
-      eden_epa               <- get(EDEN_GIS_directory)
-    }
+  # } else if (exists(EDEN_GIS_directory_main)) { # gsub(x = "a$data", pattern = "\\$.*", replacement = "")
+    } else if (exists("EDEN_GIS_directory")) {
+    if ("sf" %in% class(get("EDEN_GIS_directory"))) { # if EDEN data are already a SIMPLE FEATURE object in workspace
+      eden_epa   <- get("EDEN_GIS_directory")
+    } #else  if (any(unlist(sapply(X = get(EDEN_GIS_directory_main), FUN = class)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
+    #   eden_epa   <- get(EDEN_GIS_directory_main)$get(gsub(x = EDEN_GIS_directory, pattern = ".*\\$", replacement = "")) # gsub(x = "a$data", pattern = ".*\\$", replacement = "")
+    # }
   } else {
    stop("EDEN_GIS_DIRECTORY argument appears to be invalid. It is not an sf object in current working environment")
   }

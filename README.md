@@ -22,8 +22,8 @@ EDEN_date_target <- "20190606"
 edenDat <- getEDEN(EDEN_date = EDEN_date_target)
  
 ### getEDEN output can then be used in getFireHydro
-fireDat <- getFireHydro(EDEN_date = EDEN_date_target, 
-     EDEN_GIS_directory = "edenDat",
+fireDat <- getFireHydro(EDEN_date = edenDat$date, 
+     EDEN_GIS_directory = edenDat$data,
      output_shapefile = NULL,
      returnShp = TRUE, # returns an sf object
      burnHist = TRUE, # option to include the previous three years of burn history in estimating fire risk

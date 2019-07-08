@@ -4,7 +4,8 @@
 \alias{getEDEN}
 \title{Downloads and imports EDEN data}
 \usage{
-getEDEN(EDEN_date, exact = FALSE)
+getEDEN(EDEN_date, exact = FALSE, 
+    DEM = system.file("extdata", "edenDEM.grd", package = "fireHydro"))
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018"}

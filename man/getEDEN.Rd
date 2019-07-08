@@ -4,11 +4,12 @@
 \alias{getEDEN}
 \title{Downloads and imports EDEN data}
 \usage{
-getEDEN(EDEN_date, exact = FALSE, 
+getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
+    exact = FALSE, 
     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 }
 \arguments{
-\item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018"}
+\item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
 
 \item{exact}{logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date}
 

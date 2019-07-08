@@ -22,6 +22,7 @@
 #' a.fire <- getFireHydro(EDEN_date = EDEN_date_target, 
 #'      EDEN_GIS_directory = "a",
 #'      output_shapefile = NULL,
+#'      returnShp = TRUE,
 #'      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
 #'      
 #' ### only the most recent data are available as individual geotiffs.

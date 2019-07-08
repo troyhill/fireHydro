@@ -28,6 +28,14 @@ a.fire <- getFireHydro(EDEN_date = EDEN_date_target,
      EDEN_GIS_directory = "a",
      output_shapefile = NULL,
      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
+     
+### only the most recent data are available as individual geotiffs.
+### Use 'exact = TRUE' to return FALSE if an exact date match isn't found
+edenDat.false <- getEDEN(EDEN_date = "20180101", exact = FALSE)
+edenDat.true  <- getEDEN(EDEN_date = "20180101", exact = TRUE)
+
+edenDat.false
+edenDat.true
 }
 
 }

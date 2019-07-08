@@ -21,6 +21,14 @@
 #'      EDEN_GIS_directory = "a",
 #'      output_shapefile = NULL,
 #'      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
+#'      
+#' ### only the most recent data are available as individual geotiffs.
+#' ### Use 'exact = TRUE' to return FALSE if an exact date match isn't found
+#' edenDat.false <- getEDEN(EDEN_date = "20180101", exact = FALSE)
+#' edenDat.true  <- getEDEN(EDEN_date = "20180101", exact = TRUE)
+#' 
+#' edenDat.false
+#' edenDat.true
 #' }
 #' 
 #' @importFrom httr GET
@@ -50,13 +58,13 @@ getEDEN <- function(EDEN_date, exact = FALSE) {
   txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
   cont <- TRUE
   
-  if((!EDEN_date %in% txt) && (exact = TRUE)) {
+  if((!EDEN_date %in% txt) && (exact == TRUE)) {
     cont <- FALSE # don't continue if exact date is requested but unavailable
   }
   
   if(cont) {
-    if((!EDEN_date %in% txt) && (exact = FALSE)) {
-      cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+    if((!EDEN_date %in% txt) && (exact == FALSE)) {
+      message(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
       EDEN_date <- txt[1]
     }
     

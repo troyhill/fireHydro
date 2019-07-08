@@ -44,7 +44,8 @@
 #' @export
 
 
-getEDEN <- function(EDEN_date, exact = FALSE) {
+getEDEN <- function(EDEN_date, exact = FALSE, 
+                DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
   
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
     stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))

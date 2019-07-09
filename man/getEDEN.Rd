@@ -24,15 +24,14 @@ Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , 
 \examples{
 
 \dontrun{
-EDEN_date_target <- "20190606"
-a <- getEDEN(EDEN_date = EDEN_date_target)
+### default behavior is to return data from the most recent date
+a <- getEDEN()
 
-### getEDEN output can then be used in getFireHydro
+### getEDEN output can be directly used in getFireHydro()
 a.fire <- getFireHydro(EDEN_date = a$date, 
      EDEN_GIS_directory = a$data,
-     output_shapefile = NULL,
-     returnShp = TRUE,
-     fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png", burnHist = TRUE)
+     fireSpreadExport = paste0("fireRisk_", a$date, ".png"), 
+     waterLevelExport = paste0("waterLevels_", a$date, ".png"))
      
 ### only the most recent data are available as individual geotiffs.
 ### Use 'exact = TRUE' to return NULL if an exact date match isn't found

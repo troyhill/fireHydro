@@ -5,23 +5,23 @@
 \title{Generate fire-hydro shapefile}
 \usage{
 getFireHydro(EDEN_date, 
-    output_shapefile = paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+    output_shapefile = NULL, #paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
     waterLevelExport = NULL,
     fireSpreadExport = NULL,
     csvExport = NULL,
     EDEN_GIS_directory = "detect",
     vegetation_shp = fireHydro::vegetation,
     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-    returnShp = FALSE,
-    figureWidth = 6,
+    returnShp = TRUE,
+    figureWidth = 6.5,
     figureHeight = 4,
     ggBaseSize = 12,
-    burnHist = FALSE)
+    burnHist = TRUE)
 }
 \arguments{
-\item{EDEN_date}{EDEN date to be used for water levels. Should be a character stirng, e.g., "20181018"}
+\item{EDEN_date}{EDEN date to be used for water levels. Should be a character string, e.g., "20181018"}
 
-\item{output_shapefile}{file address for shapefile output}
+\item{output_shapefile}{file address for shapefile output. Driver is inferred from file extnesion, so may not be correct. In this case, user can export shapefile after generating the sf object through \code{getFireHydro()}.}
 
 \item{waterLevelExport}{NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).}
 
@@ -55,19 +55,25 @@ Generates shapefile showing fire potential. Presently only works on the SFNRC ne
 
 \dontrun{
 
-getFireHydro(EDEN_date = "20181018", 
-     output_shapefile = NULL,
+# produce maps with the most recent EDEN data
+EDENdat <- getEDEN()
+fireDat <- getFireHydro(EDEN_date = EDENdat$date, 
+     EDEN_GIS_directory = EDENdat$data,
+     fireSpreadExport = paste0("fireRisk_", EDENdat$date, ".png"), 
+     waterLevelExport = paste0("waterLevels_", EDENdat$date, ".png"))
+
+### some more examples:
+getFireHydro(EDEN_date = "20181018",
      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png")
 
-# save output in multiple file types
+# save output in multiple file types (and exclude burn history)
 getFireHydro(EDEN_date = "20181018", 
-     output_shapefile = NULL,
+     burnHist = FALSE,
      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"))
      
 # incorportate burn history to fire spread risk maps
 getFireHydro(EDEN_date = "20181018", 
-     output_shapefile = NULL,
-     fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), burnHist = TRUE)
+     fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"))
 
 }
 

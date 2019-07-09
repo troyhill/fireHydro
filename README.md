@@ -6,9 +6,9 @@
 ## What you have here
 
 `fireHydro` is an R package that estimates fire spread risk in south Florida by integrating diverse datasets:
-(1) water level data sourced from USGS/EDEN
-(2) vegetation cover maps classified by University of Georgia and categorized into litter classes using the professional judgement of Everglades National Park's Fire Cache group
-(3) the spatial extent of historical burns over the preceding three years
+1. water level data sourced from USGS/EDEN
+2. vegetation cover maps classified by University of Georgia and categorized into litter classes using the professional judgement of Everglades National Park's Fire Cache group
+3. the spatial extent of historical burns over the preceding three years
 
 
 

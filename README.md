@@ -18,10 +18,10 @@ fireHydro can be used to create shapefiles and/or images providing an integrativ
 ```
 library(fireHydro)
 
-EDEN_date_target <- "20190606"
-edenDat <- getEDEN(EDEN_date = EDEN_date_target)
+### the EDEN web scraper defaults to downloading the most recent EDEN water depth data
+edenDat <- getEDEN()
  
-### getEDEN output can then be used in getFireHydro
+### getEDEN() output can then be used directly in getFireHydro()
 fireDat <- getFireHydro(EDEN_date = edenDat$date, 
      EDEN_GIS_directory = edenDat$data,
      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), # multiple outputs can be created simultaneously

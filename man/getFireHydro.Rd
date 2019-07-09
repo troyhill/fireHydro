@@ -29,7 +29,7 @@ getFireHydro(EDEN_date,
 
 \item{csvExport}{If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")}
 
-\item{EDEN_GIS_directory}{The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \link{\code{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error.}
+\item{EDEN_GIS_directory}{The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \code{\link[fireHydro]{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error.}
 
 \item{vegetation_shp}{shapefile of vegetation data in Big Cypress and Everglades}
 
@@ -46,7 +46,7 @@ getFireHydro(EDEN_date,
 \item{burnHist}{logical; if FALSE, fire spread risk is a binary variable (high/low); if TRUE, fire history during the preceding three years is used to split fire spread risk into a gradient of risk: High = high current fire spread risk and no burn history in past 3 years; Moderately High = high current fire spread risk and burned three years ago; Moderate = high current fire spread risk and burned two years ago; Moderately Low = high current fire spread risk and burned in the past year; Low = low current fire spread risk (regardless of burn history)}
 }
 \value{
-dataframe \code{getFireHydro} produces a shapefile.
+sf
 }
 \description{
 Generates shapefile showing fire potential. Presently only works on the SFNRC network (for EDEN data access)

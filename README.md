@@ -3,6 +3,15 @@
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/troyhill/fireHydro?branch=master&svg=true)](https://ci.appveyor.com/project/troyhill/fireHydro) [![Build Status](https://travis-ci.org/troyhill/fireHydro.svg?branch=master)](https://travis-ci.org/troyhill/fireHydro) [![codecov.io](https://codecov.io/github/troyhill/fireHydro/coverage.svg?branch=master)](https://codecov.io/github/troyhill/fireHydro?branch=master)
 
 
+## What you have here
+
+`fireHydro` is an R package that estimates fire spread risk in south Florida by integrating diverse datasets:
+1. water level data sourced from USGS/EDEN
+2. vegetation cover maps classified by University of Georgia and categorized into litter classes using the professional judgement of Everglades National Park's Fire Cache group
+3. the spatial extent of historical burns over the preceding three years
+
+
+
 ## fireHydro installation
 
 ```
@@ -18,15 +27,12 @@ fireHydro can be used to create shapefiles and/or images providing an integrativ
 ```
 library(fireHydro)
 
-EDEN_date_target <- "20190606"
-edenDat <- getEDEN(EDEN_date = EDEN_date_target)
+### the EDEN web scraper defaults to downloading the most recent EDEN water depth data
+edenDat <- getEDEN()
  
-### getEDEN output can then be used in getFireHydro
+### getEDEN() output can then be used directly in getFireHydro()
 fireDat <- getFireHydro(EDEN_date = edenDat$date, 
      EDEN_GIS_directory = edenDat$data,
-     output_shapefile = NULL,
-     returnShp = TRUE, # returns an sf object
-     burnHist = TRUE, # option to include the previous three years of burn history in estimating fire risk
      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), # multiple outputs can be created simultaneously
      waterLevelExport = c("waterLevels.png", "waterLevels.pdf"))
 

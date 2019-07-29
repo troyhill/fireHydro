@@ -70,12 +70,13 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
   
   if(cont) {
     if((!EDEN_date %in% txt) && (exact == FALSE)) {
-      message(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+      cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
       EDEN_date <- txt[1]
     }
     
     # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
-    base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", EDEN_date ,"_geotif_v2rt.zip")
+    ### TODO: identify link to avoid v2/v3 issues
+    base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", EDEN_date ,"_geotif_v3rt.zip") # ,"_geotif_v2rt.zip")
     
     geotiff_file <- tempfile(fileext='.tif')
     httr::GET(base_url, httr::write_disk(path=geotiff_file))
@@ -84,11 +85,11 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     
     
     # 2: download and unzip zip file
-    utils::unzip(geotiff_file, overwrite = TRUE, exdir = tempdir())
+    utils::unzip(zipfile = geotiff_file, overwrite = TRUE, exdir = tempdir())
     
     
     # 3: load geotiff as sf, set projection
-    a <- paste0(tempdir(), "/s_", EDEN_date, "_v2rt.tif")
+    a <- paste0(tempdir(), "/s_", EDEN_date, "_v3rt.tif") # "_v2rt.tif")
     
     a.ras  <- raster::raster(a)
     a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "

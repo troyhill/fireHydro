@@ -76,7 +76,11 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     
     # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
     ### TODO: identify link to avoid v2/v3 issues
-    base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", EDEN_date ,"_geotif_v3rt.zip") # ,"_geotif_v2rt.zip")
+    base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", 
+                                    unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
+    )
+    ### get file name by replacing .zip with .tif
+    dataName <- gsub(x = tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
     
     geotiff_file <- tempfile(fileext='.tif')
     httr::GET(base_url, httr::write_disk(path=geotiff_file))
@@ -89,7 +93,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     
     
     # 3: load geotiff as sf, set projection
-    a <- paste0(tempdir(), "/s_", EDEN_date, "_v3rt.tif") # "_v2rt.tif")
+    a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
     
     a.ras  <- raster::raster(a)
     a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "

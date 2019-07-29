@@ -81,7 +81,8 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     )
     ### get file name by replacing .zip with .tif
     dataName <- gsub(x = tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
-    
+    dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
+
     geotiff_file <- tempfile(fileext='.tif')
     httr::GET(base_url, httr::write_disk(path=geotiff_file))
     

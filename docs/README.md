@@ -81,6 +81,9 @@ fireDat <- getFireHydro(EDEN_date = edenDat$date,
      EDEN_GIS_directory = edenDat$data,
      fireSpreadExport = "fireRisk.png",
      waterLevelExport = "waterLevels.png")
+     
+### export output as a shapefile
+st_write(fireDat, paste0(tempdir(), "/fireDat.shp"), driver = "ESRI Shapefile)
 
 ```
 
@@ -95,4 +98,4 @@ Updates planned for fireHydro include the following:
 
 * Treatment of burn histories will become more accurate and flexible. Burn histories are currently hard-coded and manually updated. Additionally, full calendar years are used rather than years relative to the queried date, leading to inaccurate categorization. This will transition to a single, dated burn history file that queries based on burn date.
 
-If you're interested in working on these improvements, email Troy_Hill at nps.gov.
+If you're interested in contributing to these or other improvements, email Troy_Hill at nps.gov.

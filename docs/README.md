@@ -1,17 +1,11 @@
 # Current water levels and fire spread risk
 
-&nbsp;
-
 <img src="{{site.url}}/figures/waterLevels.png" width="600">
 
 
 Figure 1. Water levels in south Florida. [Download this figure here.](../docs/figures/waterLevels.png)
 
-
 &nbsp;
-
-&nbsp;
-
 
 <img src="{{site.url}}/figures/fireRisk.png" width="600">
 

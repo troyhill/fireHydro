@@ -4,6 +4,9 @@
 
 <img src="{{site.url}}/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
+<img src="https://troyhill.github.io/fireHydro/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
+
+
 &nbsp;
 
 Figure 1. Water levels in south Florida. 
@@ -14,6 +17,8 @@ Figure 1. Water levels in south Florida.
 
 
 <img src="{{site.url}}/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
+
+<img src="https://troyhill.github.io/fireHydro/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
 
 &nbsp;
 

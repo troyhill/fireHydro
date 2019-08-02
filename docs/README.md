@@ -23,7 +23,7 @@ Figure 2. Fire spread risk categories. Risk estimates integrate water levels, ve
 
 
 
-## What you have here
+## About fireHydro
 
 `fireHydro` is an R package that estimates fire spread risk in south Florida by integrating diverse datasets:
 1. water level data sourced from the [USGS's Everglades Depth Estimation Network](https://sofia.usgs.gov/eden/models/real-time.php)

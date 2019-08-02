@@ -14,7 +14,7 @@
 
 &nbsp;
 
-Figure 1. Water levels in south Florida. [Download figure here](../docs/figures/waterLevel.png)
+Figure 1. Water levels in south Florida. [Download figure here](../docs/figures/waterLevels.png)
 
 
 &nbsp;

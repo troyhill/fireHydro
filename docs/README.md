@@ -1,4 +1,4 @@
-# Current water levels and fire spread risk in south Florida
+# Current water levels and fire spread risk
 
 &nbsp;
 

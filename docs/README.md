@@ -4,7 +4,6 @@
 
 ![current water levels]({{site.url}}/figures/waterLevels.png)
 
-&nbsp;
 
 Figure 1. Water levels in south Florida. [Download this figure here.](../docs/figures/waterLevels.png)
 
@@ -15,8 +14,6 @@ Figure 1. Water levels in south Florida. [Download this figure here.](../docs/fi
 
 
 ![current fire spread risk]({{site.url}}/figures/fireRisk.png)
-
-&nbsp;
 
 Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is below. [Download this figure here.](../docs/figures/fireRisk.png)
 
@@ -35,6 +32,11 @@ Figure 2. Fire spread risk categories. Risk estimates integrate water levels, ve
 
 
 fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two. Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking these shapefiles or maps should email Troy_Hill at nps.gov.
+
+&nbsp;
+
+&nbsp;
+
 
 ### Fire spread risk categories
 
@@ -65,6 +67,8 @@ install.packages("devtools")
 devtools::install_github("troyhill/fireHydro")
 ```
 
+&nbsp;
+
 
 ## fireHydro usage
 
@@ -87,6 +91,8 @@ st_write(fireDat, paste0(tempdir(), "/fireDat.shp"), driver = "ESRI Shapefile)
 
 ```
 
+
+&nbsp;
 
       
 

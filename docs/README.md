@@ -4,13 +4,13 @@
 
 <img src="{{site.url}}/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
-<img src="https://troyhill.github.io/fireHydro/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
+<img src="https://troyhill.github.io/fireHydro/blob/master/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
 ![current water levels]({{ BASE_PATH }}/docs/figures/waterLevels.png)
 
 &nbsp;
 
-Figure 1. Water levels in south Florida. [Download figure here](../blob/master/docs/figures/waterLevel.png)
+Figure 1. Water levels in south Florida. [Download figure here](../docs/figures/waterLevel.png)
 
 
 &nbsp;
@@ -20,13 +20,13 @@ Figure 1. Water levels in south Florida. [Download figure here](../blob/master/d
 
 <img src="{{site.url}}/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
 
-<img src="https://troyhill.github.io/fireHydro/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
+<img src="https://troyhill.github.io/fireHydro/blob/master/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
 
 ![current fire risk]({{ BASE_PATH }}/docs/figures/fireRisk.png)
 
 &nbsp;
 
-Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the preceding three years. [Download figure here](../blob/master/docs/figures/fireRisk.png)
+Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the preceding three years. [Download figure here](../docs/figures/fireRisk.png)
 
 &nbsp;
 

@@ -8,7 +8,6 @@
 
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
-![current water levels]({{ BASE_PATH }}/docs/figures/waterLevels.png)
 ![current water levels]({{site.url}}/figures/waterLevels.png)
 
 
@@ -28,7 +27,7 @@ Figure 1. Water levels in south Florida. [Download figure here](../docs/figures/
 
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
 
-![current fire risk]({{ BASE_PATH }}/docs/figures/fireRisk.png)
+![current water levels]({{site.url}}/figures/fireRisk.png)
 
 &nbsp;
 

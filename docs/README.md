@@ -4,6 +4,8 @@
 
 ![current water levels]({{site.url}}/figures/waterLevels.png)
 
+<img src="{{site.url}}/figures/waterLevels.png" width="100">
+
 
 Figure 1. Water levels in south Florida. [Download this figure here.](../docs/figures/waterLevels.png)
 
@@ -83,8 +85,8 @@ edenDat <- getEDEN()
 ### getEDEN() output can then be used directly in getFireHydro()
 fireDat <- getFireHydro(EDEN_date = edenDat$date, 
      EDEN_GIS_directory = edenDat$data,
-     fireSpreadExport = "fireRisk.png",
-     waterLevelExport = "waterLevels.png")
+     fireSpreadExport =  paste0(tempdir(), "fireRisk.png"),
+     waterLevelExport =  paste0(tempdir(), "waterLevels.png"))
      
 ### export output as a shapefile
 sf::st_write(fireDat, paste0(tempdir(), "/fireDat.shp"), 

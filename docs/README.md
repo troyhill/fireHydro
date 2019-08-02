@@ -41,7 +41,7 @@ Figure 2. Fire spread risk categories. Risk estimates integrate water levels, ve
 fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two. Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking these shapefiles or maps should email Troy_Hill at nps.gov.
 
 
-## fireHydro installation and usage
+## fireHydro installation
 
 fireHydro is a package of functions for use in R. The R statistical software is open source, and freely available from the [Comprehensive R Archive Network](https://cran.r-project.org/). The fireHydro package has been tested on Windows and Linux operating systems.
 

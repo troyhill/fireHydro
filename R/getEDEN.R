@@ -83,14 +83,14 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     dataName <- gsub(x = tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
     dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
 
-    geotiff_file <- tempfile(fileext='.tif')
-    httr::GET(base_url, httr::write_disk(path=geotiff_file))
+    geotiff_zip <- tempfile(fileext='.zip')
+    httr::GET(base_url, httr::write_disk(path=geotiff_zip))
     
     # TODO: if no file returned (file size < 100 kb), find most recent date, inform user, and use most recent date
     
     
     # 2: download and unzip zip file
-    utils::unzip(zipfile = geotiff_file, overwrite = TRUE, exdir = tempdir())
+    utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir())
     
     
     # 3: load geotiff as sf, set projection
@@ -104,8 +104,8 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     # plot(a.sf)
     
     ### cleanup
-    # file.remove(c(geotiff_file, a))
-    unlink(c(geotiff_file, a))
+    # file.remove(c(geotiff_zip, a))
+    unlink(c(geotiff_zip, a))
     
     invisible(list(date = EDEN_date, data = a.sf))
   }

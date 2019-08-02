@@ -18,7 +18,7 @@ Figure 1. Water levels in south Florida. [Download this figure here.](../docs/fi
 
 &nbsp;
 
-Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the preceding three years. More detail on fire spread risk categories is below. [Download this figure here.](../docs/figures/fireRisk.png)
+Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is below. [Download this figure here.](../docs/figures/fireRisk.png)
 
 &nbsp;
 
@@ -44,11 +44,11 @@ Fire spread risk is estimated primarily based on water levels and vegetation cov
 
 * 'High risk' areas have water levels below the ground surface and the presence of vegetation that produce large amounts of litter (based on the expert judgement of Everglades National Park's Fire Cache).
 
-* 'Moderately high risk' areas meet the criteria for high risk but burned three calendar years ago.
+* 'Moderately high risk' areas meet the criteria for high risk but burned two calendar years ago.
 
-* 'Moderate risk' areas meet the criteria for high risk but burned two calendar years ago.
+* 'Moderate risk' areas meet the criteria for high risk but burned in the previous calendar year.
 
-* 'Moderately low risk' areas meet the criteria for high risk but burned within the last calendar year.
+* 'Moderately low risk' areas meet the criteria for high risk but burned within the current calendar year.
 
 * 'Low risk' areas are characterized by inundation above the ground surface and/or vegetation cover that does not produce large amounts of litter.
 

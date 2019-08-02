@@ -64,7 +64,7 @@ A simple fireHydro usage example is below. This code generates maps of water lev
 ```
 library(fireHydro)
 
-### the EDEN web scraper defaults to downloading the most recent EDEN water depth data
+### By default, the most recent EDEN water surface data are used
 edenDat <- getEDEN()
  
 ### getEDEN() output can then be used directly in getFireHydro()

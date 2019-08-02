@@ -35,3 +35,5 @@ rsconnect/
 .Rproj.user
 *.R
 !/docs/script_updateFigures.R
+!/docs/figures/waterLevels.png
+!/docs/figures/fireRisk.png

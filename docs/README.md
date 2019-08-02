@@ -1,5 +1,6 @@
 # Most recent fire risk maps
 
+&nbsp;
 
 
 <img src="{{site.url}}/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
@@ -21,13 +22,7 @@ Figure 1. Water levels in south Florida. [Download figure here](../docs/figures/
 &nbsp;
 
 
-<img src="{{site.url}}/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
-
-<img src="{{site.url}}/figures/fireRisk.png" style="display: block; margin: auto;" />
-
-<img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
-
-![current water levels]({{site.url}}/figures/fireRisk.png)
+![current fire spread risk]({{site.url}}/figures/fireRisk.png)
 
 &nbsp;
 

@@ -40,10 +40,10 @@ fireDat <- getFireHydro(EDEN_date = edenDat$date,
 
 ```
 
-<img src="https://github.com/troyhill/images/blob/master/docs/figures/waterLevels.png" width="650" height="425" />
+<img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png" width="650" height="425" />
 Figure 1. Water level categories  
 
-<img src="https://github.com/troyhill/images/blob/master/docs/figures/fireRisk.png" width="650" height="425" />
+<img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png" width="650" height="425" />
 Figure 2. Fire spread risk categories. Risk estimates include water levels, vegetation type, and the burn history over the preceding three years.
 
       

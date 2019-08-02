@@ -1,6 +1,28 @@
-# fireHydro
+# Most recent fire risk maps
 
-[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/troyhill/fireHydro?branch=master&svg=true)](https://ci.appveyor.com/project/troyhill/fireHydro) [![Build Status](https://travis-ci.org/troyhill/fireHydro.svg?branch=master)](https://travis-ci.org/troyhill/fireHydro) [![codecov.io](https://codecov.io/github/troyhill/fireHydro/coverage.svg?branch=master)](https://codecov.io/github/troyhill/fireHydro?branch=master)
+
+
+<img src="{{site.url}}/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
+
+&nbsp;
+
+Figure 1. Water levels in south Florida. 
+
+&nbsp;
+
+&nbsp;
+
+
+<img src="{{site.url}}/docs/figures/fireRisk.png" style="display: block; margin: auto;" />
+
+&nbsp;
+
+Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the preceding three years.
+
+&nbsp;
+
+&nbsp;
+
 
 
 ## What you have here
@@ -11,8 +33,14 @@
 3. the spatial extent of historical burns over the preceding three years
 
 
+fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two. Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking these shapefiles or maps should email Troy_Hill at nps.gov.
 
-## fireHydro installation
+
+## fireHydro installation and usage
+
+fireHydro is a package of functions for use in R. The R statistical software is open source, and freely available from the [Comprehensive R Archive Network](https://cran.r-project.org/). The fireHydro package has been tested on Windows and Linux operating systems.
+
+fireHydro can be installed using the following commands in R:
 
 ```
 install.packages("devtools")
@@ -22,7 +50,7 @@ devtools::install_github("troyhill/fireHydro")
 
 ## fireHydro usage
 
-fireHydro can be used to create shapefiles and/or images providing an integrative measure of fire risk in Big Cypress National Preserve and Everglades National Park.
+A simple fireHydro usage example is below. This code generates maps of water levels and fire spread risk using the most recent EDEN water level data.
 
 ```
 library(fireHydro)
@@ -33,17 +61,12 @@ edenDat <- getEDEN()
 ### getEDEN() output can then be used directly in getFireHydro()
 fireDat <- getFireHydro(EDEN_date = edenDat$date, 
      EDEN_GIS_directory = edenDat$data,
-     fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"), # multiple outputs can be created simultaneously
-     waterLevelExport = c("waterLevels.png", "waterLevels.pdf"))
+     fireSpreadExport = "fireRisk.png",
+     waterLevelExport = "waterLevels.png")
 
 
 
 ```
 
-<img src="https://github.com/troyhill/images/blob/master/waterLevels.png" width="650" height="425" />
-Figure 1. Water level categories  
-
-<img src="https://github.com/troyhill/images/blob/master/fireRisk.png" width="650" height="425" />
-Figure 2. Fire spread risk categories. Risk estimates include water levels, vegetation type, and the burn history over the preceding three years.
 
       

@@ -2,9 +2,7 @@
 
 &nbsp;
 
-![current water levels]({{site.url}}/figures/waterLevels.png)
-
-<img src="{{site.url}}/figures/waterLevels.png" width="100">
+<img src="{{site.url}}/figures/waterLevels.png" width="400">
 
 
 Figure 1. Water levels in south Florida. [Download this figure here.](../docs/figures/waterLevels.png)

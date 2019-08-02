@@ -1,4 +1,4 @@
-# Most recent fire risk maps
+# Current water levels and fire spread risk in south Florida
 
 &nbsp;
 
@@ -18,7 +18,7 @@ Figure 1. Water levels in south Florida. [Download this figure here.](../docs/fi
 
 &nbsp;
 
-Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the preceding three years. [Download this figure here.](../docs/figures/fireRisk.png)
+Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the preceding three years. More detail on fire spread risk categories is below. [Download this figure here.](../docs/figures/fireRisk.png)
 
 &nbsp;
 
@@ -36,6 +36,23 @@ Figure 2. Fire spread risk categories. Risk estimates integrate water levels, ve
 
 fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two. Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking these shapefiles or maps should email Troy_Hill at nps.gov.
 
+### Fire spread risk categories
+
+Fire spread risk is estimated primarily based on water levels and vegetation cover, with burn history introducing a gradient of fire spread risk. The categories in Figure 2 are defined as follows:
+
+&nbsp; 
+
+* 'High risk' areas have water levels below the ground surface and the presence of vegetation that produce large amounts of litter (based on the expert judgement of Everglades National Park's Fire Cache).
+
+* 'Moderately high risk' areas meet the criteria for high risk but burned three calendar years ago.
+
+* 'Moderate risk' areas meet the criteria for high risk but burned two calendar years ago.
+
+* 'Moderately low risk' areas meet the criteria for high risk but burned within the last calendar year.
+
+* 'Low risk' areas are characterized by inundation above the ground surface and/or vegetation cover that does not produce large amounts of litter.
+
+&nbsp;
 
 ## fireHydro installation
 
@@ -65,9 +82,17 @@ fireDat <- getFireHydro(EDEN_date = edenDat$date,
      fireSpreadExport = "fireRisk.png",
      waterLevelExport = "waterLevels.png")
 
-
-
 ```
 
 
       
+
+## What's coming
+
+Updates planned for fireHydro include the following:
+
+* Access historic water surface data archived [here](https://sofia.usgs.gov/eden/models/watersurfacemod_download.php) and [here](https://sofia.usgs.gov/eden/models/watersurfacemod_download_1990s.php). These data are presently accessible only to fireHydro users on the SFNRC's internal network (or to external users who manually download the data). This feature would provide equal access to data for all users.
+
+* Treatment of burn histories will become more accurate and flexible. Burn histories are currently hard-coded and manually updated. Additionally, full calendar years are used rather than years relative to the queried date, leading to inaccurate categorization. This will transition to a single, dated burn history file that queries based on burn date.
+
+If you're interested in working on these improvements, email Troy_Hill at nps.gov.

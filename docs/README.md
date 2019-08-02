@@ -4,6 +4,8 @@
 
 <img src="{{site.url}}/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
+<img src="{{site.url}}/figures/waterLevels.png" style="display: block; margin: auto;" />
+
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
 ![current water levels]({{ BASE_PATH }}/docs/figures/waterLevels.png)

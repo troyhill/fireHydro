@@ -87,8 +87,8 @@ fireDat <- getFireHydro(EDEN_date = edenDat$date,
      waterLevelExport = "waterLevels.png")
      
 ### export output as a shapefile
-st_write(fireDat, paste0(tempdir(), "/fireDat.shp"), 
-         driver = "ESRI Shapefile)
+sf::st_write(fireDat, paste0(tempdir(), "/fireDat.shp"), 
+         driver = "ESRI Shapefile")
 
 ```
 

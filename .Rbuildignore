@@ -1,6 +1,7 @@
 ^tests/testthat\.R$
 ^tests/testthat/test-getFireHydro\.R$
 ^tests$
+^docs/
 ^codecov\.yml$
 ^\.travis\.yml$
 ^appveyor\.yml$

@@ -9,6 +9,8 @@
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png" style="display: block; margin: auto;" />
 
 ![current water levels]({{ BASE_PATH }}/docs/figures/waterLevels.png)
+![current water levels]({{site.url}}/figures/waterLevels.png)
+
 
 &nbsp;
 

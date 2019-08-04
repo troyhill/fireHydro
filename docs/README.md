@@ -25,7 +25,7 @@ Figure 2. Fire spread risk categories. Risk estimates integrate water levels, ve
 3. the spatial extent of historical burns over the preceding three years (source: Everglades National Park Fire Cache)
 
 
-fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two - see [workflow example below](#fireHydro-usage). Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking older shapefiles or maps should email Troy_Hill at nps.gov.
+fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two - see [workflow example below](#firehydro-usage). Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking older shapefiles or maps should email Troy_Hill at nps.gov.
 
 &nbsp;
 

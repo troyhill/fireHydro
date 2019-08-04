@@ -3,7 +3,7 @@
 <img src="{{site.url}}/figures/waterLevels.png" width="600">
 
 
-Figure 1. Water levels in south Florida. [Download this figure here.](../figures/waterLevels.png)
+Figure 1. Water levels in south Florida. [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png)
 
 &nbsp;
 

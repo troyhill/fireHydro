@@ -71,18 +71,19 @@ A simple fireHydro usage example is below. This code generates maps of water lev
 ```
 library(fireHydro)
 
+### Step 1: Generate a map of water depths using getEDEN()
 ### By default, the most recent EDEN water surface data are used
 edenDat <- getEDEN()
  
-### getEDEN() output can then be used directly in getFireHydro()
+### Step 2: Generate fire spread risk maps using getFireHydro()
 fireDat <- getFireHydro(EDEN_date = edenDat$date, 
      EDEN_GIS_directory = edenDat$data,
      fireSpreadExport =  paste0(tempdir(), "/fireRisk.png"),
      waterLevelExport =  paste0(tempdir(), "/waterLevels.png"))
      
-### export output as a shapefile
-sf::st_write(fireDat, paste0(tempdir(), "/fireDat.shp"), 
-         driver = "ESRI Shapefile")
+### Step 3: If desired, export output as a shapefile
+sf::st_write(obj = fireDat, driver = "ESRI Shapefile",
+     layer = paste0(tempdir(), "/fireDat_", edenDat$date, ".shp"))
 
 ```
 

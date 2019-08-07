@@ -36,7 +36,6 @@ fireHydro is a product of the South Florida Natural Resources Center (SFNRC), bu
 
 Fire spread risk is estimated primarily based on water levels and vegetation cover, with burn history introducing a gradient of fire spread risk. The categories in Figure 2 are defined as follows:
 
-&nbsp; 
 
 * **High risk** areas meet criteria for water depth defined for vegetation types based on the amount of litter produced (categorization and criteria were based on the professional judgement of Everglades National Park's Fire Cache). The table below shows water depth thresholds for each fuel category. Areas where water depth is below the threshold would experience high risk of fire spread.
 

@@ -3,13 +3,13 @@
 <img src="{{site.url}}figures/waterLevels.png" width="600">
 
 
-Figure 1. Water levels in south Florida. [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png)
+Figure 1. Water levels in south Florida. This map reflects the most recent EDEN data available. [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png)
 
 &nbsp;
 
 <img src="{{site.url}}figures/fireRisk.png" width="600">
 
-Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png)
+Figure 2. Fire spread risk categories, based on the most recent EDEN data. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png)
 
 &nbsp;
 

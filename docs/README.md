@@ -41,7 +41,7 @@ Fire spread risk is estimated primarily based on water levels and vegetation cov
 * **High risk** areas meet criteria for water depth defined for vegetation types based on the amount of litter produced (categorization and criteria were based on the professional judgement of Everglades National Park's Fire Cache). The table below shows water depth thresholds for each fuel category. Areas where water depth is below the threshold would experience high risk of fire spread.
 
 | Vegetation cover | Fuel category  | Water depth threshold (ft)  | 
-| :---: | :---: |:---:|
+| :--- | :---: |:---:|
 | Tall continuous grass, pine forest | 5      | Inf |
 | Short continuous grass, pine savannah | 4      | 4 |
 | Short sparse grass, hammock/tree island | 3      | 0 |

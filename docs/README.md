@@ -7,7 +7,7 @@ Figure 1. Water levels in south Florida. [Download this figure here.](https://gi
 
 &nbsp;
 
-<img src="{{ site.url }}figures/fireRisk.png" width="600">
+<img src="{{site.url}}figures/fireRisk.png" width="600">
 
 Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png)
 

@@ -3,7 +3,7 @@
 <img src="{{site.url}}figures/waterLevels.png" width="600">
 
 
-Figure 1. Water levels in south Florida. This map reflects the most recent EDEN water surface data. [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png)
+Figure 1. Water levels in south Florida. This map is a categorization of the most recent EDEN water surface data. [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png)
 
 &nbsp;
 

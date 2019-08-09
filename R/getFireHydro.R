@@ -98,6 +98,10 @@ getFireHydro <- function(EDEN_date,
   ### un-pack piped statements
   ### user specifies what's displayed in the output?
   ### what's up with the shapefiles that used to be exported - are they useful? should they have export options? 
+  feetToCm <- function(x) {
+    outDat <- x * 12 * 2.54 # Fire Cache uses three sig figs for this unit conversion
+    outDat
+    }
   
   planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
   EDEN_date2    <- format(x = strptime(x = as.character(EDEN_date), format = "%Y%m%d"), "%d %b %Y")
@@ -134,7 +138,7 @@ getFireHydro <- function(EDEN_date,
 
   ### Read EDEN EPA hydro data                    
   # ye olde version (pre-20190222): eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
-  eden_epa$WaterLevel    <- c(7, 6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 18.288, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
+  eden_epa$WaterLevel    <- c(7, 6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, feetToCm(c(-Inf, -1, -0.6, 0, 0.6, 1.6, 3, 4, Inf)))]   # Rank water depth
   eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
   eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits_shp))                                   # Reproject dissolved grid to park boundary
   eden_epa_reclass       <- eden_epaGroupPrj[,"WaterLevel"]
@@ -151,18 +155,26 @@ getFireHydro <- function(EDEN_date,
   vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   withCallingHandlers(
     eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, riskNames[1],
-                               ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, riskNames[1],
-                                      ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 5, riskNames[1], # changed  waterLevel threshold from 4 to 5 on 20190222
-                                             ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 5, riskNames[1], riskNames[length(riskNames)])))) # changed  waterLevel threshold from 4 to 5 on 20190222
+  eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterDepth <= feetToCm(4)), riskNames[1], 
+                               ifelse((eden_epaNveg$Veg_Cat == "Pine Forest|Pine Savannah") & (eden_epaNveg$WaterDepth <= feetToCm(0.6)), riskNames[1],
+                                      ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterDepth <= 0), riskNames[1], 
+                                             ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterDepth >= feetToCm(-1)), riskNames[1], 
+                                                    ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterDepth >= feetToCm(-0.6)), riskNames[1],
+                                                           ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterDepth >= feetToCm(-1)), riskNames[1],
+                                                    riskNames[length(riskNames)])))))) # changed  waterLevel threshold from 4 to 5 on 20190222
   
+  # eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, riskNames[1], # tall continuous grass, pine forest
+  #                              ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, riskNames[1],
+  #                                     ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 5, riskNames[1], # changed  waterLevel threshold from 4 to 5 on 20190222
+  #                                            ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 5, riskNames[1], riskNames[length(riskNames)])))) # changed  waterLevel threshold from 4 to 5 on 20190222
+  # 
   eden_epaNveg$RX_Use <-ifelse(eden_epaNveg$WF_Use == riskNames[1], "High Fuel Availability", "Low Fuel Availability")
   
   waterLevelLabels <- c("0" = "Above Surface: >4 ft",         "1" = "Above Surface: 3-4 ft",   "2" = "Above Surface: 1.6-3 ft",    
                         "3" = "Above Surface: 0.6-1.6 ft",    "4" = "Above Surface: 0-0.6 ft", "5" = "Below Surface: -0.6-0 ft", 
                         "6" = "Below Surface: -1 to -0.6 ft", "7" = "Below Surface: < -1 ft" )
   waterLevelColors <- c("0" = "cornflowerblue", "1" = "lightseagreen", "2" = "green4", 
-                        "3" = "yellow1",        "4" = "yellow3",       "5" = "orange",  
+                        "3" = "yellow3",        "4" = "yellow1",       "5" = "orange",  
                         "6" = "orangered3",     "7" = "firebrick")
   
   ### Combine fireRisk data with planning units
@@ -204,8 +216,8 @@ getFireHydro <- function(EDEN_date,
       # group.colors  <- c("7" = "firebrick",
       #                    "6" = "orangered3",
       #                    "5" = "orange",
-      #                    "4" = "yellow3",  # new category introduced 20190222
-      #                    "3" = "yellow1",
+      #                    "4" = "yellow1",  # new category introduced 20190222
+      #                    "3" = "yellow3",
       #                    "2" = "green4",
       #                    "1" = RColorBrewer::brewer.pal(9, "Greens")[4],
       #                    "0" = RColorBrewer::brewer.pal(9, "Blues")[4])

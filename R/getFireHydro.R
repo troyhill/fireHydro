@@ -155,12 +155,12 @@ getFireHydro <- function(EDEN_date,
   vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   withCallingHandlers(
     eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterDepth <= feetToCm(4)), riskNames[1], 
-                               ifelse((eden_epaNveg$Veg_Cat == "Pine Forest|Pine Savannah") & (eden_epaNveg$WaterDepth <= feetToCm(0.6)), riskNames[1],
-                                      ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterDepth <= 0), riskNames[1], 
-                                             ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterDepth <= feetToCm(-1)), riskNames[1], 
-                                                    ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterDepth <= feetToCm(-0.6)), riskNames[1],
-                                                           ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterDepth <= feetToCm(-1)), riskNames[1],
+  eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(4)), riskNames[1], 
+                               ifelse((eden_epaNveg$Veg_Cat == "Pine Forest|Pine Savannah") & (eden_epaNveg$WaterLevel <= feetToCm(0.6)), riskNames[1],
+                                      ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterLevel <= 0), riskNames[1], 
+                                             ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1], 
+                                                    ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterLevel <= feetToCm(-0.6)), riskNames[1],
+                                                           ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1],
                                                     riskNames[length(riskNames)])))))) # changed  waterLevel threshold from 4 to 5 on 20190222
   
   # eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, riskNames[1], # tall continuous grass, pine forest

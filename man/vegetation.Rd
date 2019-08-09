@@ -26,6 +26,8 @@ A shapefile of vegetation data
 \dontrun{
 summary(vegetation)
 
+plyr::ddply(vegetation, ("Veg_Cat"), plyr::summarise, type = head(FuelType, 1))
+
 ### code used to generate object using shapefile provided by NCSU
 vegetation          <- sf::st_read("CLC_Veg_exotic_Final_Updated_EDEN_py.shp")
 vegetation$FuelType <- dplyr::revalue(vegetation$Veg_Cat, c("NA"=1,

@@ -1,12 +1,9 @@
 ### script to generate most recent fireHydro maps
 
-if (!"devtools" %in% installed.packages()) {
-  install.packages("devtools")
-}
+if (!"devtools" %in% installed.packages()) install.packages("devtools")
   
-if (!"fireHydro" %in% installed.packages()) {
-  devtools::install_github("troyhill/fireHydro")
-}
+if (!"fireHydro" %in% installed.packages()) devtools::install_github("troyhill/fireHydro")
+
 
 library(fireHydro)
 

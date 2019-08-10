@@ -10,8 +10,8 @@ library(fireHydro)
 edenDat       <- getEDEN()
 fireDat <- getFireHydro(EDEN_date         = edenDat$date, 
                        EDEN_GIS_directory = edenDat$data,
-                       fireSpreadExport   = paste0(getwd(), "/docs/figures/fireRisk.png"), 
-                       waterLevelExport   = paste0(getwd(), "/docs/figures/waterLevels.png"))
+                       fireSpreadExport   = c(paste0(getwd(), "/docs/figures/fireRisk.png")), 
+                       waterLevelExport   = c(paste0(getwd(), "/docs/figures/waterLevels.png")))
 
 ### export output as a shapefile
 # st_write(fireDat, paste0(tempdir(), "/fireDat.shp"),

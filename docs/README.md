@@ -1,15 +1,15 @@
 # Current water levels and fire spread risk
 
-<img src="{{site.url}}/figures/waterLevels.png" width="600">
+<img src="{{site.url}}figures/waterLevels.png" width="600">
 
 
-Figure 1. Water levels in south Florida. [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png)
+Figure 1. Water levels in south Florida. This map is based on the most recent EDEN water surface data. Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png) or .pdf file.
 
 &nbsp;
 
-<img src="{{site.url}}/figures/fireRisk.png" width="600">
+<img src="{{site.url}}figures/fireRisk.png" width="600">
 
-Figure 2. Fire spread risk categories. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). [Download this figure here.](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png)
+Figure 2. Fire spread risk categories, based on the most recent EDEN data. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png) or .pdf file.
 
 &nbsp;
 
@@ -36,21 +36,30 @@ fireHydro is a product of the South Florida Natural Resources Center (SFNRC), bu
 
 Fire spread risk is estimated primarily based on water levels and vegetation cover, with burn history introducing a gradient of fire spread risk. The categories in Figure 2 are defined as follows:
 
-&nbsp; 
 
-* 'High risk' areas have water levels below the ground surface and the presence of vegetation that produce large amounts of litter (based on the expert judgement of Everglades National Park's Fire Cache).
+* **High risk** areas meet criteria for water depth defined for vegetation types based on the amount of litter produced (categorization and criteria were based on the professional judgement of Everglades National Park's Fire Cache). The table below shows water depth thresholds for each fuel category. Areas where water depth is below the threshold would experience high risk of fire spread.
 
-* 'Moderately high risk' areas meet the criteria for high risk but burned two calendar years ago.
+| Vegetation cover | Fuel category  | Water depth threshold (ft)  | 
+| :--- | :---: |:---:|
+| Tall continuous grass, pine forest | 5      | Inf (always high risk) |
+| Short continuous grass, pine savannah | 4      | 4 |
+| Short sparse grass, hammock/tree island | 3      | 0 |
+| Coastal forest, Brazilian Pepper, shrub | 2      | -0.6 |
 
-* 'Moderate risk' areas meet the criteria for high risk but burned in the previous calendar year.
+* **Moderately high risk** areas meet the criteria for high risk but burned two calendar years ago.
 
-* 'Moderately low risk' areas meet the criteria for high risk but burned within the current calendar year.
+* **Moderate risk** areas meet the criteria for high risk but burned in the previous calendar year.
 
-* 'Low risk' areas are characterized by inundation above the ground surface and/or vegetation cover that does not produce large amounts of litter.
+* **Moderately low risk** areas meet the criteria for high risk but burned within the current calendar year.
+
+* **Low risk** areas are characterized by inundation above the ground surface and/or vegetation cover that does not produce large amounts of litter.
 
 &nbsp;
 
 ## fireHydro installation
+
+
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/troyhill/fireHydro?branch=master&svg=true)](https://ci.appveyor.com/project/troyhill/fireHydro) [![Build Status](https://travis-ci.org/troyhill/fireHydro.svg?branch=master)](https://travis-ci.org/troyhill/fireHydro) [![codecov.io](https://codecov.io/github/troyhill/fireHydro/coverage.svg?branch=master)](https://codecov.io/github/troyhill/fireHydro?branch=master)
 
 fireHydro is a package of functions for use in R. The R statistical software is open source, and freely available from the [Comprehensive R Archive Network](https://cran.r-project.org/). The fireHydro package has been tested on Windows and Linux operating systems.
 

@@ -16,7 +16,8 @@ getFireHydro(EDEN_date,
     figureWidth = 6.5,
     figureHeight = 4,
     ggBaseSize = 12,
-    burnHist = TRUE)
+    burnHist = TRUE,
+    burnData = list(fireHydro::fire172, fireHydro::fire182, fireHydro::fire192))
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character string, e.g., "20181018"}
@@ -44,6 +45,8 @@ getFireHydro(EDEN_date,
 \item{ggBaseSize}{base_size argument passed to ggplot theme.}
 
 \item{burnHist}{logical; if FALSE, fire spread risk is a binary variable (high/low); if TRUE, fire history during the preceding three years is used to split fire spread risk into a gradient of risk: High = high current fire spread risk and no burn history in past 3 years; Moderately High = high current fire spread risk and burned three years ago; Moderate = high current fire spread risk and burned two years ago; Moderately Low = high current fire spread risk and burned in the past year; Low = low current fire spread risk (regardless of burn history)}
+
+\item{burnData}{list with three elements: simple feature polygon files with burn history data. Data must be in ascending chronological order; this will be used to parse areas of high fire spread risk into finer categories.}
 }
 \value{
 sf

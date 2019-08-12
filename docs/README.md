@@ -92,12 +92,12 @@ edenDat <- getEDEN()
 ### Step 2: Generate fire spread risk maps using getFireHydro()
 fireDat <- getFireHydro(EDEN_date = edenDat$date, 
      EDEN_GIS_directory = edenDat$data,
-     fireSpreadExport =  paste0(tempdir(), "/fireRisk.png"),
-     waterLevelExport =  paste0(tempdir(), "/waterLevels.png"))
+     fireSpreadExport =  "fireRisk.png", # to see location: getwd()
+     waterLevelExport =  "waterLevels.png")
      
 ### Step 3: If desired, export output as a shapefile
 sf::st_write(obj = fireDat, driver = "ESRI Shapefile",
-     layer = paste0(tempdir(), "/fireDat_", edenDat$date, ".shp"))
+     layer = paste0("fireDat_", edenDat$date, ".shp"))
 
 ```
 

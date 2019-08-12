@@ -14,7 +14,8 @@
 #'     figureWidth = 6.5,
 #'     figureHeight = 4,
 #'     ggBaseSize = 12,
-#'     burnHist = TRUE)
+#'     burnHist = TRUE,
+#'     burnData = list(fireHydro::fire172, fireHydro::fire182, fireHydro::fire192))
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character string, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output. Driver is inferred from file extnesion, so may not be correct. In this case, user can export shapefile after generating the sf object through \code{getFireHydro()}.
@@ -29,6 +30,7 @@
 #' @param figureHeight height of output figure, in inches 
 #' @param ggBaseSize base_size argument passed to ggplot theme. 
 #' @param burnHist logical; if FALSE, fire spread risk is a binary variable (high/low); if TRUE, fire history during the preceding three years is used to split fire spread risk into a gradient of risk: High = high current fire spread risk and no burn history in past 3 years; Moderately High = high current fire spread risk and burned three years ago; Moderate = high current fire spread risk and burned two years ago; Moderately Low = high current fire spread risk and burned in the past year; Low = low current fire spread risk (regardless of burn history)
+#' @param burnData list with three elements: simple feature polygon files with burn history data. Data must be in ascending chronological order; this will be used to parse areas of high fire spread risk into finer categories.
 #' @return sf 
 #' 
 #' 
@@ -91,7 +93,8 @@ getFireHydro <- function(EDEN_date,
                          BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
                          returnShp = TRUE, figureWidth = 6.5, figureHeight = 4, 
                          ggBaseSize = 12,
-                         burnHist = TRUE) {
+                         burnHist = TRUE,
+                         burnData = list(fireHydro::fire172, fireHydro::fire182, fireHydro::fire192)) {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406
@@ -273,17 +276,17 @@ getFireHydro <- function(EDEN_date,
         eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
         
         withCallingHandlers(
-        high17                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::fire172), warning = fireHydro::intersectionWarningHandler)  
+        high17                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[1]]), warning = fireHydro::intersectionWarningHandler)  
         high17$WF_Use         <- factor(high17$WF_Use)
         levels(high17$WF_Use) <- c(riskNames[2], riskNames[length(riskNames)])
         
         withCallingHandlers( # if an error occurs, may need to change other years to use a2 
-          high18                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::fire182), warning = fireHydro::intersectionWarningHandler)  
+          high18                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::burnData[[2]]), warning = fireHydro::intersectionWarningHandler)  
         high18$WF_Use         <- factor(high18$WF_Use)
         levels(high18$WF_Use) <- c(riskNames[3], riskNames[length(riskNames)])
         
         withCallingHandlers(
-          high19                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::fire192), warning = fireHydro::intersectionWarningHandler)  
+          high19                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::burnData[[3]]), warning = fireHydro::intersectionWarningHandler)  
         high19$WF_Use         <- factor(high19$WF_Use)
         levels(high19$WF_Use) <- c(riskNames[4], riskNames[length(riskNames)])
         

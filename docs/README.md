@@ -3,13 +3,13 @@
 <img src="{{site.url}}figures/waterLevels.png" width="600">
 
 
-Figure 1. Water levels in south Florida. This map is based on the most recent EDEN water surface data. Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png) or .pdf file.
+Figure 1. Water levels in south Florida. This map is based on the most recent EDEN water surface data. Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png).
 
 &nbsp;
 
 <img src="{{site.url}}figures/fireRisk.png" width="600">
 
-Figure 2. Fire spread risk categories, based on the most recent EDEN data. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png) or .pdf file.
+Figure 2. Fire spread risk categories, based on the most recent EDEN data. Risk estimates integrate water levels, vegetation type, and burn history over the past three years. More detail on fire spread risk categories is [below](#fire-spread-risk-categories). Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png).
 
 &nbsp;
 
@@ -41,10 +41,15 @@ Fire spread risk is estimated primarily based on water levels and vegetation cov
 
 | Vegetation cover | Fuel category  | Water depth threshold (ft)  | 
 | :--- | :---: |:---:|
-| Tall continuous grass, pine forest | 5      | Inf (always high risk) |
-| Short continuous grass, pine savannah | 4      | 4 |
-| Short sparse grass, hammock/tree island | 3      | 0 |
-| Coastal forest, Brazilian Pepper, shrub | 2      | -0.6 |
+| Tall continuous grass  | 5      | 4 |
+| Pine forest            | 5      | 3 |
+| Short continuous grass | 4      | 0 |
+| Pine savannah          | 4      | 1.6 |
+| Short sparse grass     | 3      | 0 |
+| Hammock/tree island    | 3      | -0.6 |
+| Shrub                  | 2      | -1 |
+| Coastal forest         | 2      | -0.6 |
+| Brazilian Pepper       | 2      | -1 |
 
 * **Moderately high risk** areas meet the criteria for high risk but burned two calendar years ago.
 

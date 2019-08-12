@@ -40,6 +40,7 @@
 #' @importFrom raster raster
 #' @importFrom raster rasterToPolygons
 #' @importFrom utils unzip
+#' @importFrom utils tail
 #' @importFrom sf st_as_sf
 #' 
 #' @export
@@ -80,7 +81,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
                                     unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
     )
     ### get file name by replacing .zip with .tif
-    dataName <- gsub(x = tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
+    dataName <- gsub(x = utils::tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
     dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
 
     geotiff_zip <- tempfile(fileext='.zip')

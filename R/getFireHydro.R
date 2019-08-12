@@ -281,12 +281,12 @@ getFireHydro <- function(EDEN_date,
         levels(high17$WF_Use) <- c(riskNames[2], riskNames[length(riskNames)])
         
         withCallingHandlers( # if an error occurs, may need to change other years to use a2 
-          high18                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::burnData[[2]]), warning = fireHydro::intersectionWarningHandler)  
+          high18                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[2]]), warning = fireHydro::intersectionWarningHandler)  
         high18$WF_Use         <- factor(high18$WF_Use)
         levels(high18$WF_Use) <- c(riskNames[3], riskNames[length(riskNames)])
         
         withCallingHandlers(
-          high19                <- sf::st_intersection(eden_epaNveg_planningUnits, fireHydro::burnData[[3]]), warning = fireHydro::intersectionWarningHandler)  
+          high19                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[3]]), warning = fireHydro::intersectionWarningHandler)  
         high19$WF_Use         <- factor(high19$WF_Use)
         levels(high19$WF_Use) <- c(riskNames[4], riskNames[length(riskNames)])
         

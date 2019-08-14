@@ -1,7 +1,7 @@
 Package: fireHydro
 Type: Package
 Title: FireHydro tool
-Version: 0.1.02
+Version: 0.1.03
 Date: 2019-07-05
 Authors@R: c(
     person("Justin", "Shedd", role = "ctb"),
@@ -17,7 +17,6 @@ LazyData: true
 Depends:
     R (>= 3.5.0),
     utils,
-    plyr,
     dplyr,
     sf,
     rgdal,

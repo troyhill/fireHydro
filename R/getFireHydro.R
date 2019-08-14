@@ -3,7 +3,7 @@
 #' @description Generates shapefile showing fire potential. Presently only works on the SFNRC network (for EDEN data access)
 #' 
 #' @usage getFireHydro(EDEN_date, 
-#'     output_shapefile = NULL, #paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+#'     output_shapefile = NULL,
 #'     waterLevelExport = NULL,
 #'     fireSpreadExport = NULL,
 #'     csvExport = NULL,
@@ -66,7 +66,6 @@
 #' @importFrom sf st_intersection
 #' @importFrom sf st_write
 #' @importFrom sf st_set_geometry
-#' @importFrom plyr revalue
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom rgdal setCPLConfigOption
@@ -84,7 +83,7 @@
 
 
 getFireHydro <- function(EDEN_date, 
-                         output_shapefile = NULL, #paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+                         output_shapefile = NULL, 
                          waterLevelExport = NULL,
                          fireSpreadExport = NULL,
                          csvExport = NULL, 
@@ -142,7 +141,10 @@ getFireHydro <- function(EDEN_date,
   ### Read EDEN EPA hydro data                    
   # ye olde version (pre-20190222): eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epa$WaterLevel    <- c(7, 6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, feetToCm(c(-Inf, -1, -0.6, 0, 0.6, 1.6, 3, 4, Inf)))]   # Rank water depth
-  eden_epaGroup          <- eden_epa %>% dplyr::group_by(WaterLevel) %>% dplyr::summarize(sum=sum(WaterDepth))                         # Dissovle grid to minize the file size
+  
+  ### h(g(f(x))) = f(x) %>%  g() %>% h() = a <- f(x); b <- g(a);   h(b)
+  eden_epaGroup          <- dplyr::summarize(.data = dplyr::group_by(.data = eden_epa, WaterLevel), 
+                                             sum = sum(WaterDepth))                         # Dissovle grid to minize the file size
   eden_epaGroupPrj       <- sf::st_transform(eden_epaGroup, sf::st_crs(planningUnits_shp))                                   # Reproject dissolved grid to park boundary
   eden_epa_reclass       <- eden_epaGroupPrj[,"WaterLevel"]
   
@@ -186,8 +188,24 @@ getFireHydro <- function(EDEN_date,
   # st_intersection warning: attribute variables are assumed to be spatially constant throughout all geometries
   withCallingHandlers( # takes a long time
     eden_epaNveg_planningUnits              <- sf::st_intersection(eden_epaNveg, BICY_EVER_PlanningUnits_shp[, c("PlanningUn", "FMU_Name")]), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), waterLevelLabels)
-  eden_epaNveg_planningUnits$WL_des_colors  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), waterLevelColors)
+  
+  ### make sure this works if not all levels occur in the data
+  # eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), waterLevelLabels)
+  # eden_epaNveg_planningUnits$WL_des2         <- as.factor(eden_epaNveg_planningUnits$WaterLevel)
+  # levels(eden_epaNveg_planningUnits$WL_des2) <- waterLevelLabels[names(waterLevelLabels) %in% unique(eden_epaNveg_planningUnits$WaterLevel)]
+  # all.equal(eden_epaNveg_planningUnits$WL_des, eden_epaNveg_planningUnits$WL_des2)
+  # head(eden_epaNveg_planningUnits[, c("WL_des", "WL_des2")])
+  
+  eden_epaNveg_planningUnits$WL_des         <- as.factor(eden_epaNveg_planningUnits$WaterLevel)
+  levels(eden_epaNveg_planningUnits$WL_des) <- waterLevelLabels[names(waterLevelLabels) %in% unique(eden_epaNveg_planningUnits$WaterLevel)]
+  
+  eden_epaNveg_planningUnits$WL_des_colors         <- as.factor(eden_epaNveg_planningUnits$waterLevel)
+  levels(eden_epaNveg_planningUnits$WL_des_colors) <- waterLevelLabels[names(waterLevelLabels) %in% unique(eden_epaNveg_planningUnits$WaterLevel)]
+  
+  ### re-written in base R on 20180814:
+  # eden_epaNveg_planningUnits$WL_des         <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), waterLevelLabels)
+  # eden_epaNveg_planningUnits$WL_des_colors  <- plyr::revalue(as.factor(eden_epaNveg_planningUnits$WaterLevel), waterLevelColors)
+  ###
   eden_epaNveg_planningUnits$area           <- sf::st_area(eden_epaNveg_planningUnits) * 0.000247105
   
   
@@ -202,8 +220,9 @@ getFireHydro <- function(EDEN_date,
   if (!is.null(csvExport)) { # nocov start
     ### Create a summary table of fire risk area for each planning unit
     ### and export as csv
-    keyVars_df       <- eden_epaNveg_planningUnits %>% sf::st_set_geometry(NULL)                                                # Drop geometry for summing each column for total values
-    planFMUs         <- keyVars_df %>% dplyr::group_by(PlanningUn, FMU_Name, WF_Use) %>% dplyr::summarize(area_acres=sum(area))                 # Summarize data (mean) by planning units
+    keyVars_df       <- sf::st_set_geometry(eden_epaNveg_planningUnits, NULL)                                                # Drop geometry for summing each column for total values
+    planFMUs         <- dplyr::summarize(.data = dplyr::group_by(.data = keyVars_df, PlanningUn, FMU_Name, WF_Use), 
+                                         area_acres = sum(area))                 # Summarize data (mean) by planning units
     is.num           <- sapply(planFMUs, is.numeric)                                                                        
     planFMUs[is.num] <- lapply(planFMUs[is.num], round, 2)
     
@@ -275,6 +294,9 @@ getFireHydro <- function(EDEN_date,
         ### do some additional processing
         eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
         
+        # if(is.null(burnData[[1]])) {
+        #   
+        # }
         withCallingHandlers(
         high17                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[1]]), warning = fireHydro::intersectionWarningHandler)  
         high17$WF_Use         <- factor(high17$WF_Use)

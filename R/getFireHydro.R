@@ -199,7 +199,7 @@ getFireHydro <- function(EDEN_date,
   eden_epaNveg_planningUnits$WL_des         <- as.factor(eden_epaNveg_planningUnits$WaterLevel)
   levels(eden_epaNveg_planningUnits$WL_des) <- waterLevelLabels[names(waterLevelLabels) %in% unique(eden_epaNveg_planningUnits$WaterLevel)]
   
-  eden_epaNveg_planningUnits$WL_des_colors         <- as.factor(eden_epaNveg_planningUnits$waterLevel)
+  eden_epaNveg_planningUnits$WL_des_colors         <- as.factor(eden_epaNveg_planningUnits$WaterLevel)
   levels(eden_epaNveg_planningUnits$WL_des_colors) <- waterLevelLabels[names(waterLevelLabels) %in% unique(eden_epaNveg_planningUnits$WaterLevel)]
   
   ### re-written in base R on 20180814:

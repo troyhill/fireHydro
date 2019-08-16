@@ -66,6 +66,8 @@
 #' @importFrom sf st_intersection
 #' @importFrom sf st_write
 #' @importFrom sf st_set_geometry
+#' @importFrom sf st_buffer
+#' @importFrom sf st_area
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom rgdal setCPLConfigOption
@@ -103,7 +105,7 @@ getFireHydro <- function(EDEN_date,
   feetToCm <- function(x) {
     outDat <- x * 12 * 2.54 # Fire Cache uses three sig figs for this unit conversion
     outDat
-    }
+  }
   
   planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
   EDEN_date2    <- format(x = strptime(x = as.character(EDEN_date), format = "%Y%m%d"), "%d %b %Y")
@@ -126,18 +128,18 @@ getFireHydro <- function(EDEN_date,
     eden_epa               <- sf::st_read(paste0(EDEN_GIS_directory, substr(EDEN_date, 1, 4), "/eden_epa", EDEN_date, ".shp"))
   } else if ((length(EDEN_GIS_directory) == 1) && (class(EDEN_GIS_directory)[1] %in% "character") && (grepl(x = EDEN_GIS_directory, pattern = "shp$"))) {
     eden_epa               <- sf::st_read(EDEN_GIS_directory)
-  # } else if (exists(EDEN_GIS_directory_main)) { # gsub(x = "a$data", pattern = "\\$.*", replacement = "")
-    } else if (exists("EDEN_GIS_directory")) {
+    # } else if (exists(EDEN_GIS_directory_main)) { # gsub(x = "a$data", pattern = "\\$.*", replacement = "")
+  } else if (exists("EDEN_GIS_directory")) {
     if ("sf" %in% class(get("EDEN_GIS_directory"))) { # if EDEN data are already a SIMPLE FEATURE object in workspace
       eden_epa   <- get("EDEN_GIS_directory")
     } #else  if (any(unlist(sapply(X = get(EDEN_GIS_directory_main), FUN = class)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
     #   eden_epa   <- get(EDEN_GIS_directory_main)$get(gsub(x = EDEN_GIS_directory, pattern = ".*\\$", replacement = "")) # gsub(x = "a$data", pattern = ".*\\$", replacement = "")
     # }
   } else {
-   stop("EDEN_GIS_DIRECTORY argument appears to be invalid. It is not an sf object in current working environment")
+    stop("EDEN_GIS_DIRECTORY argument appears to be invalid. It is not an sf object in current working environment")
   }
   
-
+  
   ### Read EDEN EPA hydro data                    
   # ye olde version (pre-20190222): eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epa$WaterLevel    <- c(7, 6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, feetToCm(c(-Inf, -1, -0.6, 0, 0.6, 1.6, 3, 4, Inf)))]   # Rank water depth
@@ -159,16 +161,16 @@ getFireHydro <- function(EDEN_date,
   ### Combine EDEN EPA hydro and fuel types
   vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   withCallingHandlers(
-    eden_epaNveg        <- sf::st_intersection(st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
+    eden_epaNveg        <- sf::st_intersection(sf::st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
   eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(4)), riskNames[1], 
                                 ifelse((eden_epaNveg$Veg_Cat == "Short Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(0)), riskNames[1],
                                        ifelse((eden_epaNveg$Veg_Cat == "Pine Forest") & (eden_epaNveg$WaterLevel <= feetToCm(3)), riskNames[1],
-                                      ifelse((eden_epaNveg$Veg_Cat == "Pine Savannah") & (eden_epaNveg$WaterLevel <= feetToCm(1.6)), riskNames[1],
-                                      ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterLevel <= 0), riskNames[1], 
-                                             ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1], 
-                                                    ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterLevel <= feetToCm(-0.6)), riskNames[1],
-                                                           ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1],
-                                                    riskNames[length(riskNames)])))))))) # changed  waterLevel threshold from 4 to 5 on 20190222
+                                              ifelse((eden_epaNveg$Veg_Cat == "Pine Savannah") & (eden_epaNveg$WaterLevel <= feetToCm(1.6)), riskNames[1],
+                                                     ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterLevel <= 0), riskNames[1], 
+                                                            ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1], 
+                                                                   ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterLevel <= feetToCm(-0.6)), riskNames[1],
+                                                                          ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1],
+                                                                                 riskNames[length(riskNames)])))))))) # changed  waterLevel threshold from 4 to 5 on 20190222
   
   # eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, riskNames[1], # tall continuous grass, pine forest
   #                              ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, riskNames[1],
@@ -229,29 +231,132 @@ getFireHydro <- function(EDEN_date,
     utils::write.csv(planFMUs, file = csvExport, row.names = FALSE)       
   }
   ### export as image
-   if (!is.null(waterLevelExport)) {
-      dataToPlot    <- "WL_des"
-      # group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
-      dataToPlot    <- "WaterLevel"
-      dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
-      legendLabel   <- paste0("Water Levels\n", EDEN_date2)
-      group.colors  <- rev(waterLevelColors)
+  if (!is.null(waterLevelExport)) {
+    dataToPlot    <- "WL_des"
+    # group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
+    dataToPlot    <- "WaterLevel"
+    dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+    legendLabel   <- paste0("Water Levels\n", EDEN_date2)
+    group.colors  <- rev(waterLevelColors)
+    
+    # group.colors  <- c("7" = "firebrick",
+    #                    "6" = "orangered3",
+    #                    "5" = "orange",
+    #                    "4" = "yellow1",  # new category introduced 20190222
+    #                    "3" = "yellow3",
+    #                    "2" = "green4",
+    #                    "1" = RColorBrewer::brewer.pal(9, "Greens")[4],
+    #                    "0" = RColorBrewer::brewer.pal(9, "Blues")[4])
+    
+    # group.colors$WaterLevel <- factor(eden_epaNveg_planningUnits$WaterLevel, levels=unique(eden_epaNveg_planningUnits$WaterLevel[order(eden_epaNveg_planningUnits$WaterLevel)]), ordered=TRUE)
+    # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+    
+    ### TODO: remove these calls to as.character(get(x))
+    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)),
+                                                                                         col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
+      ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
+                       lwd = 0.05, show.legend = FALSE) + 
+      ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
+                       lwd = 0.25, show.legend = FALSE) + 
+      ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
+      ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
+      ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
+    
+    # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
+    for (i in 1:length(waterLevelExport)) {
+      ggplot2::ggsave(file = waterLevelExport[i], width = figureWidth, height = figureHeight, units = "in")
+    }
+  } 
+  
+  
+  if (!is.null(fireSpreadExport)) {
+    dataToPlot    <- "WF_Use"
+    legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date2)
+    
+    
+    
+    group.colors  <- c(
+      `High`            = "brown4",
+      `Moderately High` = "darkorange1",
+      `Moderate`        = "yellow3",
+      `Moderately Low`  = "deepskyblue2",
+      `Low`             = "chartreuse4"
+    )
+    # group.colors  <- c(
+    #   "1"  = RColorBrewer::brewer.pal(9, "Reds")[4],
+    #   "2"  = RColorBrewer::brewer.pal(9, "Oranges")[4],
+    #   "3"  = RColorBrewer::brewer.pal(9, "YlOrBr")[2],
+    #   "4"  = RColorBrewer::brewer.pal(9, "Blues")[4],
+    #   "5"  = RColorBrewer::brewer.pal(9, "Greens")[4]
+    # )
+    # dataLabels    <- names(group.colors) <- riskNames
+    dataLabels    <- names(group.colors)
+    
+    if (burnHist) {
+      ### do some additional processing
+      eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
       
-      # group.colors  <- c("7" = "firebrick",
-      #                    "6" = "orangered3",
-      #                    "5" = "orange",
-      #                    "4" = "yellow1",  # new category introduced 20190222
-      #                    "3" = "yellow3",
-      #                    "2" = "green4",
-      #                    "1" = RColorBrewer::brewer.pal(9, "Greens")[4],
-      #                    "0" = RColorBrewer::brewer.pal(9, "Blues")[4])
+      # if(is.null(burnData[[1]])) {
+      #   
+      # }
+      withCallingHandlers(
+        high17                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[1]]), warning = fireHydro::intersectionWarningHandler)  
+      high17$WF_Use         <- factor(high17$WF_Use)
+      levels(high17$WF_Use) <- c(riskNames[2], riskNames[length(riskNames)])
       
-      # group.colors$WaterLevel <- factor(eden_epaNveg_planningUnits$WaterLevel, levels=unique(eden_epaNveg_planningUnits$WaterLevel[order(eden_epaNveg_planningUnits$WaterLevel)]), ordered=TRUE)
-      # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+      withCallingHandlers( # if an error occurs, may need to change other years to use a2 
+        high18                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[2]]), warning = fireHydro::intersectionWarningHandler)  
+      high18$WF_Use         <- factor(high18$WF_Use)
+      levels(high18$WF_Use) <- c(riskNames[3], riskNames[length(riskNames)])
       
-      ### TODO: remove these calls to as.character(get(x))
-      ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)),
-                                                                                           col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
+      withCallingHandlers(
+        high19                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[3]]), warning = fireHydro::intersectionWarningHandler)  
+      high19$WF_Use         <- factor(high19$WF_Use)
+      levels(high19$WF_Use) <- c(riskNames[4], riskNames[length(riskNames)])
+      
+      eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use)
+      levels(eden_epaNveg_planningUnits$WF_Use) <- c(riskNames[1], riskNames[length(riskNames)])
+      levels(eden_epaNveg_planningUnits$WF_Use) <- c(levels(eden_epaNveg_planningUnits$WF_Use), dataLabels[!dataLabels %in% levels(eden_epaNveg_planningUnits$WF_Use)]) 
+      eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use, levels = riskNames)
+      
+      ### TODO: merge fire history maps back into main object
+      burn <- do.call(rbind, list(
+        sf::st_buffer(high17, dist = 1),
+        sf::st_buffer(high18, dist = 1),
+        sf::st_buffer(high19, dist = 1)
+      ))
+      # table(burn$WF_Use)
+      
+      eden_epaNveg_planningUnits <- rbind(eden_epaNveg_planningUnits, burn[, names(eden_epaNveg_planningUnits)])
+      ###
+      
+      
+      ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot), col = get(dataToPlot)), alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
+        # ggplot2::geom_sf(data = high17, alpha = 1,
+        #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
+        #                  lwd = 0.0, show.legend = FALSE)  +
+        # ggplot2::geom_sf(data = high18, alpha = 1,
+        #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
+        #                  lwd = 0.0, show.legend = FALSE)  +
+        # ggplot2::geom_sf(data = high19, alpha = 1,
+        #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
+        #                  lwd = 0.0, show.legend = FALSE) +
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
+                         lwd = 0.05, show.legend = FALSE) + 
+        ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
+                         lwd = 0.25, show.legend = FALSE) +
+        ggplot2::labs(fill = legendLabel) +
+        ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  +
+        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE)
+      
+    }
+    
+    if (!burnHist) { # fire spread risk map without burn history
+      # legendPalette <- "Reds"
+      group.colors  <- c(`High` = "brown4", `Low` = "ivory3")
+      dataLabels    <- names(group.colors)
+      
+      ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
                          lwd = 0.05, show.legend = FALSE) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
@@ -259,117 +364,14 @@ getFireHydro <- function(EDEN_date,
         ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
         ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
-      
-      # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-      for (i in 1:length(waterLevelExport)) {
-        ggplot2::ggsave(file = waterLevelExport[i], width = figureWidth, height = figureHeight, units = "in")
-      }
-    } 
-    
-      
-    if (!is.null(fireSpreadExport)) {
-      dataToPlot    <- "WF_Use"
-      legendLabel   <- paste0("Fire Spread Risk \n", EDEN_date2)
-      
-      
-      
-      group.colors  <- c(
-        `High`            = "brown4",
-        `Moderately High` = "darkorange1",
-        `Moderate`        = "yellow3",
-        `Moderately Low`  = "deepskyblue2",
-        `Low`             = "chartreuse4"
-      )
-      # group.colors  <- c(
-      #   "1"  = RColorBrewer::brewer.pal(9, "Reds")[4],
-      #   "2"  = RColorBrewer::brewer.pal(9, "Oranges")[4],
-      #   "3"  = RColorBrewer::brewer.pal(9, "YlOrBr")[2],
-      #   "4"  = RColorBrewer::brewer.pal(9, "Blues")[4],
-      #   "5"  = RColorBrewer::brewer.pal(9, "Greens")[4]
-      # )
-      # dataLabels    <- names(group.colors) <- riskNames
-      dataLabels    <- names(group.colors)
-      
-      if (burnHist) {
-        ### do some additional processing
-        eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
-        
-        # if(is.null(burnData[[1]])) {
-        #   
-        # }
-        withCallingHandlers(
-        high17                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[1]]), warning = fireHydro::intersectionWarningHandler)  
-        high17$WF_Use         <- factor(high17$WF_Use)
-        levels(high17$WF_Use) <- c(riskNames[2], riskNames[length(riskNames)])
-        
-        withCallingHandlers( # if an error occurs, may need to change other years to use a2 
-          high18                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[2]]), warning = fireHydro::intersectionWarningHandler)  
-        high18$WF_Use         <- factor(high18$WF_Use)
-        levels(high18$WF_Use) <- c(riskNames[3], riskNames[length(riskNames)])
-        
-        withCallingHandlers(
-          high19                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[3]]), warning = fireHydro::intersectionWarningHandler)  
-        high19$WF_Use         <- factor(high19$WF_Use)
-        levels(high19$WF_Use) <- c(riskNames[4], riskNames[length(riskNames)])
-        
-        eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use)
-        levels(eden_epaNveg_planningUnits$WF_Use) <- c(riskNames[1], riskNames[length(riskNames)])
-        levels(eden_epaNveg_planningUnits$WF_Use) <- c(levels(eden_epaNveg_planningUnits$WF_Use), dataLabels[!dataLabels %in% levels(eden_epaNveg_planningUnits$WF_Use)]) 
-        eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use, levels = riskNames)
-        
-        ### TODO: merge fire history maps back into main object
-        burn <- do.call(rbind, list(
-          sf::st_buffer(high17, dist = 1),
-          sf::st_buffer(high18, dist = 1),
-          sf::st_buffer(high19, dist = 1)
-        ))
-        # table(burn$WF_Use)
-        
-        eden_epaNveg_planningUnits <- rbind(eden_epaNveg_planningUnits, burn[, names(eden_epaNveg_planningUnits)])
-        ###
-        
-        
-        ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot), col = get(dataToPlot)), alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
-          # ggplot2::geom_sf(data = high17, alpha = 1,
-          #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
-          #                  lwd = 0.0, show.legend = FALSE)  +
-          # ggplot2::geom_sf(data = high18, alpha = 1,
-          #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
-          #                  lwd = 0.0, show.legend = FALSE)  +
-          # ggplot2::geom_sf(data = high19, alpha = 1,
-          #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
-          #                  lwd = 0.0, show.legend = FALSE) +
-          ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
-                           lwd = 0.05, show.legend = FALSE) + 
-          ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
-                           lwd = 0.25, show.legend = FALSE) +
-          ggplot2::labs(fill = legendLabel) +
-          ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  +
-          ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE)
-        
-      }
-      
-      if (!burnHist) { # fire spread risk map without burn history
-        # legendPalette <- "Reds"
-        group.colors  <- c(`High` = "brown4", `Low` = "ivory3")
-        dataLabels    <- names(group.colors)
-        
-        ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
-          ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
-                           lwd = 0.05, show.legend = FALSE) + 
-          ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
-                           lwd = 0.25, show.legend = FALSE) + 
-          ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
-          ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
-          ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
-      }
-      
-      # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
-      for (i in 1:length(fireSpreadExport)) {
-        ggplot2::ggsave(file = fireSpreadExport[i], width = figureWidth, height = figureHeight, units = "in")
-      }
     }
-      
+    
+    # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
+    for (i in 1:length(fireSpreadExport)) {
+      ggplot2::ggsave(file = fireSpreadExport[i], width = figureWidth, height = figureHeight, units = "in")
+    }
+  }
+  
   # nocov end
   if (returnShp) {
     invisible(eden_epaNveg_planningUnits)

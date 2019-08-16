@@ -1,6 +1,6 @@
 # Current water levels and fire spread risk
 
-<img src="{{site.url}}figures/waterLevels.png" width="600">
+<img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png" width="600">
 
 
 Figure 1. Water levels in south Florida. This map is based on the most recent EDEN water surface data. Download this figure as a [.png](https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png).

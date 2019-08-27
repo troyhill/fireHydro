@@ -5,7 +5,7 @@
 \title{Generate fire-hydro shapefile}
 \usage{
 getFireHydro(EDEN_date, 
-    output_shapefile = NULL, #paste0(tempdir(), "/output_", EDEN_date, ".shp"), 
+    output_shapefile = NULL,
     waterLevelExport = NULL,
     fireSpreadExport = NULL,
     csvExport = NULL,

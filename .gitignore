@@ -34,6 +34,9 @@ vignettes/*.pdf
 rsconnect/
 .Rproj.user
 *.R
+/docs/*.png
+/docs/pdf/*
+/docs/shp/*
 !/docs/script_updateFigures.R
 !/docs/figures/waterLevels.png
 !/docs/figures/fireRisk.png

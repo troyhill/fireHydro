@@ -7,11 +7,15 @@ if (!"fireHydro" %in% installed.packages()) devtools::install_github("troyhill/f
 
 library(fireHydro)
 
+### create directory, if it doesn't exist
+figureDir <- paste0(getwd(), "/docs/figures/")
+dir.create(figureDir, recursive = TRUE)
+
 edenDat       <- getEDEN()
 fireDat <- getFireHydro(EDEN_date         = edenDat$date, 
                        EDEN_GIS_directory = edenDat$data,
-                       fireSpreadExport   = c(paste0(getwd(), "/docs/figures/fireRisk.png")), 
-                       waterLevelExport   = c(paste0(getwd(), "/docs/figures/waterLevels.png")))
+                       fireSpreadExport   = paste0(figureDir, "fireRisk.png"), 
+                       waterLevelExport   = paste0(figureDir, "waterLevels.png"))
 
 ### export output as a shapefile
 # st_write(fireDat, paste0(tempdir(), "/fireDat.shp"),

@@ -21,6 +21,7 @@ Depends:
     sf,
     rgdal,
     rgeos,
+    ncdf4,
     httr,
     raster,
     ggplot2,

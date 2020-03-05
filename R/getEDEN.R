@@ -65,49 +65,59 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
   txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
   cont <- TRUE
   
-  if((!EDEN_date %in% txt) && (exact == TRUE)) {
+  if((as.numeric(EDEN_date) > as.numeric(txt[1])) && (exact == TRUE)) {
+    cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. Because 'exact' was set to TRUE, no data is being returned. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))   
     cont <- FALSE # don't continue if exact date is requested but unavailable
   }
   
   if(cont) {
-    if((!EDEN_date %in% txt) && (exact == FALSE)) {
-      cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+    # if((!EDEN_date %in% txt) && (exact == FALSE)) {
+    #   cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+    #   EDEN_date <- txt[1]
+    # }
+    
+    if(as.numeric(EDEN_date) > as.numeric(txt[1])) {
+      cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))
       EDEN_date <- txt[1]
+    } else if(as.numeric(EDEN_date) %in% as.numeric(txt)) {
+      
+      # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
+      ### TODO: identify link to avoid v2/v3 issues
+      base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", 
+                                      unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
+      )
+      ### get file name by replacing .zip with .tif
+      dataName <- gsub(x = utils::tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
+      dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
+  
+      geotiff_zip <- tempfile(fileext='.zip')
+      httr::GET(base_url, httr::write_disk(path=geotiff_zip))
+      
+      # TODO: if no file returned (file size < 100 kb), find most recent date, inform user, and use most recent date
+      
+      
+      # 2: download and unzip zip file
+      utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir())
+      
+      
+      # 3: load geotiff as sf, set projection
+      a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
+      
+      a.ras  <- raster::raster(a)
+      a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
+      a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
+      a.sf <- sf::st_as_sf(a.poly)
+      names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
+      # plot(a.sf)
+      
+      ### cleanup
+      # file.remove(c(geotiff_zip, a))
+      unlink(c(geotiff_zip, a))
+      
+      invisible(list(date = EDEN_date, data = a.sf))
+    } else if (as.numeric(EDEN_date) < as.numeric(txt[length(txt)])) {
+      cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
+      invisible(getOldEDEN(YYYYMMDD = EDEN_date))
     }
-    
-    # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
-    ### TODO: identify link to avoid v2/v3 issues
-    base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", 
-                                    unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
-    )
-    ### get file name by replacing .zip with .tif
-    dataName <- gsub(x = utils::tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
-    dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
-
-    geotiff_zip <- tempfile(fileext='.zip')
-    httr::GET(base_url, httr::write_disk(path=geotiff_zip))
-    
-    # TODO: if no file returned (file size < 100 kb), find most recent date, inform user, and use most recent date
-    
-    
-    # 2: download and unzip zip file
-    utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir())
-    
-    
-    # 3: load geotiff as sf, set projection
-    a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
-    
-    a.ras  <- raster::raster(a)
-    a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
-    a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
-    a.sf <- sf::st_as_sf(a.poly)
-    names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
-    # plot(a.sf)
-    
-    ### cleanup
-    # file.remove(c(geotiff_zip, a))
-    unlink(c(geotiff_zip, a))
-    
-    invisible(list(date = EDEN_date, data = a.sf))
   }
 }

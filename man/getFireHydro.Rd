@@ -30,7 +30,7 @@ getFireHydro(EDEN_date,
 
 \item{csvExport}{If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")}
 
-\item{EDEN_GIS_directory}{The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \code{\link[fireHydro]{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error.}
+\item{EDEN_GIS_directory}{The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \code{\link[fireHydro]{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternatively be the specific address of a shapefile of EDEN data or a character string naming an object in the working environment, such as that generated from getEDEN().}
 
 \item{vegetation_shp}{shapefile of vegetation data in Big Cypress and Everglades}
 

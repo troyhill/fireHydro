@@ -22,7 +22,7 @@
 #' @param waterLevelExport NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).
 #' @param fireSpreadExport NULL or a character vector specifying the file address/name used for exporting an image file of fire spread risk (e.g., /home/fireSpreadRisk.pdf).
 #' @param csvExport If an exported .csv file of the output is desired, include a file addess/name here (e.g., "fireHydroOutput.csv")
-#' @param EDEN_GIS_directory The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \code{\link[fireHydro]{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternative be the specific address of a shapefile of EDEN data. This can also be a character string naming an object in the working environment, such as that generated from getEDEN(). Setting this argument to refer to an sf object located in the working environment will result in an error. 
+#' @param EDEN_GIS_directory The source for EDEN data. Can be an \code{sf} object already in the working environment (such as the data output from \code{\link[fireHydro]{getEDEN}}) or, for users with access to the SFNRC's physical drive, the default value (\code{"detect"}) will identify the parent directory where EDEN water level data are located ("/opt/physical/gis/eden/" on linux; "Y:/gis/eden/" on Windows). This can alternatively be the specific address of a shapefile of EDEN data or a character string naming an object in the working environment, such as that generated from getEDEN().
 #' @param vegetation_shp shapefile of vegetation data in Big Cypress and Everglades
 #' @param BICY_EVER_PlanningUnits_shp shapefile of polygons representing Big Cypress and Everglades planning units
 #' @param returnShp TRUE/FALSE determinant of whether output is returned to the working environment
@@ -119,6 +119,7 @@ getFireHydro <- function(EDEN_date,
   # get(paste0(EDEN_GIS_directory_main, "$", gsub(x = EDEN_GIS_directory, pattern = ".*\\$", replacement = "")))
   
   ### adjust EDEN directory for operating system
+  # if(!"character" %in% class(EDEN_GIS_directory)) stop("EDEN_GIS_DIRECTORY argument needs to be a character vector (e.g., an object in the working environment ('dat1'), a shapefile address ('dat1.shp'), a directory (e.g., 'Y:/gis/eden/') or the word 'detect'. )")
   
   if ((length(EDEN_GIS_directory) == 1) && (class(EDEN_GIS_directory)[1] %in% "character") && (EDEN_GIS_directory[1] == "detect")) {
     switch(Sys.info()[['sysname']],
@@ -129,10 +130,10 @@ getFireHydro <- function(EDEN_date,
   } else if ((length(EDEN_GIS_directory) == 1) && (class(EDEN_GIS_directory)[1] %in% "character") && (grepl(x = EDEN_GIS_directory, pattern = "shp$"))) {
     eden_epa               <- sf::st_read(EDEN_GIS_directory)
     # } else if (exists(EDEN_GIS_directory_main)) { # gsub(x = "a$data", pattern = "\\$.*", replacement = "")
-  } else if (exists("EDEN_GIS_directory")) {
-    if ("sf" %in% class(get("EDEN_GIS_directory"))) { # if EDEN data are already a SIMPLE FEATURE object in workspace
-      eden_epa   <- get("EDEN_GIS_directory")
-    } #else  if (any(unlist(sapply(X = get(EDEN_GIS_directory_main), FUN = class)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
+  } else if ("sf" %in% class(EDEN_GIS_directory)) {
+    # if ("sf" %in% class(get(EDEN_GIS_directory)) || "sf" %in% class(EDEN_GIS_directory)) { # if EDEN data are already a SIMPLE FEATURE object in workspace
+      eden_epa   <- EDEN_GIS_directory
+    #} else  if (any(unlist(sapply(X = get(EDEN_GIS_directory_main), FUN = class)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
     #   eden_epa   <- get(EDEN_GIS_directory_main)$get(gsub(x = EDEN_GIS_directory, pattern = ".*\\$", replacement = "")) # gsub(x = "a$data", pattern = ".*\\$", replacement = "")
     # }
   } else {

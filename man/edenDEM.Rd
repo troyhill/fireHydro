@@ -4,7 +4,9 @@
 \name{edenDEM}
 \alias{edenDEM}
 \title{Data: A raster DEM used to calculate EDEN water depths from water surfaces}
-\format{A raster layer. Downloaded from https://sofia.usgs.gov/eden/models/groundelevmod.php on 20190705. Metadata available here: http://sofia.usgs.gov/metadata/sflwww/eden_em_oc11.html}
+\format{
+A raster layer. Downloaded from https://sofia.usgs.gov/eden/models/groundelevmod.php on 20190705. Metadata available here: http://sofia.usgs.gov/metadata/sflwww/eden_em_oc11.html
+}
 \usage{
 edenDEM
 }

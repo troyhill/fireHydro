@@ -4,7 +4,8 @@
 \name{BICY_EVER_PlanningUnits}
 \alias{BICY_EVER_PlanningUnits}
 \title{Data: Big Cypress and Everglades planning units}
-\format{A shapefile of planning unit boundaries for Big Cypress National Preserve and Everglades National Park
+\format{
+A shapefile of planning unit boundaries for Big Cypress National Preserve and Everglades National Park
 \describe{
 \item{Park_Code}{tbd}
 \item{PlanningUn}{tbd}
@@ -13,7 +14,8 @@
 \item{Shape_Leng}{tbd}
 \item{Shape_Area}{tbd}
 \item{geometry}{tbd}
-}}
+}
+}
 \usage{
 BICY_EVER_PlanningUnits
 }

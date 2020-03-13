@@ -4,12 +4,16 @@
 \alias{getOldEDEN}
 \title{Downloads and imports archived EDEN data (from 2000 through the penultimate quarter in the record)}
 \usage{
-getOldEDEN(YYYYMMDD,
-baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/", 
-"https://sofia.usgs.gov/eden/data/netcdf/v3/"), 
-    urlEnding = c("v2prov", "v2r1", "v2r2", "v2r3", 
-    "v2prov", "v3prov", "v3r1", "v3r2", "v3r3"), 
-    DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
+getOldEDEN(
+  YYYYMMDD,
+  baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/",
+    "https://sofia.usgs.gov/eden/data/netcdf/v3/",
+    "https://sofia.usgs.gov/eden/data/realtime2/"),
+  urlEnding = c("v2prov", "v2r1", "v2r2", "v2r3", "v2prov", "v3prov", "v3r1", "v3r2",
+    "v3r3", "v3rt_nc", "v4rt_nc"),
+  DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  quarterly = FALSE
+)
 }
 \arguments{
 \item{YYYYMMDD}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
@@ -19,6 +23,8 @@ baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/",
 \item{urlEnding}{ending part of url}
 
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
+
+\item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
 }
 \value{
 list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.

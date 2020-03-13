@@ -4,7 +4,9 @@
 \name{fire192}
 \alias{fire192}
 \title{Data: 2019 fire history shapefile}
-\format{A shapefile of fires in 2019 in Big Cypress National Preserve and Everglades National Park}
+\format{
+A shapefile of fires in 2019 in Big Cypress National Preserve and Everglades National Park
+}
 \usage{
 fire192
 }

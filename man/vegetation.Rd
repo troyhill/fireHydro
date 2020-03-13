@@ -4,7 +4,8 @@
 \name{vegetation}
 \alias{vegetation}
 \title{Data: Vegetation shapefile for Big Cypress National Preserve and Everglades National Park}
-\format{A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
+\format{
+A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
 \describe{
 \item{NAME_SITE}{tbd}
 \item{NAME_STATE}{tbd}
@@ -14,7 +15,8 @@
 \item{Shape_Area}{tbd}
 \item{geometry}{tbd}
 \item{FuelType}{Ranges between 1 and 5, where 1 represents low fire and 5 represents high fire risk}
-}}
+}
+}
 \usage{
 vegetation
 }

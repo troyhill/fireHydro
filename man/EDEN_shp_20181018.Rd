@@ -4,14 +4,16 @@
 \name{EDEN_shp_20181018}
 \alias{EDEN_shp_20181018}
 \title{Data: A shapefile of EDEN water level data for 18 October 2018}
-\format{A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
+\format{
+A shapefile of vegetation in Big Cypress National Preserve and Everglades National Park
 \describe{
   \item{row}{tbd}
   \item{col}{tbd}
   \item{WaterDepth}{Water depth (ft above surface)}
   \item{Stage}{Water depth (ft NGVD29?)}
   \item{geometry}{tbd}
-}}
+}
+}
 \usage{
 EDEN_shp_20181018
 }

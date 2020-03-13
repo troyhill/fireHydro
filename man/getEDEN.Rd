@@ -6,12 +6,15 @@
 \usage{
 getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
     exact = FALSE, 
+    quarterly = FALSE,
     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
 
 \item{exact}{logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date}
+
+\item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
 
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
 }

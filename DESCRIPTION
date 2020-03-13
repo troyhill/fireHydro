@@ -1,8 +1,8 @@
 Package: fireHydro
 Type: Package
 Title: FireHydro tool
-Version: 0.1.04
-Date: 2020-03-05
+Version: 0.1.05
+Date: 2020-03-13
 Authors@R: c(
     person("Justin", "Shedd", role = "ctb"),
     person("Jelena", "Vukomanovic", role = "ctb"),
@@ -19,15 +19,15 @@ Depends:
     utils,
     dplyr,
     sf,
+    sp,
     rgdal,
     rgeos,
     ncdf4,
     httr,
     raster,
     ggplot2,
-    googledrive,
     zoo
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Suggests: 
     covr,
     testthat,

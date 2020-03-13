@@ -4,10 +4,12 @@
 #' 
 #' @usage getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
 #'     exact = FALSE, 
+#'     quarterly = FALSE,
 #'     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
+#' @param quarterly logical; if set to TRUE, entire quarter is downloaded.
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
 #' 
 #' @return list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
@@ -48,6 +50,7 @@
 
 getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
                 exact = FALSE, 
+                quarterly = FALSE,
                 DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
   
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
@@ -76,7 +79,8 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     #   EDEN_date <- txt[1]
     # }
     
-    if(as.numeric(EDEN_date) > as.numeric(txt[1])) {
+    if (!quarterly){
+      if(as.numeric(EDEN_date) > as.numeric(txt[1])) {
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))
       EDEN_date <- txt[1]
     } else if(as.numeric(EDEN_date) %in% as.numeric(txt)) {
@@ -119,5 +123,9 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
       invisible(getOldEDEN(YYYYMMDD = EDEN_date))
     }
-  }
+    } else if (quarterly) {
+      
+      
+    }
+    }
 }

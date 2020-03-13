@@ -34,6 +34,7 @@ vignettes/*.pdf
 rsconnect/
 .Rproj.user
 *.R
+!/R/*.R
 /docs/*.png
 /docs/pdf/*
 /docs/shp/*

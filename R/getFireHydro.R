@@ -144,7 +144,8 @@ getFireHydro <- function(EDEN_date,
   ### Read EDEN EPA hydro data                    
   # ye olde version (pre-20190222): eden_epa$WaterLevel    <- c(6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, c(-Inf, -30.48, -18.288, 0, 48.768, 91.44, 121.92, Inf))]   # Rank water depth
   eden_epa$WaterLevel    <- c(7, 6, 5, 4, 3, 2, 1, 0)[findInterval(eden_epa$WaterDepth, feetToCm(c(-Inf, -1, -0.6, 0, 0.6, 1.6, 3, 4, Inf)))]   # Rank water depth
-  
+  # ggplot() +  geom_sf(data = eden_epa, mapping = aes(fill = factor(WaterLevel)), col = NA, lwd = 0) + theme_classic()
+
   ### h(g(f(x))) = f(x) %>%  g() %>% h() = a <- f(x); b <- g(a);   h(b)
   eden_epaGroup          <- dplyr::summarize(.data = dplyr::group_by(.data = eden_epa, WaterLevel), 
                                              sum = sum(WaterDepth))                         # Dissovle grid to minize the file size
@@ -163,16 +164,35 @@ getFireHydro <- function(EDEN_date,
   vegetation_reclass <- vegetation_shp[, c("Veg_Cat", "FuelType")]     
   withCallingHandlers(
     eden_epaNveg        <- sf::st_intersection(sf::st_buffer(vegetation_reclass,0), eden_epa_reclass), warning = fireHydro::intersectionWarningHandler)
-  eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(4)), riskNames[1], 
-                                ifelse((eden_epaNveg$Veg_Cat == "Short Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(0)), riskNames[1],
-                                       ifelse((eden_epaNveg$Veg_Cat == "Pine Forest") & (eden_epaNveg$WaterLevel <= feetToCm(3)), riskNames[1],
-                                              ifelse((eden_epaNveg$Veg_Cat == "Pine Savannah") & (eden_epaNveg$WaterLevel <= feetToCm(1.6)), riskNames[1],
-                                                     ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterLevel <= 0), riskNames[1], 
-                                                            ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1], 
-                                                                   ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterLevel <= feetToCm(-0.6)), riskNames[1],
-                                                                          ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1],
-                                                                                 riskNames[length(riskNames)])))))))) # changed  waterLevel threshold from 4 to 5 on 20190222
+  eden_epaNveg$WF_Use <- riskNames[length(riskNames)]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Tall Continuous Grass") & 
+                        (eden_epaNveg$WaterLevel         > 0)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Short Continuous Grass") & 
+                        (eden_epaNveg$WaterLevel         > 4)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Pine Forest") & 
+                        (eden_epaNveg$WaterLevel         > 1)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Pine Savannah") & 
+                        (eden_epaNveg$WaterLevel         > 2)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Short Sparse Grass") & 
+                        (eden_epaNveg$WaterLevel         > 4)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Shrub") & 
+                        (eden_epaNveg$WaterLevel         > 6)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Hammock/Tree Island|Coastal Forest") & 
+                        (eden_epaNveg$WaterLevel         > 5)] <- riskNames[1]
+  eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Brazilian Pepper/HID") & 
+                        (eden_epaNveg$WaterLevel         > 6)] <- riskNames[1]
   
+  ### version prior to change on 20200403, mistakenly treats "WaterLevel" variable as if it were "WaterDepth", regex errors in hammock areas
+    # eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(4)), riskNames[1], 
+    #                             ifelse((eden_epaNveg$Veg_Cat == "Short Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(0)), riskNames[1],
+    #                                    ifelse((eden_epaNveg$Veg_Cat == "Pine Forest") & (eden_epaNveg$WaterLevel <= feetToCm(3)), riskNames[1],
+    #                                           ifelse((eden_epaNveg$Veg_Cat == "Pine Savannah") & (eden_epaNveg$WaterLevel <= feetToCm(1.6)), riskNames[1],
+    #                                                  ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterLevel <= 0), riskNames[1], 
+    #                                                         ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1], 
+    #                                                                ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterLevel <= feetToCm(-0.6)), riskNames[1],
+    #                                                                       ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1],
+    #                                                                              riskNames[length(riskNames)])))))))) # changed  waterLevel threshold from 4 to 5 on 20190222
+    # 
   # eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, riskNames[1], # tall continuous grass, pine forest
   #                              ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, riskNames[1],
   #                                     ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 5, riskNames[1], # changed  waterLevel threshold from 4 to 5 on 20190222
@@ -253,8 +273,8 @@ getFireHydro <- function(EDEN_date,
     # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
     
     ### TODO: remove these calls to as.character(get(x))
-    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)),
-                                                                                         col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
+    ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot))), 
+                                         col = NA, lwd = 0, alpha = 1) + 
       ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
                        lwd = 0.05, show.legend = FALSE) + 
       ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
@@ -332,7 +352,7 @@ getFireHydro <- function(EDEN_date,
       ###
       
       
-      ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot), col = get(dataToPlot)), alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
+      ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot)), col = NA, alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
         # ggplot2::geom_sf(data = high17, alpha = 1,
         #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
         #                  lwd = 0.0, show.legend = FALSE)  +
@@ -357,7 +377,7 @@ getFireHydro <- function(EDEN_date,
       group.colors  <- c(`High` = "brown4", `Low` = "ivory3")
       dataLabels    <- names(group.colors)
       
-      ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot)), col = as.character(get(dataToPlot))), lwd = 0, alpha = 1) + 
+      ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot))), col = NA, lwd = 0, alpha = 1) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
                          lwd = 0.05, show.legend = FALSE) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 

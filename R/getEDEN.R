@@ -68,9 +68,11 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
   txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
   cont <- TRUE
   
-  if((as.numeric(EDEN_date) > as.numeric(txt[1])) && (exact == TRUE)) {
+  if(as.numeric(EDEN_date) > as.numeric(txt[1])) {
     cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. Because 'exact' was set to TRUE, no data is being returned. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))   
-    cont <- FALSE # don't continue if exact date is requested but unavailable
+    if (exact == TRUE) {
+      cont <- FALSE # don't continue if exact date is requested but unavailable
+    }
   }
   
   if(cont) {

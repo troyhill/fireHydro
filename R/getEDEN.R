@@ -74,6 +74,9 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       cont <- FALSE # don't continue if exact date is requested but unavailable
       cat(" Because 'exact' was set to TRUE, no data is being returned. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n")
     }
+    if (exact == FALSE) {
+      cat(paste0(" Because 'exact' was set to FALSE, the most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+    }
     EDEN_date <- txt[1]
   }
   

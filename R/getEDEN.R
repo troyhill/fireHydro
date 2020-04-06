@@ -73,6 +73,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
     if (exact == TRUE) {
       cont <- FALSE # don't continue if exact date is requested but unavailable
     }
+    EDEN_date <- txt[1]
   }
   
   if(cont) {

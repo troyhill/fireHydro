@@ -15,7 +15,7 @@
 #'     figureHeight = 4,
 #'     ggBaseSize = 12,
 #'     burnHist = TRUE,
-#'     burnData = list(fireHydro::fire172, fireHydro::fire182, fireHydro::fire192))
+#'     burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020))
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be a character string, e.g., "20181018"
 #' @param output_shapefile file address for shapefile output. Driver is inferred from file extnesion, so may not be correct. In this case, user can export shapefile after generating the sf object through \code{getFireHydro()}.
@@ -95,7 +95,7 @@ getFireHydro <- function(EDEN_date,
                          returnShp = TRUE, figureWidth = 6.5, figureHeight = 4, 
                          ggBaseSize = 12,
                          burnHist = TRUE,
-                         burnData = list(fireHydro::fire172, fireHydro::fire182, fireHydro::fire192)) {
+                         burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020)) {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406

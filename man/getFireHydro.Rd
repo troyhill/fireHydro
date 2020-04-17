@@ -17,7 +17,7 @@ getFireHydro(EDEN_date,
     figureHeight = 4,
     ggBaseSize = 12,
     burnHist = TRUE,
-    burnData = list(fireHydro::fire172, fireHydro::fire182, fireHydro::fire192))
+    burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020))
 }
 \arguments{
 \item{EDEN_date}{EDEN date to be used for water levels. Should be a character string, e.g., "20181018"}

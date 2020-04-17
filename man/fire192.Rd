@@ -11,7 +11,7 @@ A shapefile of fires in 2019 in Big Cypress National Preserve and Everglades Nat
 fire192
 }
 \description{
-A shapefile of fires in 2019 occurring in Big Cypress National Preserve and Everglades National Park
+A shapefile of fires in 2019 (1 Jan 2019 - 30 Sept 2019) occurring in Big Cypress National Preserve and Everglades National Park
 }
 \examples{
 

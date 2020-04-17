@@ -1,0 +1,12 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <Description>eden_em_oc11</Description>
+    <Metadata>
+      <MDI key="STATISTICS_MAXIMUM">4.593985080719</MDI>
+      <MDI key="STATISTICS_MEAN">1.7420798918136</MDI>
+      <MDI key="STATISTICS_MINIMUM">-0.64763832092285</MDI>
+      <MDI key="STATISTICS_STDDEV">1.1898182780996</MDI>
+      <MDI key="STATISTICS_VALID_PERCENT">40.28</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>

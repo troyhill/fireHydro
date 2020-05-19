@@ -128,11 +128,10 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       invisible(list(date = EDEN_date, data = a.sf))
     } else if (as.numeric(EDEN_date) < as.numeric(txt[length(txt)])) {
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
-      invisible(getOldEDEN(YYYYMMDD = EDEN_date))
+      invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))
     }
     } else if (quarterly) {
-      
-      
+      invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))
     }
     }
 }

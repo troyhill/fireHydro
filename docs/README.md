@@ -19,13 +19,13 @@ Figure 2. Fire spread risk categories, based on the most recent EDEN data. Risk 
 
 ## About fireHydro
 
-`fireHydro` is an R package that estimates fire spread risk in south Florida by integrating diverse datasets:
+`fireHydro` is an R package with the primary purpose of estimating fire spread risk in south Florida by integrating diverse datasets:
 1. water level data sourced from the [USGS's Everglades Depth Estimation Network](https://sofia.usgs.gov/eden/models/real-time.php)
 2. vegetation cover maps classified by University of Georgia and categorized into litter classes using the professional judgement of Everglades National Park's Fire Cache group
 3. the spatial extent of historical burns over the preceding three years (source: Everglades National Park Fire Cache)
 
 
-fireHydro is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two - see [workflow example below](#firehydro-usage). Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking older shapefiles or maps should email Troy_Hill at nps.gov.
+`fireHydro` is a product of the South Florida Natural Resources Center (SFNRC), but does not rely on the SFNRC network. It can be used anywhere with an internet connection, although it is limited to processing EDEN water level data available on the [USGS's real-time water surface web page](https://sofia.usgs.gov/eden/models/real-time.php). In general, this means it can produce fire risk maps for dates from the most recent quarter or two - see [workflow example below](#firehydro-usage). Fire risk maps from earlier dates can be easily produced by users on the SFNRC's internal network; external users seeking older shapefiles or maps should email Troy_Hill at nps.gov.
 
 &nbsp;
 
@@ -110,8 +110,6 @@ sf::st_write(obj = fireDat, driver = "ESRI Shapefile",
 
 Updates planned for fireHydro include the following:
 
-* Access historic water surface data archived [here](https://sofia.usgs.gov/eden/models/watersurfacemod_download.php) and [here](https://sofia.usgs.gov/eden/models/watersurfacemod_download_1990s.php). These data are presently accessible only to fireHydro users on the SFNRC's internal network (or to external users who manually download the data). This feature would provide equal access to data for all users.
-
-* Treatment of burn histories will become more accurate and flexible. Burn histories are currently hard-coded and manually updated. Additionally, full calendar years are used rather than years relative to the queried date, leading to inaccurate categorization. This will transition to a single, dated burn history file that queries based on burn date.
+* Treatment of burn histories will become more accurate and flexible. Burn histories currently use full calendar/water years rather than expressing time relative to the queried date, leading to somewhat inaccurate categorization. To more accurately incorporate burn history, the burn history inputs may transition to a single, dated burn history file that queries based on burn date.
 
 If you're interested in contributing to these or other improvements, email Troy_Hill at nps.gov.

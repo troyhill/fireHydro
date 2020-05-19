@@ -62,7 +62,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
   
   # if date isn't present on USGS site, find and use most recent date, inform user
   url  <- "https://sofia.usgs.gov/eden/models/real-time.php"
-  html <- paste(readLines(url), collapse="\n")
+  html <- paste(readLines(url, warn = FALSE), collapse="\n") # warn = FALSE dodges a warning message about an incomplete final line in the url
   
   txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
   txt <- gsub(pattern = "_geotif", replacement = "", x = txt)

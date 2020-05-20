@@ -61,6 +61,24 @@ Fire spread risk is estimated primarily based on water levels and vegetation cov
 
 &nbsp;
 
+
+### Broader relevance
+
+&nbsp;
+
+The `fireHydro` R package provides utilities that are useful beyond this specific application to fire risk estimation in South Florida. For example, the package provides console-level access to the spatially explicit water level surfaces developed by USGS and hosted on EDEN. These spatially-explicit water level data are made readily available by `fireHydro`'s `getEDEN()` function, and were used to create this .gif, showing water level change over the past year:
+
+&nbsp;
+
+<img src="{{site.url}}figures/eden_pastYear.gif" width="600">
+
+Figure 3. Changes in water level from July 2019 - May 2020. Note the rapid drawdown in water levels beginning in March 2020. Download this figure as a [.gif](https://github.com/troyhill/fireHydro/blob/master/docs/figures/eden_pastYear.gif).
+
+&nbsp;
+
+
+
+
 ## fireHydro installation
 
 

@@ -40,10 +40,39 @@ fireDat <- getFireHydro(EDEN_date = edenDat$date,
 
 ```
 
+
+### Output example: Current water levels
+
+&nbsp;
+
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/waterLevels.png" width="650" height="425" />
 Figure 1. Water level categories  
+
+&nbsp;
+
+
+&nbsp;
+
+### Output example: Current fire spread risk
+
+&nbsp;
 
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/fireRisk.png" width="650" height="425" />
 Figure 2. Fire spread risk categories. Risk estimates include water levels, vegetation type, and the burn history over the preceding three years.
 
-      
+&nbsp;
+
+&nbsp;
+
+
+
+### Output example: Visualizing drawdown
+
+&nbsp;
+
+<img src="{{site.url}}figures/eden_pastYear.gif" width="600">
+
+Figure 3. Changes in water level from July 2019 - May 2020. Note the rapid drawdown in water levels beginning in March 2020. Download this figure as a [.gif](https://github.com/troyhill/fireHydro/blob/master/docs/figures/eden_pastYear.gif).
+
+&nbsp;
+

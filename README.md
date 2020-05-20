@@ -72,7 +72,7 @@ Figure 2. Fire spread risk categories. Risk estimates include water levels, vege
 
 <img src="https://github.com/troyhill/fireHydro/blob/master/docs/figures/eden_pastYear.gif" width="650" height="425" />
 
-Figure 3. Changes in water level from July 2019 - May 2020. Note the rapid drawdown in water levels beginning in March 2020. Download this figure as a [.gif](https://github.com/troyhill/fireHydro/blob/master/docs/figures/eden_pastYear.gif).
+Figure 3. Changes in water level from July 2019 - May 2020. Blue indicates water levels exceeding the soil surface elevation, whereas water levels below the surface are shown in shades of red. Note the rapid drawdown in water levels beginning in March 2020. Download this figure as a [.gif](https://github.com/troyhill/fireHydro/blob/master/docs/figures/eden_pastYear.gif).
 
 &nbsp;
 

@@ -9,8 +9,9 @@ getOldEDEN(
   baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/",
     "https://sofia.usgs.gov/eden/data/netcdf/v3/",
     "https://sofia.usgs.gov/eden/data/realtime2/"),
-  urlEnding = c("v2prov", "v2r1", "v2r2", "v2r3", "v2prov", "v3prov", "v3r1", "v3r2",
-    "v3r3", "v3rt_nc", "v4rt_nc"),
+  urlEnding = c("v2prov", "v2prov_r2", "v2prov_r3", "v2r1", "v2r2", "v2r3", "v2rt_nc",
+    "v3prov", "v3prov_r2", "v3prov_r3", "v3r1", "v3r2", "v3r3", "v3rt_nc", "v4prov",
+    "v4prov_r2", "v4prov_r3", "v4r1", "v4r2", "v4r3", "v4rt_nc"),
   DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
   quarterly = FALSE
 )

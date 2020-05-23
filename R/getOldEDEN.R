@@ -31,17 +31,18 @@
 #' @export
 
 
-
 getOldEDEN <- function(YYYYMMDD, 
                        baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/", "https://sofia.usgs.gov/eden/data/netcdf/v3/", "https://sofia.usgs.gov/eden/data/realtime2/"),
-                       urlEnding = c("v2prov", "v2r1", "v2r2", "v2r3", "v2prov", "v3prov", "v3r1", "v3r2", "v3r3", "v3rt_nc", "v4rt_nc"), # weak - data end in many variants
+                       urlEnding = c("v2prov", "v2prov_r2", "v2prov_r3", "v2r1", "v2r2", "v2r3",  "v2rt_nc", 
+                                     "v3prov", "v3prov_r2", "v3prov_r3", "v3r1", "v3r2", "v3r3", "v3rt_nc", 
+                                     "v4prov", "v4prov_r2", "v4prov_r3", "v4r1", "v4r2", "v4r3", "v4rt_nc"), # weak - data end in many variants
                        DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
                        quarterly = FALSE) {
   
   YYYYMMDD <- as.character(YYYYMMDD)
   ### create vector of possible urls
   if (as.numeric(substr(YYYYMMDD, 1, 3)) == 199) {
-    urlEnding <- "v2prov_r2.zip" # override; all 1990s data appear to share a file ending (https://sofia.usgs.gov/eden/models/watersurfacemod_download.php)
+    urlEnding <- "v2prov_r2" # override; all 1990s data appear to share a file ending (https://sofia.usgs.gov/eden/models/watersurfacemod_download.php)
   }
   
   ### identify quarterly netCDF to be downloaded

@@ -117,7 +117,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       a.ras  <- raster::raster(a)
       a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
       a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
-      a.sf <- sf::st_as_sf(a.poly)
+      a.sf <- sf::st_as_sf(a.poly) # this is super slow. Recently became even slower (20200526)
       names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
       # plot(a.sf)
       

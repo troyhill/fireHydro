@@ -12,7 +12,8 @@
 ^\.prj$
 ^\.dbf$
 ^\.png$
-^\.R$
+.png$
+.gif$
 !\\R\\.*\.R$
 ^\.Rproj\.user$
 ^\\vignettes\\NPS-EVER_fireHydro\.R$

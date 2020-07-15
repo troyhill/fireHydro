@@ -131,7 +131,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))
     }
     } else if (quarterly) {
-      invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))
+      invisible(getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))
     }
     }
 }

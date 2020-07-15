@@ -4,10 +4,12 @@
 \alias{convertQuarterlyToList}
 \title{Re-formats quarterly EDEN data to a list-of-lists}
 \usage{
-convertQuarterlyToList(quarterlyEDEN_data)
+convertQuarterlyToList(quarterlyEDEN_data, returnClass = "SpatialPolygonsDataFrame")
 }
 \arguments{
 \item{quarterlyEDEN_data}{quarterly EDEN water level data, as produced by, e.g., getOldEDEN(YYYYMMDD = gsub(x = Sys.Date(), pattern = "-", replacement = ""), quarterly = TRUE)}
+
+\item{returnClass}{class of data returned. Needs to be either SpatialPolygonsDataFrame or raster}
 }
 \value{
 list \code{convertQuarterlyToList} returns a list with an element for each day in the quarter. Each sub-list contains two elements: (1) the date (character vector), and (2) an sf multipolygon object with water depths (not stages) in the EDEN grid.

@@ -46,7 +46,7 @@
 
 convertQuarterlyToList <- function (quarterlyEDEN_data, returnClass = "SpatialPolygonsDataFrame")  { # getoldEDEN output: list with quarter and raster stack stored as EDEN_data$data when getoldEDEN(quarterly = TRUE)
   daysInDataset <- length(names(quarterlyEDEN_data$data))
-  quarter <- zoo::as.yearqtr(toupper(quarterlyEDEN_data$date), 
+  quarter <- zoo::as.yearqtr(toupper(as.character(quarterlyEDEN_data$date)), 
                              format = "%Y_Q%q")
   quarter_begin <- as.Date(quarter)
   quarterDates <- seq.Date(from = quarter_begin, to = quarter_begin + 

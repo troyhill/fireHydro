@@ -9,7 +9,7 @@
 .Ruserdata
 # Output files from getFireHydro()
 .png$
-.gif$
+*.gif$
 /*.png
 /*.pdf
 /*.gpkg

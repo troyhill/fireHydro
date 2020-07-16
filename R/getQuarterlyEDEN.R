@@ -70,8 +70,9 @@ getQuarterlyEDEN <- function(YYYYMMDD,
     # a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
     #
     # names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
+    returnDat <- list(date = YYYYMMDD, data = rasDate)
   } else if (quarterly == TRUE) {
-    rasDate <- raster::stack(x = file.path(tmpDir, paste0(qtr, ".nc")))
+    rasDate <- raster::stack(x = ras) #(x = file.path(tmpDir, paste0(qtr, ".nc")))
     ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
     rasDate  <- rasDate - (DEM*100)
     # rasDate <- as.list(rasDate)
@@ -81,12 +82,12 @@ getQuarterlyEDEN <- function(YYYYMMDD,
     # 
     # rasDate <- as(ras, "SpatialPolygonsDataFrame") # creates a spatialPolygonsDataFrame with a variable for each day
     # rasDate <- sf::st_as_sf(rasDate)
-    YYYYMMDD <- qtr
+    returnDat <- list(date = qtr, data = rasDate)
   }
 
-  unlink(x = temp)     # deletes the zipped file
+  # unlink(x = temp)     # deletes the zipped file
   unlink(x = file.path(tmpDir, paste0(qtr, ".nc"))) # deletes the unzipped file
   
-  invisible(list(date = YYYYMMDD, data = rasDate))
+  invisible(returnDat)
   
 }

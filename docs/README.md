@@ -41,13 +41,14 @@ Fire spread risk is estimated primarily based on water levels and vegetation cov
 
 | Vegetation cover | Fuel category  | Water depth threshold (ft)  | 
 | :--- | :---: |:---:|
-| Tall continuous grass  | 5      | 4 |
-| Pine forest            | 5      | 3 |
-| Short continuous grass | 4      | 0 |
+| Tall continuous grass  | 5      | 3.6 |
+| Pine forest            | 5      | 2.6 |
+| Beach dune             | NA     | 2.6 |
 | Pine savannah          | 4      | 1.6 |
+| Short continuous grass | 4      | 0 |
 | Short sparse grass     | 3      | 0 |
+| Shrub                  | 2      | -0.6 |
 | Hammock/tree island    | 3      | -0.6 |
-| Shrub                  | 2      | -1 |
 | Coastal forest         | 2      | -0.6 |
 | Brazilian Pepper       | 2      | -1 |
 

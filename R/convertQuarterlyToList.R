@@ -49,7 +49,7 @@ convertQuarterlyToList <- function (quarterlyEDEN_data, returnClass = "SpatialPo
   daysInDataset <- length(names(quarterlyEDEN_data$data))
   quarter <- zoo::as.yearqtr(toupper(as.character(quarterlyEDEN_data$date)), 
                              format = "%Y_Q%q")
-  quarter_begin <- zoo::as.Date(quarter)
+  quarter_begin <- zoo::as.Date(quarter, format = "%F")
   quarterDates <- seq.Date(from = quarter_begin, to = quarter_begin + 
                              daysInDataset - 1, by = "day")
   outDat <- list()

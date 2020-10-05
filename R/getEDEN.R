@@ -5,11 +5,13 @@
 #' @usage getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
 #'     exact = FALSE, 
 #'     quarterly = FALSE,
+#'     returnType  = "sf",
 #'     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded.
+#' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
 #' 
 #' @return list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
@@ -51,6 +53,7 @@
 getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
                 exact = FALSE, 
                 quarterly = FALSE,
+                returnType  = "sf",
                 DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
   
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
@@ -116,10 +119,15 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       
       a.ras  <- raster::raster(a)
       a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
-      a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
-      a.sf <- sf::st_as_sf(a.poly) # this is super slow. Recently became even slower (20200526)
-      names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
-      # plot(a.sf)
+      
+      if (returnType == "sf") {
+        a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
+        a.sf <- sf::st_as_sf(a.poly) # this is super slow. Recently became even slower (20200526)
+        names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
+        # plot(a.sf)
+      } else {
+        a.sf <- a.ras
+      }
       
       ### cleanup
       # file.remove(c(geotiff_zip, a))

@@ -7,6 +7,7 @@
 getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
     exact = FALSE, 
     quarterly = FALSE,
+    returnType  = "sf",
     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 }
 \arguments{
@@ -15,6 +16,8 @@ getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""),
 \item{exact}{logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date}
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
+
+\item{returnType}{character; class of object returned. Acceptable options: "sf", "raster"}
 
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
 }

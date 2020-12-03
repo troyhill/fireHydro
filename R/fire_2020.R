@@ -1,6 +1,6 @@
 #' Data: 2020 fire history shapefile
 #'
-#' @description A shapefile of fires in 2020 (1 Oct 2019 - 1 May 2020) occurring in Big Cypress National Preserve and Everglades National Park
+#' @description A shapefile of fires in 2020 (FY19: 1 Oct 2019 - 30 Sept 2020) occurring in Big Cypress National Preserve and Everglades National Park
 #'
 #' @format A shapefile of fires in 2020 in Big Cypress National Preserve and Everglades National Park
 #' @docType data

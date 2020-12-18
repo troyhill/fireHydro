@@ -4,12 +4,13 @@
 #' 
 #' 
 #' @param YYYYMMDD EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
+#' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
 #' @param baseURL beginning part of url
 #' @param urlEnding ending part of url
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
-#' @param quarterly logical; if set to TRUE, entire quarter is downloaded.
+#' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' 
-#' @return list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
+#' @return list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
 #' 
 #' @examples
@@ -32,6 +33,7 @@
 
 
 getOldEDEN <- function(YYYYMMDD, 
+                       returnType = "sf",
                        baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/", "https://sofia.usgs.gov/eden/data/netcdf/v3/", "https://sofia.usgs.gov/eden/data/realtime2/"),
                        urlEnding = c("v2prov", "v2prov_r2", "v2prov_r3", "v2r1", "v2r2", "v2r3",  "v2rt_nc", 
                                      "v3prov", "v3prov_r2", "v3prov_r3", "v3r1", "v3r2", "v3r3", "v3rt_nc", 
@@ -88,8 +90,14 @@ getOldEDEN <- function(YYYYMMDD,
     targetRas <- ras[[which(gsub(x = ras@z$Date, pattern = "-", replacement = "")  %in% YYYYMMDD)]]
     targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
     names(targetRas) <- "WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
-    rasDate <- as(targetRas, "SpatialPolygonsDataFrame")
-    rasDate <- sf::st_as_sf(rasDate)
+    
+    if (returnType == "sf") {
+      rasDate <- as(targetRas, "SpatialPolygonsDataFrame")
+      rasDate <- sf::st_as_sf(rasDate)
+      
+    } else {
+      rasDate <- targetRas
+    }
     
     # rasDate <- sf::st_as_sf(rasDate)
     # a.ras  <- raster::raster(a)

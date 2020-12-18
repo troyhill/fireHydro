@@ -6,6 +6,7 @@
 \usage{
 getOldEDEN(
   YYYYMMDD,
+  returnType = "sf",
   baseURL = c("https://sofia.usgs.gov/eden/data/netcdf/v2/",
     "https://sofia.usgs.gov/eden/data/netcdf/v3/",
     "https://sofia.usgs.gov/eden/data/realtime2/"),
@@ -19,16 +20,18 @@ getOldEDEN(
 \arguments{
 \item{YYYYMMDD}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
 
+\item{returnType}{character; class of object returned. Acceptable options: "sf", "raster"}
+
 \item{baseURL}{beginning part of url}
 
 \item{urlEnding}{ending part of url}
 
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
 
-\item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
+\item{quarterly}{logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.}
 }
 \value{
-list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
+list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 }
 \description{
 Downloads netCDF files from https://sofia.usgs.gov/eden/models/watersurfacemod_download.php, unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").

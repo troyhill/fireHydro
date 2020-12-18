@@ -10,11 +10,11 @@
 #' 
 #' @param EDEN_date EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
-#' @param quarterly logical; if set to TRUE, entire quarter is downloaded.
+#' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
 #' 
-#' @return list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) an sf object with water levels in the EDEN grid.
+#' @return list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
 #' 
 #' @examples
@@ -136,7 +136,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       invisible(list(date = EDEN_date, data = a.sf))
     } else if (as.numeric(EDEN_date) < as.numeric(txt[length(txt)])) {
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
-      invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))
+      invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, returnType = returnType))
     }
     } else if (quarterly) {
       invisible(getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly))

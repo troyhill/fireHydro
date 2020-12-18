@@ -16,7 +16,9 @@ A raster digital elevation map for the greater Everglades. Units = meters NAVD88
 \examples{
 \dontrun{
 ### code used to generate object
-edenDEM <- raster::raster("C:/Users/tdh/Downloads/eden_em_oc11/eden_em_oc11.e00")
+edenDEM <- raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))
+# writeRaster(edenDEM, file = paste0(here::here(), "/inst/extdata/edenDEM.grd"))
+edenDEM <- edenDEM * 1 # store full raster in memory
 save(edenDEM, file = "C:/RDATA/fireHydro/data/edenDEM.RData")
  
 }

@@ -118,6 +118,9 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
       
       a.ras  <- raster::raster(a)
+      ### make sure projection matches DEM
+      a.ras <- projectRaster(a.ras, crs=crs(DEM))
+      
       a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
       
       if (returnType == "sf") {

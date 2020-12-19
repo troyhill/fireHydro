@@ -84,6 +84,9 @@ getOldEDEN <- function(YYYYMMDD,
   utils::download.file(url = temp_url, destfile = temp)
   fileName <- utils::unzip(zipfile = temp, exdir = tmpDir, list = TRUE)$Name
   ras      <- raster::brick(unzip(zipfile = temp, exdir = tmpDir))
+  ### make sure projection matches DEM
+  ras      <- projectRaster(ras, crs=crs(DEM))
+  
   
   if (quarterly == FALSE) {
     ### load raster for specified date 
@@ -107,6 +110,9 @@ getOldEDEN <- function(YYYYMMDD,
     # names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
   } else if (quarterly == TRUE) {
     rasDate <- raster::stack(file.path(tmpDir, fileName))
+    ### make sure projection matches DEM
+    rasDate      <- projectRaster(rasDate, crs=crs(DEM))
+    
     ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
     rasDate  <- rasDate - (DEM*100)
     # rasDate <- as.list(rasDate)

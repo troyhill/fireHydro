@@ -59,6 +59,9 @@ getQuarterlyEDEN <- function(YYYYMMDD,
   if (quarterly == FALSE) {
     ### load raster for specified date 
     targetRas <- ras[[which(gsub(x = ras@z$Date, pattern = "-", replacement = "")  %in% YYYYMMDD)]]
+    ### make sure projection matches DEM
+    targetRas      <- projectRaster(targetRas, crs=crs(DEM))
+    
     targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
     names(targetRas) <- "WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
     rasDate <- as(targetRas, "SpatialPolygonsDataFrame")
@@ -73,6 +76,9 @@ getQuarterlyEDEN <- function(YYYYMMDD,
     returnDat <- list(date = YYYYMMDD, data = rasDate)
   } else if (quarterly == TRUE) {
     rasDate <- raster::stack(x = ras) #(x = file.path(tmpDir, paste0(qtr, ".nc")))
+    ### make sure projection matches DEM
+    rasDate      <- projectRaster(rasDate, crs=crs(DEM))
+    
     ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
     rasDate  <- rasDate - (DEM*100)
     # rasDate <- as.list(rasDate)

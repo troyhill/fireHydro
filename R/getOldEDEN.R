@@ -24,6 +24,9 @@
 #' @importFrom httr   http_status
 #' @importFrom raster brick
 #' @importFrom raster stack
+#' @importFrom raster compareCRS
+#' @importFrom raster projectRaster
+#' @importFrom raster crs
 #' @importFrom zoo    as.yearqtr
 #' @importFrom utils  unzip
 #' @importFrom utils  download.file
@@ -85,7 +88,9 @@ getOldEDEN <- function(YYYYMMDD,
   fileName <- utils::unzip(zipfile = temp, exdir = tmpDir, list = TRUE)$Name
   ras      <- raster::brick(unzip(zipfile = temp, exdir = tmpDir))
   ### make sure projection matches DEM
-  ras      <- projectRaster(ras, crs=crs(DEM))
+  if (!raster::compareCRS(DEM, ras)) {
+    ras      <- raster::projectRaster(ras, crs=raster::crs(DEM))
+  }
   
   
   if (quarterly == FALSE) {
@@ -111,7 +116,9 @@ getOldEDEN <- function(YYYYMMDD,
   } else if (quarterly == TRUE) {
     rasDate <- raster::stack(file.path(tmpDir, fileName))
     ### make sure projection matches DEM
-    rasDate      <- projectRaster(rasDate, crs=crs(DEM))
+    if (!raster::compareCRS(DEM, rasDate)) {
+      rasDate      <- raster::projectRaster(rasDate, crs=raster::crs(DEM))
+    }
     
     ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
     rasDate  <- rasDate - (DEM*100)

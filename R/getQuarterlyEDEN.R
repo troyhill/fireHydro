@@ -19,6 +19,9 @@
 #' 
 #' @importFrom raster brick
 #' @importFrom raster stack
+#' @importFrom raster compareCRS
+#' @importFrom raster projectRaster
+#' @importFrom raster crs
 #' @importFrom zoo    as.yearqtr
 #' @importFrom utils  unzip
 #' @importFrom utils  download.file
@@ -60,7 +63,9 @@ getQuarterlyEDEN <- function(YYYYMMDD,
     ### load raster for specified date 
     targetRas <- ras[[which(gsub(x = ras@z$Date, pattern = "-", replacement = "")  %in% YYYYMMDD)]]
     ### make sure projection matches DEM
-    targetRas      <- projectRaster(targetRas, crs=crs(DEM))
+    if (!raster::compareCRS(DEM, targetRas)) {
+      targetRas      <- raster::projectRaster(targetRas, crs=raster::crs(DEM))
+    }
     
     targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
     names(targetRas) <- "WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
@@ -77,7 +82,9 @@ getQuarterlyEDEN <- function(YYYYMMDD,
   } else if (quarterly == TRUE) {
     rasDate <- raster::stack(x = ras) #(x = file.path(tmpDir, paste0(qtr, ".nc")))
     ### make sure projection matches DEM
-    rasDate      <- projectRaster(rasDate, crs=crs(DEM))
+    if (!raster::compareCRS(DEM, rasDate)) {
+      rasDate      <- raster::projectRaster(rasDate, crs=raster::crs(DEM))
+    }
     
     ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
     rasDate  <- rasDate - (DEM*100)

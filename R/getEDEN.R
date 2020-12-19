@@ -43,6 +43,9 @@
 #' @importFrom httr write_disk
 #' @importFrom raster raster
 #' @importFrom raster rasterToPolygons
+#' @importFrom raster compareCRS
+#' @importFrom raster projectRaster
+#' @importFrom raster crs
 #' @importFrom utils unzip
 #' @importFrom utils tail
 #' @importFrom sf st_as_sf
@@ -119,7 +122,9 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       
       a.ras  <- raster::raster(a)
       ### make sure projection matches DEM
-      a.ras <- projectRaster(a.ras, crs=crs(DEM))
+      if (!raster::compareCRS(DEM, a.ras)) {
+        a.ras <- raster::projectRaster(a.ras, crs=raster::crs(DEM))
+      }
       
       a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
       

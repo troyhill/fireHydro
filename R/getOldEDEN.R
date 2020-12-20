@@ -17,7 +17,7 @@
 #' 
 #' \dontrun{
 #' 
-#' edenDat <- getOldEDEN(YYYYMMDD = "20180101")
+#' edenDat <- getOldEDEN(YYYYMMDD = "20170809", returnType = "raster")
 #' }
 #' 
 #' @importFrom httr   GET
@@ -26,7 +26,6 @@
 #' @importFrom raster stack
 #' @importFrom raster compareCRS
 #' @importFrom raster projectRaster
-#' @importFrom raster crs
 #' @importFrom zoo    as.yearqtr
 #' @importFrom utils  unzip
 #' @importFrom utils  download.file
@@ -89,13 +88,13 @@ getOldEDEN <- function(YYYYMMDD,
   ras      <- raster::brick(unzip(zipfile = temp, exdir = tmpDir))
   ### make sure projection matches DEM
   if (!raster::compareCRS(DEM, ras)) {
-    ras      <- raster::projectRaster(ras, crs=raster::crs(DEM))
+    ras      <- raster::projectRaster(from = ras, to = DEM) # crs = raster::projection(DEM))
   }
   
   
   if (quarterly == FALSE) {
     ### load raster for specified date 
-    targetRas <- ras[[which(gsub(x = ras@z$Date, pattern = "-", replacement = "")  %in% YYYYMMDD)]]
+    targetRas <- ras[[which(gsub(x = names(ras), pattern = "X|-|\\.", replacement = "")  %in% YYYYMMDD)]]
     targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
     names(targetRas) <- "WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
     
@@ -117,7 +116,7 @@ getOldEDEN <- function(YYYYMMDD,
     rasDate <- raster::stack(file.path(tmpDir, fileName))
     ### make sure projection matches DEM
     if (!raster::compareCRS(DEM, rasDate)) {
-      rasDate      <- raster::projectRaster(rasDate, crs=raster::crs(DEM))
+      rasDate      <- raster::projectRaster(from = rasDate, to = DEM) # crs=raster::crs(DEM))
     }
     
     ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf

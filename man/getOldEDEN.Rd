@@ -40,7 +40,7 @@ Downloads netCDF files from https://sofia.usgs.gov/eden/models/watersurfacemod_d
 
 \dontrun{
 
-edenDat <- getOldEDEN(YYYYMMDD = "20180101")
+edenDat <- getOldEDEN(YYYYMMDD = "20170809", returnType = "raster")
 }
 
 }

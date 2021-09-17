@@ -42,6 +42,10 @@ getOldEDEN <- function(YYYYMMDD,
                                      "v4prov", "v4prov_r2", "v4prov_r3", "v4r1", "v4r2", "v4r3", "v4rt_nc"), # weak - data end in many variants
                        DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
                        quarterly = FALSE) {
+  if(grepl(x = YYYYMMDD, pattern = "-")) {
+    YYYYMMDD <- gsub(x = YYYYMMDD, pattern = "-", replacement = "")
+    cat("hyphens in YYYYMMDD are being removed; date format is assumed to be %Y-%m-%d")
+  }
   
   YYYYMMDD <- as.character(YYYYMMDD)
   ### create vector of possible urls

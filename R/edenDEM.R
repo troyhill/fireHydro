@@ -11,7 +11,7 @@
 #' ### code used to generate object
 #' edenDEM <- raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))
 #' # writeRaster(edenDEM, file = paste0(here::here(), "/inst/extdata/edenDEM.grd"))
-#' edenDEM <- edenDEM * 1 # store full raster in memory
+#' edenDEM <- raster::readAll(edenDEM) # store full raster in memory
 #' save(edenDEM, file = "C:/RDATA/fireHydro/data/edenDEM.RData")
 #'  
 #'}

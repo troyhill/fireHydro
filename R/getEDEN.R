@@ -58,10 +58,16 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
                 returnType  = "sf",
                 DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
   
+  ### accommodate hyphenated dates but notes
+  if(grepl(x = EDEN_date, pattern = "-")) {
+    EDEN_date <- gsub(x = EDEN_date, pattern = "-", replacement = "")
+    cat("hyphens in EDEN_date are being removed; date format is assumed to be %Y-%m-%d")
+  }
+  
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {
     stop(paste0("\n", EDEN_date, " is not a valid date entry. Dates must be in format YYYYMMDD. \n"))
   }
-
+  
   # on.exit(close(base_url))
   # on.exit(close(url))
   

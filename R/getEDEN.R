@@ -8,7 +8,7 @@
 #'     returnType  = "sf",
 #'     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 #' 
-#' @param EDEN_date EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
+#' @param EDEN_date EDEN date to be used for water levels. Should be an 8-digit numeric or character string, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
@@ -23,12 +23,6 @@
 #' ### default behavior is to return data from the most recent date
 #' a <- getEDEN()
 #' 
-#' ### getEDEN output can be directly used in getFireHydro()
-#' a.fire <- getFireHydro(EDEN_date = a$date, 
-#'      EDEN_GIS_directory = a$data,
-#'      fireSpreadExport = paste0("fireRisk_", a$date, ".png"), 
-#'      waterLevelExport = paste0("waterLevels_", a$date, ".png"))
-#'      
 #' ### only the most recent data are available as individual geotiffs.
 #' ### Use 'exact = TRUE' to return NULL if an exact date match isn't found
 #' edenDat.false <- getEDEN(EDEN_date = "20180101", exact = FALSE)

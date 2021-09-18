@@ -11,7 +11,7 @@ getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""),
     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 }
 \arguments{
-\item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
+\item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character string, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
 
 \item{exact}{logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date}
 
@@ -33,12 +33,6 @@ Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , 
 ### default behavior is to return data from the most recent date
 a <- getEDEN()
 
-### getEDEN output can be directly used in getFireHydro()
-a.fire <- getFireHydro(EDEN_date = a$date, 
-     EDEN_GIS_directory = a$data,
-     fireSpreadExport = paste0("fireRisk_", a$date, ".png"), 
-     waterLevelExport = paste0("waterLevels_", a$date, ".png"))
-     
 ### only the most recent data are available as individual geotiffs.
 ### Use 'exact = TRUE' to return NULL if an exact date match isn't found
 edenDat.false <- getEDEN(EDEN_date = "20180101", exact = FALSE)

@@ -7,7 +7,7 @@
 #' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
 #' @param baseURL beginning part of url
 #' @param urlEnding ending part of url
-#' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
+#' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' 
 #' @return list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
@@ -26,6 +26,7 @@
 #' @importFrom raster stack
 #' @importFrom raster compareCRS
 #' @importFrom raster projectRaster
+#' @importFrom raster nlayers
 #' @importFrom zoo    as.yearqtr
 #' @importFrom utils  unzip
 #' @importFrom utils  download.file
@@ -90,16 +91,25 @@ getOldEDEN <- function(YYYYMMDD,
   utils::download.file(url = temp_url, destfile = temp)
   fileName <- utils::unzip(zipfile = temp, exdir = tmpDir, list = TRUE)$Name
   ras      <- raster::brick(unzip(zipfile = temp, exdir = tmpDir))
-  ### make sure projection matches DEM
-  if (!raster::compareCRS(DEM, ras)) {
-    ras      <- raster::projectRaster(from = ras, to = DEM) # crs = raster::projection(DEM))
+  
+  if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
+    if (!raster::compareCRS(DEM, a.ras)) { 
+      ### make sure projection matches DEM before subtracting to get water depth
+      ras <- raster::projectRaster(from = ras, to = DEM) # crs=raster::crs(DEM))
+    }
   }
+  # ### make sure projection matches DEM
+  # if (!raster::compareCRS(DEM, ras)) {
+  #   ras      <- raster::projectRaster(from = ras, to = DEM) # crs = raster::projection(DEM))
+  # }
   
   
   if (quarterly == FALSE) {
     ### load raster for specified date 
     targetRas <- ras[[which(gsub(x = names(ras), pattern = "X|-|\\.", replacement = "")  %in% YYYYMMDD)]]
-    targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
+    if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
+      targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
+    }
     names(targetRas) <- "WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
     
     if (returnType == "sf") {
@@ -118,26 +128,54 @@ getOldEDEN <- function(YYYYMMDD,
     # names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
   } else if (quarterly == TRUE) {
     rasDate <- raster::stack(file.path(tmpDir, fileName))
-    ### make sure projection matches DEM
-    if (!raster::compareCRS(DEM, rasDate)) {
-      rasDate      <- raster::projectRaster(from = rasDate, to = DEM) # crs=raster::crs(DEM))
+    if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
+      ### make sure projection matches DEM
+      if (!raster::compareCRS(DEM, rasDate)) {
+        rasDate      <- raster::projectRaster(from = rasDate, to = DEM) # crs=raster::crs(DEM))
+      }
+      ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
+      rasDate  <- rasDate - (DEM*100)
     }
     
-    ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
-    rasDate  <- rasDate - (DEM*100)
-    # rasDate <- as.list(rasDate)
-    # polylist2 <- lapply(as.list(rasDate), as("SpatialPolygonsDataFrame"))
-    # 
-    # rasDate_2 <- sf::st_as_sf(as(rasDate[[1]], "SpatialPolygonsDataFrame"))
-    # 
-    # rasDate <- as(ras, "SpatialPolygonsDataFrame") # creates a spatialPolygonsDataFrame with a variable for each day
-    # rasDate <- sf::st_as_sf(rasDate)
-    YYYYMMDD <- qtr
+    createDateVec <- function(year_qtr) {
+      ### creates a vector of dates from a year_qtr object
+      # YYMMDD <- "20210115"
+      # year_qtr <- zoo::as.yearqtr(as.Date(YYYYMMDD, format = "%Y%m%d"))
+      
+      yr <- substr(year_qtr, 1, 4)
+      dd_start <- "01"
+      mo_tmp <- substr(YYYYMMDD, 5, 6)
+      if (any(grepl(x = mo_tmp, pattern = "01|02|03"))) {
+        mo_start <- "01"
+        mo_end <- "03"
+        dd_end <- "31"
+      }
+      if (any(grepl(x = mo_tmp, pattern = "04|05|06"))) {
+        mo_start <- "04"
+        mo_end <- "06"
+        dd_end <- "30"
+      }
+      if (any(grepl(x = mo_tmp, pattern = "07|08|09"))) {
+        mo_start <- "07"
+        mo_end <- "09"
+        dd_end <- "30"
+      }
+      if (any(grepl(x = mo_tmp, pattern = "10|11|12"))) {
+        mo_start <- "10"
+        mo_end <- "12"
+        dd_end <- "31"
+      }
+      return(seq.Date(from = as.Date(paste(yr, mo_start, dd_start, sep = "-")),
+                      to = as.Date(paste(yr, mo_end, dd_end, sep = "-")), by = 1))
+      
+    }
+    
+    YYYYMMDD <- createDateVec(qtr)[1:raster::nlayers(rasDate)]
   }
 
   unlink(x = temp)     # deletes the zipped file
   unlink(x = file.path(tmpDir, fileName)) # deletes the unzipped file
   
-  invisible(list(date = YYYYMMDD, data = rasDate))
+  invisible(list(date = as.Date(YYYYMMDD, format = "%Y%m%d"), data = rasDate))
   
 }

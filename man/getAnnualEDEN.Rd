@@ -12,7 +12,7 @@ getAnnualEDEN(
 \arguments{
 \item{years}{a vector specifying which years of EDEN data should be downloaded. Please consider RAM limitations - a year of data can be ~ 300 Mb of RAM. If this is an issue, consider using getAnnualEDEN() and do analysis/extraction incrementally in a loop.}
 
-\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
+\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.  If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
 }
 \value{
 list \code{getAnnualEDEN} returns a list with two versions of the same data: (1) the dates used, and (2) a raster stack object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).

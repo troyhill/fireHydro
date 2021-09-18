@@ -12,7 +12,7 @@
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
-#' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.
+#' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' 
 #' @return list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
@@ -120,12 +120,14 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
       
       a.ras  <- raster::raster(a)
-      ### make sure projection matches DEM
-      if (!raster::compareCRS(DEM, a.ras)) {
-        a.ras <- raster::projectRaster(from = a.ras, to = DEM) # crs=raster::crs(DEM))
+
+      if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
+        if (!raster::compareCRS(DEM, a.ras)) { 
+          ### make sure projection matches DEM before subtracting to get water depth
+          a.ras <- raster::projectRaster(from = a.ras, to = DEM) # crs=raster::crs(DEM))
+        }
+        a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
       }
-      
-      a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
       
       if (returnType == "sf") {
         a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
@@ -140,7 +142,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
       # file.remove(c(geotiff_zip, a))
       unlink(c(geotiff_zip, a))
       
-      invisible(list(date = EDEN_date, data = a.sf))
+      invisible(list(date = as.Date(EDEN_date, format = "%Y%m%d"), data = a.sf))
     } else if (as.numeric(EDEN_date) < as.numeric(txt[length(txt)])) {
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
       invisible(getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, returnType = returnType))

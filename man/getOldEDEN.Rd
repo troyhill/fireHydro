@@ -26,7 +26,7 @@ getOldEDEN(
 
 \item{urlEnding}{ending part of url}
 
-\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
+\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product. If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.}
 }

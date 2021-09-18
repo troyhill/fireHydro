@@ -1,7 +1,15 @@
+fireHydro version 0.2.04 (release date: TBA)
+==================
+Changes:
+* `getEDEN()` will return water surfaces in cm NAVD88 if DEM argument is set to `NULL`
+
+
+
 fireHydro version 0.2.03 (release date: 2021-09-18)
 ==================
 Changes:
 * Improved flexibility about date input formats
 * Added NAVD88-NGVD29 datum conversion layer
 * Added `convertEDEN()`, a function to convert EDEN data between common units/datums and improve compatibility with EverForecast data
+
 

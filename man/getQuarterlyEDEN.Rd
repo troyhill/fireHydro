@@ -13,12 +13,12 @@ getQuarterlyEDEN(
 \arguments{
 \item{YYYYMMDD}{EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
 
-\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.}
+\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product in meters NAVD88. If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
 }
 \value{
-list \code{getQuarterlyEDEN} returns a list with two elements: (1) the name of the quarter (e.g., "1991_q2"), and (2) an sf object (if quarterly = FALSE) or a rasterStack object with water depths in the EDEN grid for all days in the quarter.
+list \code{getQuarterlyEDEN} returns a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).
 }
 \description{
 This a beta replacement for getOldEDEN, providing access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").

@@ -55,7 +55,7 @@ getEDEN <- function(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = "
   ### accommodate hyphenated dates but notes
   if(grepl(x = EDEN_date, pattern = "-")) {
     EDEN_date <- gsub(x = EDEN_date, pattern = "-", replacement = "")
-    cat("hyphens in EDEN_date are being removed; date format is assumed to be %Y-%m-%d")
+    cat("Hyphens in EDEN_date are being removed. Date is interpreted as ", format(EDEN_date, format = '%Y%m%d'))
   }
   
   if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {

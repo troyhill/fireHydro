@@ -45,8 +45,8 @@ getOldEDEN <- function(YYYYMMDD,
                        quarterly = FALSE) {
   if(grepl(x = YYYYMMDD, pattern = "-")) {
     YYYYMMDD <- gsub(x = YYYYMMDD, pattern = "-", replacement = "")
-    cat("hyphens in YYYYMMDD are being removed; date format is assumed to be %Y-%m-%d")
-  }
+    cat("Hyphens in EDEN_date are being removed. Date is interpreted as ", format(YYYYMMDD, format = '%Y%m%d'))
+    }
   
   YYYYMMDD <- as.character(YYYYMMDD)
   ### create vector of possible urls

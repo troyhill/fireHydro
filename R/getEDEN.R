@@ -14,7 +14,7 @@
 #' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' 
-#' @return list \code{getEDEN} returns a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
+#' @return eden \code{getEDEN} returns an `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
 #' 
 #' @examples
@@ -58,6 +58,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
     EDEN_list_int  <- lapply(X = EDEN_date, FUN = getEDEN, exact = exact, quarterly = quarterly, returnType = returnType, DEM = DEM)
     EDEN_list      <- list(date = as.Date(do.call(rbind, lapply(EDEN_list_int, function(x) {as.character(x[[1]])}))), 
                            data = do.call(stack, lapply(EDEN_list_int, function(x) {x[[2]]})))
+    class(EDEN_list) <- "eden"
     return(EDEN_list)
   } 
   if (length(EDEN_date) == 1) {
@@ -155,14 +156,17 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         unlink(c(geotiff_zip, a))
         
         EDEN_list <- list(date = as.Date(EDEN_date, format = "%Y%m%d"), data = a.sf)
+        class(EDEN_list) <- "eden"
         return(EDEN_list)
       } else if (as.numeric(EDEN_date) < as.numeric(txt[length(txt)])) {
         cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
         EDEN_list <- getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, returnType = returnType)
+        class(EDEN_list) <- "eden"
         return(EDEN_list)
       }
       } else if (quarterly) {
         EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly)
+        class(EDEN_list) <- "eden"
         return(EDEN_list)
       }
     }

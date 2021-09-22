@@ -10,7 +10,7 @@
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' 
-#' @return list \code{getOldEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
+#' @return eden \code{getOldEDEN} returns an `eden` object, which is a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
 #' 
 #' @examples
@@ -180,6 +180,7 @@ getOldEDEN <- function(YYYYMMDD,
   unlink(x = temp)     # deletes the zipped file
   unlink(x = file.path(tmpDir, fileName)) # deletes the unzipped file
   
-  invisible(list(date = as.Date(YYYYMMDD, format = "%Y%m%d"), data = rasDate))
-  
+  EDEN_list <- list(date = as.Date(YYYYMMDD, format = "%Y%m%d"), data = rasDate)
+  class(EDEN_list) <- "eden"
+  invisible(EDEN_list)
 }

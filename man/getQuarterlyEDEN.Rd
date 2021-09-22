@@ -18,7 +18,7 @@ getQuarterlyEDEN(
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
 }
 \value{
-list \code{getQuarterlyEDEN} returns a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).
+eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).
 }
 \description{
 This a beta replacement for getOldEDEN, providing access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").

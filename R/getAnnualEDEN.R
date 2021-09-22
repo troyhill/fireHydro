@@ -6,7 +6,7 @@
 #' @param years a vector specifying which years of EDEN data should be downloaded. Please consider RAM limitations - a year of data can be ~ 300 Mb of RAM. If this is an issue, consider using getAnnualEDEN() and do analysis/extraction incrementally in a loop.
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.  If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' 
-#' @return list \code{getAnnualEDEN} returns a list with two versions of the same data: (1) the dates used, and (2) a raster stack object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).
+#' @return eden \code{getAnnualEDEN} returns an `eden` object, which is a list with two elements: (1) the dates used, and (2) a raster stack object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).
 #' 
 #' 
 #' @examples
@@ -96,12 +96,12 @@ getAnnualEDEN <- function(years,
     names(tst) <- tst.dates[1:raster::nlayers(tst)] # might want to convert to character: as.character(tst.dates)
     
     if (i == 1) {
-      outList <- list(date = tst.dates[1:raster::nlayers(tst)], 
+      EDEN_list <- list(date = tst.dates[1:raster::nlayers(tst)], 
                       data = tst)
     } else {
-      outList <- list(
-        date = c(outList$date, tst.dates[1:raster::nlayers(tst)]), 
-        data = raster::stack(outList$data, tst))
+      EDEN_list <- list(
+        date = c(EDEN_list$date, tst.dates[1:raster::nlayers(tst)]), 
+        data = raster::stack(EDEN_list$data, tst))
     }
     
     rm(tst)
@@ -112,6 +112,8 @@ getAnnualEDEN <- function(years,
     rm(EDEN_qtr_4)
     
   }
-  invisible(outList)
+  
+  class(EDEN_list) <- "eden"
+  invisible(EDEN_list)
 }
 

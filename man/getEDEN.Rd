@@ -4,14 +4,14 @@
 \alias{getEDEN}
 \title{Downloads and imports EDEN data}
 \usage{
-getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""), 
-    exact = FALSE, 
+getEDEN(EDEN_date = Sys.Date(), 
+    exact     = FALSE, 
     quarterly = FALSE,
     returnType  = "sf",
     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 }
 \arguments{
-\item{EDEN_date}{EDEN date to be used for water levels. Should be an 8-digit numeric or character string, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
+\item{EDEN_date}{The date(s) for which water levels are desired. Format should be a numeric or character string with the format "20181018" or "2018-10-18", or a Date object in any format. By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
 
 \item{exact}{logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date}
 
@@ -22,7 +22,7 @@ getEDEN(EDEN_date = gsub(Sys.Date(), pattern  = "-", replacement = ""),
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
 }
 \value{
-list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
+list \code{getEDEN} returns a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 }
 \description{
 Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").

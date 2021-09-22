@@ -34,6 +34,9 @@ getQuarterlyEDEN <- function(YYYYMMDD,
                        DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
                        quarterly = FALSE) {
   
+  if (class(YYYYMMDD) == "Date") {
+    YYYYMMDD <- as.character(format(YYYYMMDD, format = "%Y%m%d"))
+  }
   YYYYMMDD <- as.character(YYYYMMDD)
   
   ### identify quarterly netCDF to be downloaded

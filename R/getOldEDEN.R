@@ -43,9 +43,13 @@ getOldEDEN <- function(YYYYMMDD,
                                      "v4prov", "v4prov_r2", "v4prov_r3", "v4r1", "v4r2", "v4r3", "v4rt_nc"), # weak - data end in many variants
                        DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
                        quarterly = FALSE) {
-  if(grepl(x = YYYYMMDD, pattern = "-")) {
-    YYYYMMDD <- gsub(x = YYYYMMDD, pattern = "-", replacement = "")
-    cat("Hyphens in EDEN_date are being removed. Date is interpreted as ", format(YYYYMMDD, format = '%Y%m%d'))
+  
+  if (class(YYYYMMDD) == "Date") {
+    YYYYMMDD <- as.character(format(YYYYMMDD, format = "%Y%m%d"))
+  }
+  if(grepl(x = as.character(YYYYMMDD), pattern = "-")) {
+    YYYYMMDD <- gsub(x = as.character(YYYYMMDD), pattern = "-", replacement = "")
+    cat("Hyphens in EDEN_date are being removed. Date is interpreted as '%Y-%m-%d'\n")
     }
   
   YYYYMMDD <- as.character(YYYYMMDD)

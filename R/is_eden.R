@@ -8,13 +8,17 @@
 #' @examples
 #' edenList <- list(date = Sys.Date(), data = raster::raster())
 #' is.eden(edenList)
+#' @export
+
 is.eden <- function(x) {
-  
-  # Added this because there was a situation
-  # where people were fiddling with the eList and removing critical bits 
-  if(!all(c("date","data") %in% names(x))){
-    stop("Missing ", c("date","data")[!(c("date","data") %in% names(x))])
+  if (grepl(x = class(x), pattern = "eden")) {
+    return(TRUE)
+  } else {
+    return(FALSE)
   }
-  return(all(c(all(c("date","data") %in% names(x)),
-               inherits(x, "eden"))))
+  # if(!all(c("date","data") %in% names(x))){
+  #   stop("Missing ", c("date","data")[!(c("date","data") %in% names(x))])
+  # }
+  # return(all(c(all(c("date","data") %in% names(x)),
+  #              inherits(x, "eden"))))
 }

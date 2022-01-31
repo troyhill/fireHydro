@@ -34,7 +34,7 @@ getOldEDEN(
 eden \code{getOldEDEN} returns an `eden` object, which is a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 }
 \description{
-Downloads netCDF files from https://sofia.usgs.gov/eden/models/watersurfacemod_download.php, unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
+Note: This function is deprecated. See \code{getQuarterlyEDEN} for a more generally useful function. Downloads netCDF files from https://sofia.usgs.gov/eden/models/watersurfacemod_download.php, unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 }
 \examples{
 

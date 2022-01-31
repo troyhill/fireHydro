@@ -1,6 +1,6 @@
 #' @title Downloads quarterly EDEN data (from 1991 through present) 
 #'
-#' @description This a beta replacement for getOldEDEN, providing access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
+#' @description Provides access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM"). NOTE: on 20220131, download.file was changed to use method = 'curl' (resolving broken code). This requires that curl be installed and available in users' PATH variable, which may not be the case for all users. 
 #' 
 #' 
 #' @param YYYYMMDD EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
@@ -83,14 +83,15 @@ getQuarterlyEDEN <- function(YYYYMMDD,
    
   dateVec <- createDateVec(qtr)
   ### assemble vector of URLS and identify the working url
-  # url_prep  <- expand.grid(a = baseURL, b = qtr, c = "_", d = urlEnding, e = ".zip")
-  # temp_urls <- do.call(paste0, c(url_prep))
   url <- paste0("https://sflthredds.er.usgs.gov/thredds/fileServer/eden/surfaces/", qtr, ".nc")
+                # "https://sflthredds.er.usgs.gov/thredds/fileServer/eden/surfaces/1991_q1.nc"
+  # url <- paste0("https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html?dataset=EDEN/surfaces/", qtr, ".nc")
     
   tmpDir <- tempdir() 
   # temp   <- tempfile(tmpdir = tmpDir, fileext = ".nc")
   
-  utils::download.file(url = url, destfile = file.path(tmpDir, paste0(qtr, ".nc")), mode = 'wb')
+  utils::download.file(url = url, destfile = file.path(tmpDir, paste0(qtr, ".nc")), 
+                       mode = 'wb', method = 'curl')
   # fileName <- utils::unzip(zipfile = temp, exdir = tmpDir, list = TRUE)$Name
   ras      <- raster::brick(x = file.path(tmpDir, paste0(qtr, ".nc")))
   

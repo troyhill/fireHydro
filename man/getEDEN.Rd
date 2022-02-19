@@ -8,7 +8,7 @@ getEDEN(EDEN_date = Sys.Date(),
     exact     = FALSE, 
     quarterly = FALSE,
     returnType  = "sf",
-    DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
+    DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 }
 \arguments{
 \item{EDEN_date}{The date(s) for which water levels are desired. Format should be a numeric or character string with the format "20181018" or "2018-10-18", or a Date object in any format. By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}
@@ -31,7 +31,7 @@ Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , 
 
 \dontrun{
 ### default behavior is to return data from the most recent date
-a <- getEDEN()
+a <- getEDEN(EDEN_date = Sys.Date(), returnType = 'raster')
 
 ### only the most recent data are available as individual geotiffs.
 ### Use 'exact = TRUE' to return NULL if an exact date match isn't found

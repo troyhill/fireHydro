@@ -6,7 +6,7 @@
 #'     exact     = FALSE, 
 #'     quarterly = FALSE,
 #'     returnType  = "sf",
-#'     DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
+#'     DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
 #' 
 #' @param EDEN_date The date(s) for which water levels are desired. Format should be a numeric or character string with the format "20181018" or "2018-10-18", or a Date object in any format. By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
@@ -21,7 +21,7 @@
 #' 
 #' \dontrun{
 #' ### default behavior is to return data from the most recent date
-#' a <- getEDEN()
+#' a <- getEDEN(EDEN_date = Sys.Date(), returnType = 'raster')
 #' 
 #' ### only the most recent data are available as individual geotiffs.
 #' ### Use 'exact = TRUE' to return NULL if an exact date match isn't found
@@ -50,7 +50,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
                 exact = FALSE, 
                 quarterly = FALSE,
                 returnType  = "sf",
-                DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
+                DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
   
   ### handle requests for multiple dates
   ### TODO: efficient behavior: detect when dates are within a quarter and do fewer data pulls. subset/stitch
@@ -79,61 +79,79 @@ getEDEN <- function(EDEN_date = Sys.Date(),
     # on.exit(close(url))
     
     # if date isn't present on USGS site, find and use most recent date, inform user
-    url  <- "https://sofia.usgs.gov/eden/models/real-time.php"
-    html <- paste(readLines(url, warn = FALSE), collapse="\n") # warn = FALSE dodges a warning message about an incomplete final line in the url
+    theurl  <- "https://sofia.usgs.gov/eden/models/real-time.php"
     
-    txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
-    txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
+   txt <- tryCatch( {
+      html <- paste(readLines(theurl, warn = FALSE), collapse="\n") # warn = FALSE dodges a warning message about an incomplete final line in the url
+      txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
+      txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
+      prep <- NULL
+      return(list(txt = txt, prep = prep))
+      
+    },
+    error=function(cond) {
+      message(paste("URL does not seem to exist:", theurl))
+      message("Here's the original error message:")
+      message(cond)
+      message("\n\nfireHydro is attempting to download most recent quarterly data...\n")
+      # Do stuff
+      prep <- fireHydro::getQuarterlyEDEN(Sys.Date(), quarterly = TRUE)
+      txt  <- rev(gsub(x = prep$date, pattern = "-", replacement = ""))
+      # invisible(prep, txt)
+      return(list(txt = txt, prep = prep))
+    }
+    )
     cont <- TRUE
     
-    if(as.numeric(EDEN_date) > as.numeric(txt[1])) {
+    if(as.numeric(EDEN_date) > as.numeric(txt$txt[1])) {
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN.\n"))   
       if (exact == TRUE) {
         cont <- FALSE # don't continue if exact date is requested but unavailable
         cat(" Because 'exact' was set to TRUE, no data is being returned. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n")
       }
       if (exact == FALSE) {
-        cat(paste0(" Because 'exact' was set to FALSE, the most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+        cat(paste0(" Because 'exact' was set to FALSE, the most recent data from ", txt$txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
       }
-      EDEN_date <- txt[1]
+      EDEN_date <- txt$txt[1]
     }
     
     if(cont) {
-      # if((!EDEN_date %in% txt) && (exact == FALSE)) {
-      #   cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
-      #   EDEN_date <- txt[1]
+      # if((!EDEN_date %in% txt$txt) && (exact == FALSE)) {
+      #   cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt$txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+      #   EDEN_date <- txt$txt[1]
       # }
       
       if (!quarterly){
-        if(as.numeric(EDEN_date) > as.numeric(txt[1])) {
-        cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))
-        EDEN_date <- txt[1]
-      } else if(as.numeric(EDEN_date) %in% as.numeric(txt)) {
+        if(as.numeric(EDEN_date) > as.numeric(txt$txt[1])) {
+        cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt$txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))
+        EDEN_date <- txt$txt[1]
+      } else if(as.numeric(EDEN_date) %in% as.numeric(txt$txt)) {
         
         # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
         ### TODO: identify link to avoid v2/v3 issues
-        base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", 
-                                        unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
-        )
-        ### get file name by replacing .zip with .tif
-        dataName <- gsub(x = utils::tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
-        dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
-    
-        geotiff_zip <- tempfile(fileext='.zip')
-        httr::GET(base_url, httr::write_disk(path=geotiff_zip))
+        if (is.null(txt$prep)) { # if site accessible
+          base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", 
+                             unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
+          )
+          ### get file name by replacing .zip with .tif
+          dataName <- gsub(x = utils::tail(unlist(strsplit(x = base_url, split = "/")), 1), pattern = ".zip", replacement = ".tif")
+          dataName <- gsub(x = dataName, pattern = "_geotif", replacement = "")
+          geotiff_zip <- tempfile(fileext='.zip')
+          httr::GET(base_url, httr::write_disk(path=geotiff_zip))
+          # TODO: if no file returned (file size < 100 kb), find most recent date, inform user, and use most recent date
+          # 2: download and unzip zip file
+          utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir())
+          # 3: load geotiff as sf, set projection
+          a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
+          a.ras  <- raster::raster(a) 
+        } else if (!is.null(txt$prep)) { 
+          ### if quarterly file was used, subset it to get target date:
+          a.ras  <- raster::subset(x = txt$prep$data, subset = grep(x = gsub(x = txt$prep$date, pattern = "-", replacement = ""), pattern = EDEN_date))
+          
+        }
         
-        # TODO: if no file returned (file size < 100 kb), find most recent date, inform user, and use most recent date
         
         
-        # 2: download and unzip zip file
-        utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir())
-        
-        
-        # 3: load geotiff as sf, set projection
-        a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
-        
-        a.ras  <- raster::raster(a)
-  
         if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
           if (!raster::compareCRS(DEM, a.ras)) { 
             ### make sure projection matches DEM before subtracting to get water depth
@@ -153,12 +171,14 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         
         ### cleanup
         # file.remove(c(geotiff_zip, a))
-        unlink(c(geotiff_zip, a))
+        if (is.null(txt$prep)) { # if site accessible
+          unlink(c(geotiff_zip, a))
+        }
         
         EDEN_list <- list(date = as.Date(EDEN_date, format = "%Y%m%d"), data = a.sf)
         class(EDEN_list) <- "eden"
         return(EDEN_list)
-      } else if (as.numeric(EDEN_date) < as.numeric(txt[length(txt)])) {
+      } else if (as.numeric(EDEN_date) < as.numeric(txt$txt[length(txt$txt)])) {
         cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
         EDEN_list <- getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, returnType = returnType)
         class(EDEN_list) <- "eden"

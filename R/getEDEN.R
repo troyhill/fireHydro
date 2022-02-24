@@ -102,6 +102,11 @@ getEDEN <- function(EDEN_date = Sys.Date(),
     }
     )
     cont <- TRUE
+    if (is.null(txt$prep)) {
+      errorVal <- 0
+    } else if (!is.null(txt$prep)) {
+      errorVal <- 1
+    }
     
     if(as.numeric(EDEN_date) > as.numeric(txt$txt[1])) {
       cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN.\n"))   
@@ -129,7 +134,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         
         # 1: identify zip file for EDEN_date or EDEN_date-1 (add option approving this)
         ### TODO: identify link to avoid v2/v3 issues
-        if (is.null(txt$prep)) { # if site accessible
+        if (errorVal == 0) { # if site accessible
           base_url <- paste0("https://sofia.usgs.gov/eden/data/realtime2/", 
                              unlist(regmatches(x = html, gregexpr(paste0(EDEN_date, '_geotif(.*?)zip'), html)))
           )
@@ -144,21 +149,19 @@ getEDEN <- function(EDEN_date = Sys.Date(),
           # 3: load geotiff as sf, set projection
           a <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
           a.ras  <- raster::raster(a) 
-        } else if (!is.null(txt$prep)) { 
-          ### if quarterly file was used, subset it to get target date:
-          a.ras  <- raster::subset(x = txt$prep$data, subset = grep(x = gsub(x = txt$prep$date, pattern = "-", replacement = ""), pattern = EDEN_date))
-          
-        }
-        
-        
-        
-        if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
-          if (!raster::compareCRS(DEM, a.ras)) { 
-            ### make sure projection matches DEM before subtracting to get water depth
-            a.ras <- raster::projectRaster(from = a.ras, to = DEM) # crs=raster::crs(DEM))
+          if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
+            if (!raster::compareCRS(DEM, a.ras)) { 
+              ### make sure projection matches DEM before subtracting to get water depth
+              a.ras <- raster::projectRaster(from = a.ras, to = DEM) # crs=raster::crs(DEM))
+            }
+            a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
           }
-          a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
+        } else if (errorVal == 1) { 
+          ### if quarterly file was used, subset it to get target date:
+          ### DEM is already applied
+          a.ras  <- raster::subset(x = txt$prep$data, subset = grep(x = gsub(x = txt$prep$date, pattern = "-", replacement = ""), pattern = EDEN_date))
         }
+        
         
         if (returnType == "sf") {
           a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos

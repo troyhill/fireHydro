@@ -101,10 +101,11 @@ getEDEN <- function(EDEN_date = Sys.Date(),
       return(list(txt = txt, prep = prep))
     }
     )
-    cont <- TRUE
+    cont <- TRUE ### 20220225: OK to remove this? 
     if (is.null(txt$prep)) {
       errorVal <- 0
     } else if (!is.null(txt$prep)) {
+      ### flag for ability to use already downloaded data
       errorVal <- 1
     }
     

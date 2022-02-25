@@ -44,11 +44,28 @@ getAnnualEDEN <- function(years,
     # }
     
     
-    EDEN_qtr_1 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "0105"), quarterly = TRUE, exact = TRUE, DEM = DEM) # this behavior is fragile, but seems to work. setting exact == TRUE will cause there to be no download (and no object) if this date is not available in EDEN. If the date is available, the entire quarter is downloaded (not a single date)
-    EDEN_qtr_2 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "0505"), quarterly = TRUE, exact = TRUE, DEM = DEM)
-    EDEN_qtr_3 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "0801"), quarterly = TRUE, exact = TRUE, DEM = DEM)
-    EDEN_qtr_4 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "1101"), quarterly = TRUE, exact = TRUE, DEM = DEM)
+    # EDEN_qtr_1 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "0105"), quarterly = TRUE, exact = TRUE, DEM = DEM) # this behavior is fragile, but seems to work. setting exact == TRUE will cause there to be no download (and no object) if this date is not available in EDEN. If the date is available, the entire quarter is downloaded (not a single date)
+    # EDEN_qtr_2 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "0505"), quarterly = TRUE, exact = TRUE, DEM = DEM)
+    # EDEN_qtr_3 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "0801"), quarterly = TRUE, exact = TRUE, DEM = DEM)
+    # EDEN_qtr_4 <- fireHydro::getEDEN(EDEN_date = paste0(yrSelect, "1101"), quarterly = TRUE, exact = TRUE, DEM = DEM)
     
+    ### 20220225: only download quarterlies 
+    # EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly)
+    
+    qtr.dates <- c(paste0(yrSelect, "0105"), paste0(yrSelect, "0505"), paste0(yrSelect, "0805"), paste0(yrSelect, "1105"))
+    
+    if (as.Date(qtr.dates[1], format = '%Y%m%d') < Sys.Date()) {
+      EDEN_qtr_1 <- fireHydro::getQuarterlyEDEN(YYYYMMDD = qtr.dates[1], quarterly = TRUE, DEM = DEM) # this behavior is fragile, but seems to work. setting exact == TRUE will cause there to be no download (and no object) if this date is not available in EDEN. If the date is available, the entire quarter is downloaded (not a single date)
+    }
+    if (as.Date(qtr.dates[2], format = '%Y%m%d') < Sys.Date()) {
+      EDEN_qtr_2 <- fireHydro::getQuarterlyEDEN(YYYYMMDD = qtr.dates[2], quarterly = TRUE, DEM = DEM)
+    }
+    if (as.Date(qtr.dates[3], format = '%Y%m%d') < Sys.Date()) {
+      EDEN_qtr_3 <- fireHydro::getQuarterlyEDEN(YYYYMMDD = qtr.dates[3], quarterly = TRUE, DEM = DEM)
+    }
+    if (as.Date(qtr.dates[4], format = '%Y%m%d') < Sys.Date()) {
+      EDEN_qtr_4 <- fireHydro::getQuarterlyEDEN(YYYYMMDD = qtr.dates[4], quarterly = TRUE, DEM = DEM)
+    }
     
     ### identify and ignore objects that don't exist (if a quarter doesn't exist yet)
     # https://stackoverflow.com/questions/25317362/rbind-multiple-dataframes-within-a-function

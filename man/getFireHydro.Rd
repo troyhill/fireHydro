@@ -68,16 +68,16 @@ fireDat <- getFireHydro(EDEN_date = EDENdat$date,
      waterLevelExport = paste0("waterLevels_", EDENdat$date, ".png"))
 
 ### some more examples:
-getFireHydro(EDEN_date = "20181018",
+getFireHydro(EDEN_date = "2018-10-18",
      fireSpreadExport = "fireRisk.png", waterLevelExport = "waterLevels.png")
 
 # save output in multiple file types (and exclude burn history)
-getFireHydro(EDEN_date = "20181018", 
+getFireHydro(EDEN_date = "2018-10-18", 
      burnHist = FALSE,
      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"))
      
 # incorportate burn history to fire spread risk maps
-getFireHydro(EDEN_date = "20181018", 
+getFireHydro(EDEN_date = "2018-10-18", 
      fireSpreadExport = c("fireRisk.png", "fireRisk.pdf"))
 
 }

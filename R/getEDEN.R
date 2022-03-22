@@ -101,7 +101,6 @@ getEDEN <- function(EDEN_date = Sys.Date(),
       invisible(list(txt = txt, prep = prep))
     }
     )
-    cont <- TRUE ### 20220225: OK to remove this? 
     if (is.null(txt$prep)) {
       errorVal <- 0
     } else if (!is.null(txt$prep)) {
@@ -121,7 +120,6 @@ getEDEN <- function(EDEN_date = Sys.Date(),
       EDEN_date <- txt$txt[1]
     }
     
-    if(cont) {
       # if((!EDEN_date %in% txt$txt) && (exact == FALSE)) {
       #   cat(paste0("\n The date you provided, ", EDEN_date, ", is not yet available on EDEN. The most recent data from ", txt$txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
       #   EDEN_date <- txt$txt[1]
@@ -193,7 +191,6 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         class(EDEN_list) <- "eden"
         return(EDEN_list)
       }
-      return(EDEN_list)
     }
-  }
+  return(EDEN_list)
 }

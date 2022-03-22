@@ -93,6 +93,10 @@ getFireHydro <- function(EDEN_date,
   }
   
   planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
+  if(is.numeric(EDEN_date)) {
+    ### accept dates entered in YYYYMMDD format
+    EDEN_date <- as.Date(EDEN_date, format = "%Y%m%d")
+  }
   EDEN_date2    <- format(x = EDEN_date, "%d %b %Y")
   
   ### argument to auto-generate output 

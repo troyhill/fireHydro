@@ -86,7 +86,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
       txt <- unlist(regmatches(x = html, gregexpr('[0-9]{8}_geotif', html)))
       txt <- gsub(pattern = "_geotif", replacement = "", x = txt)
       prep <- NULL
-      return(list(txt = txt, prep = prep))
+      invisible(list(txt = txt, prep = prep))
       
     },
     error=function(cond) {
@@ -98,7 +98,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
       prep <- fireHydro::getQuarterlyEDEN(Sys.Date(), quarterly = TRUE)
       txt  <- rev(gsub(x = prep$date, pattern = "-", replacement = ""))
       # invisible(prep, txt)
-      return(list(txt = txt, prep = prep))
+      invisible(list(txt = txt, prep = prep))
     }
     )
     cont <- TRUE ### 20220225: OK to remove this? 
@@ -193,6 +193,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         class(EDEN_list) <- "eden"
         return(EDEN_list)
       }
+      return(EDEN_list)
     }
   }
 }

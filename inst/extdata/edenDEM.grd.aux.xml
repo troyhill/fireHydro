@@ -1,16 +1,6 @@
 <PAMDataset>
   <PAMRasterBand band="1">
     <Description>eden_em_oc11</Description>
-    <Histograms>
-      <HistItem>
-        <HistMin>-1.022039992468698</HistMin>
-        <HistMax>4.96838675226484</HistMax>
-        <BucketCount>7</BucketCount>
-        <IncludeOutOfRange>0</IncludeOutOfRange>
-        <Approximate>0</Approximate>
-        <HistCounts>2453|7463|10271|13036|9249|1741|2605</HistCounts>
-      </HistItem>
-    </Histograms>
     <Metadata>
       <MDI key="STATISTICS_MAXIMUM">4.593985080719</MDI>
       <MDI key="STATISTICS_MEAN">1.7420798918136</MDI>

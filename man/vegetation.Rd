@@ -44,6 +44,8 @@ vegetation$FuelType <- dplyr::revalue(vegetation$Veg_Cat, c("NA"=1,
   "Tall Continuous Grass"=5)) 
 vegetation_reclass <- vegetation[, c("Veg_Cat", "FuelType")]
 sf::st_write(vegetation_reclass, "analysis/outcomes/vegReclass.shp", delete_layer = TRUE)
+vegetation <- sf::st_transform(vegetation, sf::st_crs(fireHydro::edenDEM)) 
+save(vegetation, file = "data/vegetation.RData")
 }
 
 }

@@ -20,7 +20,9 @@
 #' 
 #' \dontrun{
 #' ### code used to generate object using shapefile provided by NCSU
-#' BICY_EVER_PlanningUnits <- sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp") 
+#' BICY_EVER_PlanningUnits <- sf::st_read("BICY_EVER_PlanningUnits_EDEN_py.shp")
+#' BICY_EVER_PlanningUnits <- sf::st_transform(BICY_EVER_PlanningUnits, sf::st_crs(fireHydro::edenDEM))
+#' save(BICY_EVER_PlanningUnits, file = "data/BICY_EVER_PlanningUnits.RData")
 #' }
 #' 
 "BICY_EVER_PlanningUnits"

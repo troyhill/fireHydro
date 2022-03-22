@@ -53,6 +53,10 @@ fire172 <- sf::st_buffer(fire17, dist = 0)
 fire182 <- sf::st_buffer(fire18, dist = 0)
 fire192 <- sf::st_buffer(fire19, dist = 0)
 
+fire172 <- sf::st_transform(fire172, sf::st_crs(fireHydro::edenDEM))
+fire182 <- sf::st_transform(fire182, sf::st_crs(fireHydro::edenDEM))
+fire192 <- sf::st_transform(fire192, sf::st_crs(fireHydro::edenDEM))
+
 save("fire172", "fire182", "fire192", file = "data/burnHistory.RData")
 
 }

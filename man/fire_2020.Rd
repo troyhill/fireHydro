@@ -18,6 +18,8 @@ A shapefile of fires in fiscal year 2020 (1 Oct 2019 - 30 Sept 2020) occurring i
 \dontrun{
 summary(fire_2020)
 
+fire_2020 <- sf::st_transform(fire_2020, sf::st_crs(fireHydro::edenDEM))
+save(fire_2020, file = "data/fire_2020.RData")
 }
 
 }

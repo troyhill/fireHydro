@@ -2,22 +2,7 @@
 #'
 #' @description Generates shapefile showing fire potential. Presently only works on the SFNRC network (for EDEN data access)
 #' 
-#' @usage getFireHydro(EDEN_date, 
-#'     output_shapefile = NULL,
-#'     waterLevelExport = NULL,
-#'     fireSpreadExport = NULL,
-#'     csvExport = NULL,
-#'     EDEN_GIS_directory = "detect",
-#'     vegetation_shp = fireHydro::vegetation,
-#'     BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-#'     returnShp = TRUE,
-#'     figureWidth = 6.5,
-#'     figureHeight = 4,
-#'     ggBaseSize = 12,
-#'     burnHist = TRUE,
-#'     burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020))
-#' 
-#' @param EDEN_date EDEN date to be used for water levels. Should be a character string, e.g., "20181018"
+#' @param EDEN_date EDEN date to be used for water levels. Should be a character or date class in format YYYY-MM-DD, e.g., "2018-10-18"
 #' @param output_shapefile file address for shapefile output. Driver is inferred from file extnesion, so may not be correct. In this case, user can export shapefile after generating the sf object through \code{getFireHydro()}.
 #' @param waterLevelExport NULL or a character vector specifying the file address/name used for exporting an image file of water level categories (e.g., /home/waterLevels.pdf).
 #' @param fireSpreadExport NULL or a character vector specifying the file address/name used for exporting an image file of fire spread risk (e.g., /home/fireSpreadRisk.pdf).
@@ -68,6 +53,8 @@
 #' @importFrom sf st_set_geometry
 #' @importFrom sf st_buffer
 #' @importFrom sf st_area
+#' @importFrom sf st_as_sf
+#' @importFrom terra as.polygons
 #' @importFrom dplyr group_by
 #' @importFrom dplyr summarize
 #' @importFrom rgdal setCPLConfigOption
@@ -108,7 +95,7 @@ getFireHydro <- function(EDEN_date,
   }
   
   planningUnits_shp <- sf::st_union(BICY_EVER_PlanningUnits_shp)
-  EDEN_date2    <- format(x = strptime(x = as.character(EDEN_date), format = "%Y%m%d"), "%d %b %Y")
+  EDEN_date2    <- format(x = EDEN_date, "%d %b %Y")
   
   ### argument to auto-generate output 
   # output_shapefile <- paste0("analysis/outcomes/fireRisk_area_", EDEN_date, ".csv")
@@ -136,10 +123,14 @@ getFireHydro <- function(EDEN_date,
     #} else  if (any(unlist(sapply(X = get(EDEN_GIS_directory_main), FUN = class)) %in% "sf")) { # if EDEN data are already a SIMPLE FEATURE object in workspace
     #   eden_epa   <- get(EDEN_GIS_directory_main)$get(gsub(x = EDEN_GIS_directory, pattern = ".*\\$", replacement = "")) # gsub(x = "a$data", pattern = ".*\\$", replacement = "")
     # }
+  } else if ("rast" %in% tolower(class(EDEN_GIS_directory))) {
+    # convert spatRaster to sf - not sure this will work
+    eden_epa   <- sf::st_as_sf(terra::as.polygons(EDEN_GIS_directory))
   } else {
     stop("EDEN_GIS_DIRECTORY argument appears to be invalid. It is not an sf object in current working environment")
   }
   
+  names(eden_epa)[1] <- 'WaterDepth'
   ### Fire Spread Risk category names
   riskNames   <- c("High", "Moderately High", "Moderate", "Moderately Low", "Low")
 
@@ -311,21 +302,10 @@ getFireHydro <- function(EDEN_date,
     dataToPlot    <- "WL_des"
     # group.colors  <- as.character(eden_epaNveg_planningUnits$WaterLevel)
     dataToPlot    <- "WaterLevel"
-    dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+    dataLabels    <- waterLevelLabels
+    # dataLabels    <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))] # this excludes levels that aren't present
     legendLabel   <- paste0("Water Levels\n", EDEN_date2)
-    group.colors  <- rev(waterLevelColors)
-    
-    # group.colors  <- c("7" = "firebrick",
-    #                    "6" = "orangered3",
-    #                    "5" = "orange",
-    #                    "4" = "yellow1",  # new category introduced 20190222
-    #                    "3" = "yellow3",
-    #                    "2" = "green4",
-    #                    "1" = RColorBrewer::brewer.pal(9, "Greens")[4],
-    #                    "0" = RColorBrewer::brewer.pal(9, "Blues")[4])
-    
-    # group.colors$WaterLevel <- factor(eden_epaNveg_planningUnits$WaterLevel, levels=unique(eden_epaNveg_planningUnits$WaterLevel[order(eden_epaNveg_planningUnits$WaterLevel)]), ordered=TRUE)
-    # group.colors$WaterLevel <- unique(eden_epaNveg_planningUnits$WL_des)[order(as.numeric(unique(eden_epaNveg_planningUnits$WaterLevel)))]
+    group.colors  <- waterLevelColors
     
     ### TODO: remove these calls to as.character(get(x))
     ggplot2::ggplot() + ggplot2::geom_sf(data = eden_epaNveg_planningUnits, ggplot2::aes(fill = as.character(get(dataToPlot))), 
@@ -336,7 +316,7 @@ getFireHydro <- function(EDEN_date,
                        lwd = 0.25, show.legend = FALSE) + 
       ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
       ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
-      ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
+      ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = 'none') 
     
     # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")
     for (i in 1:length(waterLevelExport)) {
@@ -402,28 +382,16 @@ getFireHydro <- function(EDEN_date,
         sf::st_buffer(high19, dist = 1)
       ))
       # table(burn$WF_Use)
-      
       eden_epaNveg_planningUnits <- rbind(eden_epaNveg_planningUnits, burn[, names(eden_epaNveg_planningUnits)])
       ###
-      
-      
       ggplot() + geom_sf(data = eden_epaNveg_planningUnits, aes(fill = get(dataToPlot)), col = NA, alpha = 1, lwd = 0) + theme_bw(base_size = 12)  +
-        # ggplot2::geom_sf(data = high17, alpha = 1,
-        #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
-        #                  lwd = 0.0, show.legend = FALSE)  +
-        # ggplot2::geom_sf(data = high18, alpha = 1,
-        #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
-        #                  lwd = 0.0, show.legend = FALSE)  +
-        # ggplot2::geom_sf(data = high19, alpha = 1,
-        #                  aes(fill = get(dataToPlot), col = get(dataToPlot)),
-        #                  lwd = 0.0, show.legend = FALSE) +
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp, alpha = 0, col = "black", 
                          lwd = 0.05, show.legend = FALSE) + 
         ggplot2::geom_sf(data = BICY_EVER_PlanningUnits_shp[!BICY_EVER_PlanningUnits_shp$FMU_Name %in% "Pinelands",], alpha = 0, col = "black", 
                          lwd = 0.25, show.legend = FALSE) +
         ggplot2::labs(fill = legendLabel) +
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  +
-        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE)
+        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = 'none')
       
     }
     
@@ -439,7 +407,7 @@ getFireHydro <- function(EDEN_date,
                          lwd = 0.25, show.legend = FALSE) + 
         ggplot2::theme_bw(base_size = ggBaseSize) + ggplot2::labs(fill = legendLabel) + 
         ggplot2::scale_fill_manual(values=group.colors, labels = dataLabels, drop = FALSE)  + 
-        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = FALSE) 
+        ggplot2::scale_colour_manual(values=group.colors, labels = dataLabels, guide = 'none') 
     }
     
     # ggplot2::scale_fill_brewer(palette = legendPalette, direction=-1) +  ggplot2::scale_colour_brewer(palette= legendPalette, direction = -1, guide = "none")

@@ -12,6 +12,8 @@
 #' \dontrun{
 #' summary(fire_2020)
 #' 
+#' fire_2020 <- sf::st_transform(fire_2020, sf::st_crs(fireHydro::edenDEM))
+#' save(fire_2020, file = "data/fire_2020.RData")
 #'}
 #' 
 "fire_2020"

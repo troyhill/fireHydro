@@ -4,23 +4,25 @@
 \alias{getFireHydro}
 \title{Generate fire-hydro shapefile}
 \usage{
-getFireHydro(EDEN_date, 
-    output_shapefile = NULL,
-    waterLevelExport = NULL,
-    fireSpreadExport = NULL,
-    csvExport = NULL,
-    EDEN_GIS_directory = "detect",
-    vegetation_shp = fireHydro::vegetation,
-    BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
-    returnShp = TRUE,
-    figureWidth = 6.5,
-    figureHeight = 4,
-    ggBaseSize = 12,
-    burnHist = TRUE,
-    burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020))
+getFireHydro(
+  EDEN_date,
+  output_shapefile = NULL,
+  waterLevelExport = NULL,
+  fireSpreadExport = NULL,
+  csvExport = NULL,
+  EDEN_GIS_directory = "detect",
+  vegetation_shp = fireHydro::vegetation,
+  BICY_EVER_PlanningUnits_shp = fireHydro::BICY_EVER_PlanningUnits,
+  returnShp = TRUE,
+  figureWidth = 6.5,
+  figureHeight = 4,
+  ggBaseSize = 12,
+  burnHist = TRUE,
+  burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020)
+)
 }
 \arguments{
-\item{EDEN_date}{EDEN date to be used for water levels. Should be a character string, e.g., "20181018"}
+\item{EDEN_date}{EDEN date to be used for water levels. Should be a character or date class in format YYYY-MM-DD, e.g., "2018-10-18"}
 
 \item{output_shapefile}{file address for shapefile output. Driver is inferred from file extnesion, so may not be correct. In this case, user can export shapefile after generating the sf object through \code{getFireHydro()}.}
 

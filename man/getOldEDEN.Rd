@@ -14,7 +14,8 @@ getOldEDEN(
     "v3prov", "v3prov_r2", "v3prov_r3", "v3r1", "v3r2", "v3r3", "v3rt_nc", "v4prov",
     "v4prov_r2", "v4prov_r3", "v4r1", "v4r2", "v4r3", "v4rt_nc"),
   DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
-  quarterly = FALSE
+  quarterly = FALSE,
+  download.method = "libcurl"
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ getOldEDEN(
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product. If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.}
+
+\item{download.method}{Method to be used for downloading files. See options in utils::download.file}
 }
 \value{
 eden \code{getOldEDEN} returns an `eden` object, which is a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.

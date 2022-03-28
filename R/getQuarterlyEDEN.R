@@ -6,6 +6,7 @@
 #' @param YYYYMMDD EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product in meters NAVD88. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded.
+#' @param download.method Method to be used for downloading files. See options in utils::download.file
 #' 
 #' @return eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).
 #' 
@@ -32,7 +33,8 @@
 
 getQuarterlyEDEN <- function(YYYYMMDD, 
                        DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
-                       quarterly = FALSE) {
+                       quarterly = FALSE,
+                       download.method = 'libcurl') {
   
   if (class(YYYYMMDD) == "Date") {
     YYYYMMDD <- as.character(format(YYYYMMDD, format = "%Y%m%d"))
@@ -91,7 +93,7 @@ getQuarterlyEDEN <- function(YYYYMMDD,
   # temp   <- tempfile(tmpdir = tmpDir, fileext = ".nc")
   
   utils::download.file(url = url, destfile = file.path(tmpDir, paste0(qtr, ".nc")), 
-                       mode = 'wb', method = 'curl')
+                       mode = 'wb', method = download.method)
   # fileName <- utils::unzip(zipfile = temp, exdir = tmpDir, list = TRUE)$Name
   ras      <- raster::brick(x = file.path(tmpDir, paste0(qtr, ".nc")))
   

@@ -6,13 +6,16 @@
 \usage{
 getAnnualEDEN(
   years,
-  DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))
+  DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  download.method = "libcurl"
 )
 }
 \arguments{
 \item{years}{a vector specifying which years of EDEN data should be downloaded. Please consider RAM limitations - a year of data can be ~ 300 Mb of RAM. If this is an issue, consider using getAnnualEDEN() and do analysis/extraction incrementally in a loop.}
 
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.  If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
+
+\item{download.method}{Method to be used for downloading files. See options in utils::download.file}
 }
 \value{
 eden \code{getAnnualEDEN} returns an `eden` object, which is a list with two elements: (1) the dates used, and (2) a raster stack object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).

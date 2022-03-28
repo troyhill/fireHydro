@@ -13,6 +13,7 @@
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
 #' @param returnType  character; class of object returned. Acceptable options: "sf", "raster"
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
+#' @param download.method Method to be used for downloading files. See options in utils::download.file
 #' 
 #' @return eden \code{getEDEN} returns an `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
@@ -50,7 +51,8 @@ getEDEN <- function(EDEN_date = Sys.Date(),
                 exact = FALSE, 
                 quarterly = FALSE,
                 returnType  = "sf",
-                DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro"))) {
+                DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+                download.method = 'libcurl') {
   
   ### handle requests for multiple dates
   ### TODO: efficient behavior: detect when dates are within a quarter and do fewer data pulls. subset/stitch
@@ -95,7 +97,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
       message(cond)
       message("\n\nfireHydro is attempting to download most recent quarterly data...\n")
       # Do stuff
-      prep <- fireHydro::getQuarterlyEDEN(Sys.Date(), quarterly = TRUE)
+      prep <- getQuarterlyEDEN(YYYYMMDD = Sys.Date(), quarterly = TRUE, download.method = download.method)
       txt  <- rev(gsub(x = prep$date, pattern = "-", replacement = ""))
       # invisible(prep, txt)
       invisible(list(txt = txt, prep = prep))
@@ -187,7 +189,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         return(EDEN_list)
       }
       } else if (quarterly) {
-        EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly)
+        EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, download.method = download.method)
         class(EDEN_list) <- "eden"
         return(EDEN_list)
       }

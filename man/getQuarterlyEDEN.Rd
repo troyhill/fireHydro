@@ -7,7 +7,8 @@
 getQuarterlyEDEN(
   YYYYMMDD,
   DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
-  quarterly = FALSE
+  quarterly = FALSE,
+  download.method = "libcurl"
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ getQuarterlyEDEN(
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product in meters NAVD88. If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
+
+\item{download.method}{Method to be used for downloading files. See options in utils::download.file}
 }
 \value{
 eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).

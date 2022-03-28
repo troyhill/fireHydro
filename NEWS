@@ -1,6 +1,8 @@
-fireHydro version 0.2.04 (release date: TBA)
+fireHydro version 0.2.04 (release date: 2022-03-25)
 ==================
 Changes:
+* updated fire history data for 2020, 2021, and 2022 (and added to getFireHydro burnData argument)
+* fire data for 2020-2022 grouped by calendar year (rather than fiscal)
 * `getEDEN()` will return water surfaces in cm NAVD88 if DEM argument is set to `NULL`
 
 

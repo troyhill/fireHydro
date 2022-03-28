@@ -18,7 +18,7 @@ getFireHydro(
   figureHeight = 4,
   ggBaseSize = 12,
   burnHist = TRUE,
-  burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020)
+  burnData = list(fireHydro::fire192, fire_2020_cy, rbind(fire_2021_cy, fire_2022_cy))
 )
 }
 \arguments{

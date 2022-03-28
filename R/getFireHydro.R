@@ -80,7 +80,7 @@ getFireHydro <- function(EDEN_date,
                          returnShp = TRUE, figureWidth = 6.5, figureHeight = 4, 
                          ggBaseSize = 12,
                          burnHist = TRUE,
-                         burnData = list(fireHydro::fire182, fireHydro::fire192, fireHydro::fire_2020)) {
+                         burnData = list(fireHydro::fire192, fire_2020_cy, rbind(fire_2021_cy, fire_2022_cy))) {
   ### TODO:
   ### supply example EDEN data for testing
   ### avoid warnings from st_intersect http://r-sig-geo.2731867.n2.nabble.com/Warning-in-st-intersection-td7591290.html https://github.com/r-spatial/sf/issues/406
@@ -219,40 +219,6 @@ getFireHydro <- function(EDEN_date,
                           (eden_epaNveg$WaterLevel         > vegTbl$WaterLevel[i])] <- riskNames[1]
   }
   
-  ### approach used prior to 20200731
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Tall Continuous Grass") & 
-  #                       (eden_epaNveg$WaterLevel         > 0)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Short Continuous Grass") & 
-  #                       (eden_epaNveg$WaterLevel         > 4)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Pine Forest") & 
-  #                       (eden_epaNveg$WaterLevel         > 1)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Pine Savannah") & 
-  #                       (eden_epaNveg$WaterLevel         > 2)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Short Sparse Grass") & 
-  #                       (eden_epaNveg$WaterLevel         > 4)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Shrub") & 
-  #                       (eden_epaNveg$WaterLevel         > 6)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Hammock/Tree Island|Coastal Forest") & 
-  #                       (eden_epaNveg$WaterLevel         > 5)] <- riskNames[1]
-  # eden_epaNveg$WF_Use[grepl(x = eden_epaNveg$Veg_Cat, pattern = "Brazilian Pepper/HID") & 
-  #                       (eden_epaNveg$WaterLevel         > 6)] <- riskNames[1]
-  
-  ### version prior to change on 20200403, mistakenly treats "WaterLevel" variable as if it were "WaterDepth", regex errors in hammock areas
-    # eden_epaNveg$WF_Use <- ifelse((eden_epaNveg$Veg_Cat == "Tall Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(4)), riskNames[1], 
-    #                             ifelse((eden_epaNveg$Veg_Cat == "Short Continuous Grass") & (eden_epaNveg$WaterLevel <= feetToCm(0)), riskNames[1],
-    #                                    ifelse((eden_epaNveg$Veg_Cat == "Pine Forest") & (eden_epaNveg$WaterLevel <= feetToCm(3)), riskNames[1],
-    #                                           ifelse((eden_epaNveg$Veg_Cat == "Pine Savannah") & (eden_epaNveg$WaterLevel <= feetToCm(1.6)), riskNames[1],
-    #                                                  ifelse((eden_epaNveg$Veg_Cat == "Short Sparse Grass") & (eden_epaNveg$WaterLevel <= 0), riskNames[1], 
-    #                                                         ifelse((eden_epaNveg$Veg_Cat == "Shrub") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1], 
-    #                                                                ifelse((eden_epaNveg$Veg_Cat == "Hammock/Tree Island|Coastal Forest") & (eden_epaNveg$WaterLevel <= feetToCm(-0.6)), riskNames[1],
-    #                                                                       ifelse((eden_epaNveg$Veg_Cat == "Brazilian Pepper/HID") & (eden_epaNveg$WaterLevel <= feetToCm(-1)), riskNames[1],
-    #                                                                              riskNames[length(riskNames)])))))))) # changed  waterLevel threshold from 4 to 5 on 20190222
-    # 
-  # eden_epaNveg$WF_Use <-ifelse(eden_epaNveg$FuelType == 5 & eden_epaNveg$WaterLevel >= 0, riskNames[1], # tall continuous grass, pine forest
-  #                              ifelse(eden_epaNveg$FuelType == 4 & eden_epaNveg$WaterLevel >= 1, riskNames[1],
-  #                                     ifelse(eden_epaNveg$FuelType == 3 & eden_epaNveg$WaterLevel >= 5, riskNames[1], # changed  waterLevel threshold from 4 to 5 on 20190222
-  #                                            ifelse(eden_epaNveg$FuelType == 2 & eden_epaNveg$WaterLevel > 5, riskNames[1], riskNames[length(riskNames)])))) # changed  waterLevel threshold from 4 to 5 on 20190222
-  # 
   eden_epaNveg$RX_Use <-ifelse(eden_epaNveg$WF_Use == riskNames[1], "High Fuel Availability", "Low Fuel Availability")
   
  ### Combine fireRisk data with planning units
@@ -354,23 +320,24 @@ getFireHydro <- function(EDEN_date,
       ### do some additional processing
       eden_epaNveg_planningUnits <- sf::st_buffer(eden_epaNveg_planningUnits, dist = 0)
       
-      # if(is.null(burnData[[1]])) {
-      #   
-      # }
+      namesToKeep <- names(eden_epaNveg_planningUnits)
       withCallingHandlers(
         high17                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[1]]), warning = fireHydro::intersectionWarningHandler)  
       high17$WF_Use         <- factor(high17$WF_Use)
       levels(high17$WF_Use) <- c(riskNames[2], riskNames[length(riskNames)])
+      high17 <- high17[, namesToKeep]
       
       withCallingHandlers( # if an error occurs, may need to change other years to use a2 
         high18                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[2]]), warning = fireHydro::intersectionWarningHandler)  
       high18$WF_Use         <- factor(high18$WF_Use)
       levels(high18$WF_Use) <- c(riskNames[3], riskNames[length(riskNames)])
+      high18 <- high18[, namesToKeep]
       
       withCallingHandlers(
         high19                <- sf::st_intersection(eden_epaNveg_planningUnits, burnData[[3]]), warning = fireHydro::intersectionWarningHandler)  
       high19$WF_Use         <- factor(high19$WF_Use)
       levels(high19$WF_Use) <- c(riskNames[4], riskNames[length(riskNames)])
+      high19 <- high19[, namesToKeep]
       
       eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use)
       levels(eden_epaNveg_planningUnits$WF_Use) <- c(riskNames[1], riskNames[length(riskNames)])
@@ -378,6 +345,7 @@ getFireHydro <- function(EDEN_date,
       eden_epaNveg_planningUnits$WF_Use         <- factor(eden_epaNveg_planningUnits$WF_Use, levels = riskNames)
       
       ### TODO: merge fire history maps back into main object
+      ### do headers need to match?
       burn <- do.call(rbind, list(
         sf::st_buffer(high17, dist = 1),
         sf::st_buffer(high18, dist = 1),

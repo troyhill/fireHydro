@@ -2,12 +2,6 @@
 #'
 #' @description Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 #' 
-#' @usage getEDEN(EDEN_date = Sys.Date(), 
-#'     exact     = FALSE, 
-#'     quarterly = FALSE,
-#'     returnType  = "sf",
-#'     DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
-#' 
 #' @param EDEN_date The date(s) for which water levels are desired. Format should be a numeric or character string with the format "20181018" or "2018-10-18", or a Date object in any format. By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.

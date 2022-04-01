@@ -4,11 +4,14 @@
 \alias{getEDEN}
 \title{Downloads and imports EDEN data}
 \usage{
-getEDEN(EDEN_date = Sys.Date(), 
-    exact     = FALSE, 
-    quarterly = FALSE,
-    returnType  = "sf",
-    DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")))
+getEDEN(
+  EDEN_date = Sys.Date(),
+  exact = FALSE,
+  quarterly = FALSE,
+  returnType = "sf",
+  DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  download.method = "libcurl"
+)
 }
 \arguments{
 \item{EDEN_date}{The date(s) for which water levels are desired. Format should be a numeric or character string with the format "20181018" or "2018-10-18", or a Date object in any format. By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.}

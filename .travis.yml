@@ -3,7 +3,8 @@
  language: R
  cache: packages
  sudo: required
- r_build_args: --resave-data --no-manual 
+ r_check_args: "--no-build-vignettes --ignore-vignettes"
+ r_build_args: "--resave-data --no-manual"
  addons:
   apt:
     packages:

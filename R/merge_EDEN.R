@@ -22,6 +22,7 @@
 #' }
 #' 
 #' @importFrom raster subset
+#' @importFrom raster stack
 #' @importFrom terra  subset
 #' 
 #' @export

@@ -132,7 +132,7 @@ getAnnualEDEN <- function(years,
     
   }
   
-  class(EDEN_list) <- "eden"
+  class(EDEN_list) <- c("eden", class(EDEN_list)) 
   invisible(EDEN_list)
 }
 

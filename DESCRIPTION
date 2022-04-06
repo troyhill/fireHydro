@@ -21,7 +21,6 @@ Depends:
     dplyr,
     terra,
     sf,
-    sp,
     rgdal,
     rgeos,
     ncdf4,

@@ -137,7 +137,8 @@ getQuarterlyEDEN <- function(YYYYMMDD,
   # unlink(x = temp)     # deletes the zipped file
   unlink(x = file.path(tmpDir, paste0(qtr, ".nc"))) # deletes the unzipped file
   
-  class(returnDat) <- "eden"
+  class(returnDat) <- c("eden", class(returnDat)) 
+  
   
   invisible(returnDat)
   

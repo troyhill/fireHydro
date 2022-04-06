@@ -174,17 +174,18 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         }
         
         EDEN_list <- list(date = as.Date(EDEN_date, format = "%Y%m%d"), data = a.sf)
-        class(EDEN_list) <- "eden"
+        class(EDEN_list) <- c("eden", class(EDEN_list)) 
+        # class(EDEN_list) <- "eden"
         return(EDEN_list)
       } else if (as.numeric(EDEN_date) < as.numeric(txt$txt[length(txt$txt)])) {
         cat(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's main  website. Attempting to download archived data... \n\n"))
         EDEN_list <- getOldEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, returnType = returnType)
-        class(EDEN_list) <- "eden"
+        class(EDEN_list) <- c("eden", class(EDEN_list)) 
         return(EDEN_list)
       }
       } else if (quarterly) {
         EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly, download.method = download.method)
-        class(EDEN_list) <- "eden"
+        class(EDEN_list) <- c("eden", class(EDEN_list)) 
         return(EDEN_list)
       }
     }

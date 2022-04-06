@@ -163,9 +163,9 @@ getEDEN <- function(EDEN_date = Sys.Date(),
           a.sf <- sf::st_as_sf(a.poly) # this is super slow. Recently became even slower (20200526)
           names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
           # plot(a.sf)
-        } else {
+        } else if (returnType == 'raster') {
           a.sf <- a.ras
-        }
+        } 
         
         ### cleanup
         # file.remove(c(geotiff_zip, a))

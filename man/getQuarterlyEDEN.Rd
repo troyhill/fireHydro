@@ -6,7 +6,7 @@
 \usage{
 getQuarterlyEDEN(
   YYYYMMDD,
-  DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
   quarterly = FALSE,
   download.method = "libcurl"
 )
@@ -18,13 +18,13 @@ getQuarterlyEDEN(
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded.}
 
-\item{download.method}{Method to be used for downloading files. See options in utils::download.file}
+\item{download.method}{For use in debugging or troubleshooting. Method to be used for downloading files. See options in utils::download.file}
 }
 \value{
-eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).
+eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a SpatRaster with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`). Geospatial data returned by this function is always a SpatRaster.
 }
 \description{
-Provides access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM"). NOTE: on 20220131, download.file was changed to use method = 'curl' (resolving broken code). This requires that curl be installed and available in users' PATH variable, which may not be the case for all users.
+Provides access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 }
 \examples{
 

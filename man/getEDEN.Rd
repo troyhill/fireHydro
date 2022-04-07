@@ -9,7 +9,7 @@ getEDEN(
   exact = FALSE,
   quarterly = FALSE,
   returnType = "sf",
-  DEM = raster::raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
   download.method = "libcurl"
 )
 }
@@ -20,9 +20,9 @@ getEDEN(
 
 \item{quarterly}{logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.}
 
-\item{returnType}{character; class of object returned. Acceptable options: "sf", "raster"}
+\item{returnType}{character; class of object returned. Acceptable options: "sf", "terra", or "raster" (raster option will be removed soon)}
 
-\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88.}
+\item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88. If a DEM is supplies and projection differs from the water surface, water surface is re-projected to match the DEM.}
 
 \item{download.method}{Method to be used for downloading files. See options in utils::download.file}
 }
@@ -36,7 +36,7 @@ Downloads GeoTiff files from https://sofia.usgs.gov/eden/models/real-time.php , 
 
 \dontrun{
 ### default behavior is to return data from the most recent date
-a <- getEDEN(EDEN_date = Sys.Date(), returnType = 'raster')
+a <- getEDEN(EDEN_date = Sys.Date(), returnType = 'terra')
 
 ### only the most recent data are available as individual geotiffs.
 ### Use 'exact = TRUE' to return NULL if an exact date match isn't found
@@ -45,7 +45,6 @@ edenDat.true  <- getEDEN(EDEN_date = "20180101", exact = TRUE)
 
 edenDat.false
 edenDat.true 
-# reporting the date with the output is particularly useful if the requested date is unavailable
 }
 
 }

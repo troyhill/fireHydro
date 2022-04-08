@@ -18,9 +18,8 @@
 #' plot(dat2)
 #' }
 #' 
-#' @importFrom raster subset
-#' @importFrom raster stack
-#' @importFrom terra  subset
+#' @importFrom terra plot
+#' @importFrom terra subset
 #' 
 #' @export
 

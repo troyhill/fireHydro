@@ -4,7 +4,7 @@
 \alias{plot.eden}
 \title{Plot EDEN data}
 \usage{
-\method{plot}{eden}(x, subset = 1, ...)
+plot.eden(x, subset = 1, ...)
 }
 \arguments{
 \item{x}{EDEN objects}

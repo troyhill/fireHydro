@@ -1,0 +1,42 @@
+#' @title Plot EDEN data
+#'
+#' @description Plot EDEN objects (lists with data and dates)
+#' 
+#' @param x  EDEN objects
+#' 
+#' @return  a plot
+#' 
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' dat1 <- getEDEN(EDEN_date = Sys.Date(), returnType = 'terra')
+#' 
+#' plot(dat1)
+#' 
+#' dat2 <- getEDEN(EDEN_date = Sys.Date(), returnType = 'sf')
+#' plot(dat2)
+#' }
+#' 
+#' @importFrom raster subset
+#' @importFrom raster stack
+#' @importFrom terra  subset
+#' 
+#' @export
+
+
+plot.eden <- function(x, subset = 1, ...) {
+  
+  if (!any(grepl(x = class(x), pattern = 'eden|list'))) {
+    stop('x must be a list of eden objects\n')
+  }
+  
+  
+  if (any(grepl(x = tolower(class(x$data)), pattern = 'sf'))) {
+    ### quarterly data aren't available as sf objects, so subset isn't used here
+    plot(x$data, border = NA, ...) # sf::plot_sf not working?
+  }
+  if (any(grepl(x = tolower(class(x$data)), pattern = 'spatraster'))) {
+    terra::plot(x$data[[subset]], main = x$date[[subset]], axes = FALSE, ...)
+  }
+}

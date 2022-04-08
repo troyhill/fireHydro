@@ -1,17 +1,17 @@
-#' @title Merge EDEN lists
+#' @title Merge EDEN data
 #'
-#' @description Merge eden objects (lists with data and dates)
+#' @description Merge EDEN objects (lists with data and dates)
 #' 
-#' @param x  list of eden objects
+#' @param x  list of EDEN objects
 #' 
-#' @return eden \code{getEDEN} returns an `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
+#' @return a single `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
 #' 
 #' @examples
 #' 
 #' \dontrun{
-#' dat1 <- getEDEN(EDEN_date = Sys.Date(), quarterly = TRUE, returnType = 'raster')
-#' dat2 <- getEDEN(EDEN_date = Sys.Date()-95, quarterly = TRUE, returnType = 'raster')
+#' dat1 <- getEDEN(EDEN_date = Sys.Date(), quarterly = TRUE, returnType = 'terra')
+#' dat2 <- getEDEN(EDEN_date = Sys.Date()-95, quarterly = TRUE, returnType = 'terra')
 #' 
 #' dat3 <- merge.eden(x = list(dat1, dat2))
 #' 

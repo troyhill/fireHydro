@@ -12,15 +12,17 @@
 #' 
 #' \dontrun{
 #' edenDat <- getEDEN()
-#' plot(edenDat$data[[1]])
+#' plot.eden(edenDat)
 #' 
 #' edenDat$data <- convertEDEN(EDENdata = edenDat$data, to = "ft_NGVD29")
-#' plot(edenDat$data[[1]])
+#' plot.eden(edenDat)
 #' }
 #' 
 #' @importFrom terra rast
 #' @importFrom terra resample
 #' @importFrom terra ext
+#' @importFrom terra crs
+#' @importFrom terra project
 #' 
 #' @export
 
@@ -44,12 +46,15 @@ convertEDEN <- function(EDENdata,  # the 'data' part of an EDEN date/data list
   
   ### convert to spatRaster if necessary
   if(!any(grepl(x = class(EDENdata), pattern = 'SpatRaster'))) { 
-    EDENdata <- terra::rast(EDENdata)
+    EDENdata <- terra::rast(EDENdata*1)
     }
   
   ### converts EDEN data from cm depth (w.r.t soil surface) to ft. NGVD29
   dem_eden   <- terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")) # DEM used in eden data (meters NAVD88)
   dem_ngvd   <- (dem_eden * 3.2808) + terra::rast(system.file("extdata/convertNGVD.grd", package = "EvergladesEBM"))
+  if (!identical(terra::crs(dem_ngvd, proj = TRUE), terra::crs(EDENdata, proj = TRUE))) { 
+    EDENdata <- terra::project(x = EDENdata, y = dem_ngvd) 
+  }
   
   if(!(terra::ext(dem_ngvd) == terra::ext(EDENdata))) { # crop/mask to DEM if the extents differ
     EDENdata <- terra::resample(x = EDENdata, y = dem_ngvd)

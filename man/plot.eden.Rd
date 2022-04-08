@@ -4,10 +4,12 @@
 \alias{plot.eden}
 \title{Plot EDEN data}
 \usage{
-plot.eden(x, subset = 1, ...)
+plot.eden(x, y = NULL, ...)
 }
 \arguments{
-\item{x}{EDEN objects}
+\item{x}{EDEN object}
+
+\item{y}{NULL; not used}
 }
 \value{
 a plot

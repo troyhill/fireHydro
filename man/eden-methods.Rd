@@ -4,10 +4,12 @@
 \alias{merge.eden}
 \title{Merge EDEN data}
 \usage{
-\method{merge}{eden}(x)
+\method{merge}{eden}(x, y, ...)
 }
 \arguments{
-\item{x}{list of EDEN objects}
+\item{x}{EDEN object}
+
+\item{y}{EDEN object}
 }
 \value{
 a single `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.

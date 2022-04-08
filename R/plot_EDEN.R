@@ -13,10 +13,10 @@
 #' \dontrun{
 #' dat1 <- getEDEN(EDEN_date = Sys.Date(), returnType = 'terra')
 #' 
-#' plot(dat1)
+#' plot.eden(dat1)
 #' 
 #' dat2 <- getEDEN(EDEN_date = Sys.Date(), returnType = 'sf')
-#' plot(dat2)
+#' plot.eden(dat2)
 #' }
 #' 
 #' @importFrom terra plot

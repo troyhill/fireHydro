@@ -7,12 +7,12 @@
 convertEDEN(EDENdata, to = "ft_NGVD29")
 }
 \arguments{
-\item{EDENdata}{A raster or rasterstack of EDEN data, such as that returned by `getEDEN()`}
+\item{EDENdata}{geospatial EDEN data, such as that returned by `getEDEN()$data`}
 
 \item{to}{unit/datum to convert EDENdata to. Acceptable inputs are "ft_NGVD29" or "cm_soil"}
 }
 \value{
-list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
+list \code{getEDEN} returns a list with two elements: (1) the date used, and (2) a SpatRaster object with water levels (centimeters relative to soil surface) in the EDEN grid.
 }
 \description{
 Easily convert between two sets of common EDEN water surface units and datums (cm depth and ft NGVD29). This function makes for easy compatibility bewtween EDEN data (cm depth) and EverForecast output (ft. NGVD29). The conversion relies on the EDEN DEM and a raster layer with NAVD88-NGVD29 conversion factors, built by interpolating between gauges in the EDEN network (https://sofia.usgs.gov/eden/stationlist.php). Both layers are available in fireHydro.

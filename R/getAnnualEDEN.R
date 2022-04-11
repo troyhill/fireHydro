@@ -24,7 +24,7 @@
 
 
 getAnnualEDEN <- function(years,
-                          DEM = terra:rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+                          DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
                           download.method = 'libcurl'
 ) {
   
@@ -53,7 +53,7 @@ getAnnualEDEN <- function(years,
     ### 20220225: only download quarterlies 
     # EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly)
     
-    qtr.dates <- c(paste0(yrSelect, "0105"), paste0(yrSelect, "0505"), paste0(yrSelect, "0805"), paste0(yrSelect, "1105"))
+    qtr.dates <- c(paste0(yrSelect, "0101"), paste0(yrSelect, "0401"), paste0(yrSelect, "0701"), paste0(yrSelect, "1005"))
     
     if (as.Date(qtr.dates[1], format = '%Y%m%d') < Sys.Date()) {
       EDEN_qtr_1 <- fireHydro::getQuarterlyEDEN(YYYYMMDD = qtr.dates[1], quarterly = TRUE, DEM = DEM, download.method = download.method) # this behavior is fragile, but seems to work. setting exact == TRUE will cause there to be no download (and no object) if this date is not available in EDEN. If the date is available, the entire quarter is downloaded (not a single date)
@@ -94,20 +94,20 @@ getAnnualEDEN <- function(years,
     
     if (exists("EDEN_qtr_4")) {
       # message("qtr4 data exists!")
-      tst <- merge.eden(list(EDEN_qtr_1, EDEN_qtr_2, EDEN_qtr_3, EDEN_qtr_4))
+      tst <- merge.eden(EDEN_qtr_1, EDEN_qtr_2, EDEN_qtr_3, EDEN_qtr_4)
       rm(EDEN_qtr_1)
       rm(EDEN_qtr_2)
       rm(EDEN_qtr_3)
       rm(EDEN_qtr_4)
     } else if (exists("EDEN_qtr_3")) {
       # message("qtr3 data exists!")
-      tst <- merge.eden(list(EDEN_qtr_1, EDEN_qtr_2, EDEN_qtr_3))
+      tst <- merge.eden(EDEN_qtr_1, EDEN_qtr_2, EDEN_qtr_3)
       rm(EDEN_qtr_1)
       rm(EDEN_qtr_2)
       rm(EDEN_qtr_3)
     } else if (exists("EDEN_qtr_2")) {
       # message("qtr2 data exists!")
-      tst <- merge.eden(list(EDEN_qtr_1, EDEN_qtr_2))
+      tst <- merge.eden(EDEN_qtr_1, EDEN_qtr_2)
       rm(EDEN_qtr_1)
       rm(EDEN_qtr_2)
     } else if (exists("EDEN_qtr_1")) {
@@ -123,13 +123,12 @@ getAnnualEDEN <- function(years,
     if (i == 1) {
       EDEN_list <- tst #list(date = tst.dates[1:raster::nlayers(tst)], data = tst)
     } else {
-      EDEN_list <- merge.eden(list(EDEN_list, tst))
+      EDEN_list <- merge.eden(EDEN_list, tst)
     }
     rm(tst)
     # rm(tst.dates)
   }
-  
-  class(EDEN_list) <- c("eden", class(EDEN_list)) 
+  class(EDEN_list) <- c("eden", grep(x = class(EDEN_list), pattern = "eden", invert = TRUE, value = TRUE)) 
   invisible(EDEN_list)
 }
 

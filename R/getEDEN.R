@@ -30,6 +30,7 @@
 #' @importFrom httr GET
 #' @importFrom httr write_disk
 #' @importFrom raster raster
+#' @importFrom raster stack
 #' @importFrom terra rast
 #' @importFrom terra crs
 #' @importFrom terra project
@@ -57,10 +58,12 @@ getEDEN <- function(EDEN_date = Sys.Date(),
   ### TODO: efficient behavior: detect when dates are within a quarter and do fewer data pulls. subset/stitch
   if (length(EDEN_date) > 1) {
     EDEN_list_int  <- lapply(X = EDEN_date, FUN = getEDEN, exact = exact, quarterly = quarterly, returnType = returnType, DEM = DEM)
-    # EDEN_list      <- list(date = as.Date(do.call(rbind, lapply(EDEN_list_int, function(x) {as.character(x[[1]])}))), 
-    #                        data = do.call(stack, lapply(EDEN_list_int, function(x) {x[[2]]})))
-    EDEN_list        <- merge.eden(EDEN_list_int) # test this
-    class(EDEN_list) <- c("eden", class(EDEN_list)) 
+    class(EDEN_list_int) <- c("eden", grep(x = class(EDEN_list_int), pattern = "eden", invert = TRUE, value = TRUE)) 
+    ### will only work with raster type
+    # EDEN_list      <- list(date = as.Date(do.call(rbind, lapply(EDEN_list_int, function(x) {as.character(x[[1]])}))),
+    #                        data = do.call(raster::stack, lapply(EDEN_list_int, function(x) {x[[2]]})))
+    EDEN_list <- merge.eden(x = EDEN_list_int, y = NULL)
+    class(EDEN_list) <- c("eden", grep(x = class(EDEN_list), pattern = "eden", invert = TRUE, value = TRUE)) 
     return(EDEN_list)
   } 
   if (length(EDEN_date) == 1) {
@@ -187,7 +190,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         }
         
         EDEN_list <- list(date = as.Date(EDEN_date, format = "%Y%m%d"), data = a.sf)
-        class(EDEN_list) <- c("eden", class(EDEN_list)) 
+        class(EDEN_list) <- c("eden", grep(x = class(EDEN_list), pattern = "eden", invert = TRUE, value = TRUE)) 
         return(EDEN_list)
       } else if (as.numeric(EDEN_date) < as.numeric(txt$txt[length(txt$txt)])) {
         stop(paste0("\n The date you provided, ", EDEN_date, ", is not available on EDEN's real-time website.\n\n"))

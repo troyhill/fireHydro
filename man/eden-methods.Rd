@@ -4,7 +4,7 @@
 \alias{merge.eden}
 \title{Merge EDEN data}
 \usage{
-\method{merge}{eden}(x, y, ...)
+\method{merge}{eden}(x, y = NULL, ...)
 }
 \arguments{
 \item{x}{EDEN object}
@@ -23,7 +23,7 @@ Merge EDEN objects (lists with data and dates)
 dat1 <- getEDEN(EDEN_date = Sys.Date(), quarterly = TRUE, returnType = 'terra')
 dat2 <- getEDEN(EDEN_date = Sys.Date()-95, quarterly = TRUE, returnType = 'terra')
 
-dat3 <- merge.eden(x = list(dat1, dat2))
+dat3 <- merge(x = dat1, y = dat2)
 
 dat1$date
 dat2$date

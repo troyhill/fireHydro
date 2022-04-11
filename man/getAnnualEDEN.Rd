@@ -6,7 +6,7 @@
 \usage{
 getAnnualEDEN(
   years,
-  DEM = terra:rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
   download.method = "libcurl"
 )
 }

@@ -1,8 +1,9 @@
 fireHydro version 0.2.05 (release date: TBD)
 ==================
 Changes:
-* added merge method for eden objects
-* added subset method for eden objects
+* added merge, subset methods for eden objects
+* added plot function for eden objects (call as plot.eden; not an S3 method)
+* eden objects can be easily saved and loaded using write.eden and read.eden
 
 
 fireHydro version 0.2.04 (release date: 2022-03-25)

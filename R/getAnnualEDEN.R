@@ -7,7 +7,7 @@
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product.  If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' @param download.method Method to be used for downloading files. See options in utils::download.file
 #' 
-#' @return eden \code{getAnnualEDEN} returns an `eden` object, which is a list with two elements: (1) the dates used, and (2) a raster stack object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).
+#' @return eden \code{getAnnualEDEN} returns an `eden` object, which is a list with two elements: (1) the dates used, and (2) a SpatRaster object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).
 #' 
 #' 
 #' @examples
@@ -17,15 +17,14 @@
 #' edenDat <- getAnnualEDEN(years = 2019:2020)
 #' }
 #' 
-#' @importFrom raster stack
-#' @importFrom raster nlayers
+#' @importFrom terra rast
 #' 
 #' @export
 
 
 
 getAnnualEDEN <- function(years,
-                          DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+                          DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
                           download.method = 'libcurl'
 ) {
   
@@ -54,7 +53,7 @@ getAnnualEDEN <- function(years,
     ### 20220225: only download quarterlies 
     # EDEN_list <- getQuarterlyEDEN(YYYYMMDD = EDEN_date, quarterly = quarterly)
     
-    qtr.dates <- c(paste0(yrSelect, "0105"), paste0(yrSelect, "0505"), paste0(yrSelect, "0805"), paste0(yrSelect, "1105"))
+    qtr.dates <- c(paste0(yrSelect, "0101"), paste0(yrSelect, "0401"), paste0(yrSelect, "0701"), paste0(yrSelect, "1005"))
     
     if (as.Date(qtr.dates[1], format = '%Y%m%d') < Sys.Date()) {
       EDEN_qtr_1 <- fireHydro::getQuarterlyEDEN(YYYYMMDD = qtr.dates[1], quarterly = TRUE, DEM = DEM, download.method = download.method) # this behavior is fragile, but seems to work. setting exact == TRUE will cause there to be no download (and no object) if this date is not available in EDEN. If the date is available, the entire quarter is downloaded (not a single date)
@@ -95,44 +94,41 @@ getAnnualEDEN <- function(years,
     
     if (exists("EDEN_qtr_4")) {
       # message("qtr4 data exists!")
-      tst <- raster::stack(EDEN_qtr_1$data, EDEN_qtr_2$data,
-                           EDEN_qtr_3$data, EDEN_qtr_4$data)
+      tst <- merge.eden(EDEN_qtr_1, EDEN_qtr_2, EDEN_qtr_3, EDEN_qtr_4)
+      rm(EDEN_qtr_1)
+      rm(EDEN_qtr_2)
+      rm(EDEN_qtr_3)
+      rm(EDEN_qtr_4)
     } else if (exists("EDEN_qtr_3")) {
       # message("qtr3 data exists!")
-      tst <- raster::stack(EDEN_qtr_1$data, EDEN_qtr_2$data, EDEN_qtr_3$data)
+      tst <- merge.eden(EDEN_qtr_1, EDEN_qtr_2, EDEN_qtr_3)
+      rm(EDEN_qtr_1)
+      rm(EDEN_qtr_2)
+      rm(EDEN_qtr_3)
     } else if (exists("EDEN_qtr_2")) {
       # message("qtr2 data exists!")
-      tst <- raster::stack(EDEN_qtr_1$data, EDEN_qtr_2$data)
+      tst <- merge.eden(EDEN_qtr_1, EDEN_qtr_2)
+      rm(EDEN_qtr_1)
+      rm(EDEN_qtr_2)
     } else if (exists("EDEN_qtr_1")) {
       # message("only qtr1 data exists")
-      tst <- raster::stack(EDEN_qtr_1$data)
+      tst <- EDEN_qtr_1
+      rm(EDEN_qtr_1)
     }
-    
-    ###
-    tst.dates <- seq.Date(from = as.Date(paste0(yrSelect, "-01-01"), format = "%Y-%m-%d"), 
-                          to   = as.Date(paste0(yrSelect, "-12-31"), format = "%Y-%m-%d"),
-                          by   = 1)
-    names(tst) <- tst.dates[1:raster::nlayers(tst)] # might want to convert to character: as.character(tst.dates)
-    
+    ### handled by merge.eden
+    # tst.dates <- seq.Date(from = as.Date(paste0(yrSelect, "-01-01"), format = "%Y-%m-%d"), 
+    #                       to   = as.Date(paste0(yrSelect, "-12-31"), format = "%Y-%m-%d"),
+    #                       by   = 1)
+    # names(tst) <- tst.dates[1:raster::nlayers(tst)] # might want to convert to character: as.character(tst.dates)
     if (i == 1) {
-      EDEN_list <- list(date = tst.dates[1:raster::nlayers(tst)], 
-                      data = tst)
+      EDEN_list <- tst #list(date = tst.dates[1:raster::nlayers(tst)], data = tst)
     } else {
-      EDEN_list <- list(
-        date = c(EDEN_list$date, tst.dates[1:raster::nlayers(tst)]), 
-        data = raster::stack(EDEN_list$data, tst))
+      EDEN_list <- merge.eden(EDEN_list, tst)
     }
-    
     rm(tst)
-    rm(tst.dates)
-    rm(EDEN_qtr_1)
-    rm(EDEN_qtr_2)
-    rm(EDEN_qtr_3)
-    rm(EDEN_qtr_4)
-    
+    # rm(tst.dates)
   }
-  
-  class(EDEN_list) <- c("eden", class(EDEN_list)) 
+  class(EDEN_list) <- c("eden", grep(x = class(EDEN_list), pattern = "eden", invert = TRUE, value = TRUE)) 
   invisible(EDEN_list)
 }
 

@@ -6,7 +6,7 @@
 \usage{
 getAnnualEDEN(
   years,
-  DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+  DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
   download.method = "libcurl"
 )
 }
@@ -18,7 +18,7 @@ getAnnualEDEN(
 \item{download.method}{Method to be used for downloading files. See options in utils::download.file}
 }
 \value{
-eden \code{getAnnualEDEN} returns an `eden` object, which is a list with two elements: (1) the dates used, and (2) a raster stack object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).
+eden \code{getAnnualEDEN} returns an `eden` object, which is a list with two elements: (1) the dates used, and (2) a SpatRaster object with a layer for each day, containing water level data for the EDEN grid (units = cm rel. to soil surface).
 }
 \description{
 Downloads and combines netCDF files from https://sofia.usgs.gov/eden/models/watersurfacemod_download.php, unzips and loads them into the workspace. Zip files are deleted after loading. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").

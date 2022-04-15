@@ -2,26 +2,28 @@
 % Please edit documentation in R/merge_EDEN.R
 \name{merge.eden}
 \alias{merge.eden}
-\title{Merge EDEN lists}
+\title{Merge EDEN data}
 \usage{
-\method{merge}{eden}(x)
+\method{merge}{eden}(x, y = NULL, ...)
 }
 \arguments{
-\item{x}{list of eden objects}
+\item{x}{EDEN object}
+
+\item{y}{EDEN object}
 }
 \value{
-eden \code{getEDEN} returns an `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
+a single `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 }
 \description{
-Merge eden objects (lists with data and dates)
+Merge EDEN objects (lists with data and dates)
 }
 \examples{
 
 \dontrun{
-dat1 <- getEDEN(EDEN_date = Sys.Date(), quarterly = TRUE, returnType = 'raster')
-dat2 <- getEDEN(EDEN_date = Sys.Date()-95, quarterly = TRUE, returnType = 'raster')
+dat1 <- getEDEN(EDEN_date = Sys.Date(), quarterly = TRUE, returnType = 'terra')
+dat2 <- getEDEN(EDEN_date = Sys.Date()-95, quarterly = TRUE, returnType = 'terra')
 
-dat3 <- merge.eden(x = list(dat1, dat2))
+dat3 <- merge(x = dat1, y = dat2)
 
 dat1$date
 dat2$date

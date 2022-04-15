@@ -11,7 +11,7 @@
 #' @export
 
 is.eden <- function(x) {
-  if (grepl(x = class(x), pattern = "eden")) {
+  if (any(grepl(x = class(x), pattern = "eden"))) {
     return(TRUE)
   } else {
     return(FALSE)

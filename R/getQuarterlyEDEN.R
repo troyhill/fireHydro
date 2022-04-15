@@ -1,14 +1,14 @@
 #' @title Downloads quarterly EDEN data (from 1991 through present) 
 #'
-#' @description Provides access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM"). NOTE: on 20220131, download.file was changed to use method = 'curl' (resolving broken code). This requires that curl be installed and available in users' PATH variable, which may not be the case for all users. 
+#' @description Provides access to quarterly data covering the entire period of record. Downloads netCDF files from https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html. This function makes `fireHydro` able to operate with complete independence from Department of Interior servers. This code generates a water depth map using the USGS water surface data and the USGS EDEN digital elevation map (present in this R package as raster layer "edenDEM").
 #' 
 #' 
 #' @param YYYYMMDD EDEN date to be used for water levels. Should be an 8-digit numeric or character stirng, e.g., "20181018". By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths. The default DEM is a USGS/EDEN product in meters NAVD88. If `DEM = NULL`, output will be water surface in centimeters NAVD88.
 #' @param quarterly logical; if set to TRUE, entire quarter is downloaded.
-#' @param download.method Method to be used for downloading files. See options in utils::download.file
+#' @param download.method For use in debugging or troubleshooting. Method to be used for downloading files. See options in utils::download.file
 #' 
-#' @return eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a rasterStack with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`).
+#' @return eden \code{getQuarterlyEDEN} returns an `eden` object, which is a list with two elements: (1) a vector of dates in the specified quarter, and (2) a SpatRaster with a water depth layer for each date (units = cm w.r.t. soil surface, unless `DEM = NULL`). Geospatial data returned by this function is always a SpatRaster.
 #' 
 #' 
 #' @examples
@@ -18,11 +18,11 @@
 #' edenDat <- getQuarterlyEDEN(YYYYMMDD = "19910101", quarterly = TRUE)
 #' }
 #' 
-#' @importFrom raster brick
-#' @importFrom raster stack
-#' @importFrom raster compareCRS
-#' @importFrom raster projectRaster
-#' @importFrom raster nlayers
+#' @importFrom terra rast
+#' @importFrom terra crs
+#' @importFrom terra project
+#' @importFrom terra subset
+#' @importFrom terra nlyr
 #' @importFrom zoo    as.yearqtr
 #' @importFrom utils  unzip
 #' @importFrom utils  download.file
@@ -32,8 +32,8 @@
 
 
 getQuarterlyEDEN <- function(YYYYMMDD, 
-                       DEM = raster(system.file("extdata/edenDEM.grd", package = "fireHydro")),
-                       quarterly = FALSE,
+                       DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
+                       quarterly = FALSE, # why even have this argument? in case an older single day is desired.
                        download.method = 'libcurl') {
   
   if (class(YYYYMMDD) == "Date") {
@@ -89,57 +89,43 @@ getQuarterlyEDEN <- function(YYYYMMDD,
                 # "https://sflthredds.er.usgs.gov/thredds/fileServer/eden/surfaces/1991_q1.nc"
   # url <- paste0("https://sflthredds.er.usgs.gov/thredds/catalog/eden/surfaces/catalog.html?dataset=EDEN/surfaces/", qtr, ".nc")
     
-  tmpDir <- tempdir() 
-  # temp   <- tempfile(tmpdir = tmpDir, fileext = ".nc")
+  dirTemp <- tempdir() 
+  # temp   <- tempfile(tmpdir = dirTemp, fileext = ".nc")
   
-  utils::download.file(url = url, destfile = file.path(tmpDir, paste0(qtr, ".nc")), 
+  utils::download.file(url = url, destfile = file.path(dirTemp, paste0(qtr, ".nc")), 
                        mode = 'wb', method = download.method)
-  # fileName <- utils::unzip(zipfile = temp, exdir = tmpDir, list = TRUE)$Name
-  ras      <- raster::brick(x = file.path(tmpDir, paste0(qtr, ".nc")))
+  # fileName <- utils::unzip(zipfile = temp, exdir = dirTemp, list = TRUE)$Name
+  # ras      <- raster::brick(x = file.path(dirTemp, paste0(qtr, ".nc")))
+  ras      <- terra::rast(x = file.path(dirTemp, paste0(qtr, ".nc")))
+  dateVec <- dateVec[1:terra::nlyr(ras)]
+  
+  ### convert to water depths
+  if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
+    if (!identical(terra::crs(DEM, proj = TRUE), terra::crs(ras, proj = TRUE))) { 
+      ### make sure projection matches DEM before subtracting to get water depth
+      ras <- terra::project(x = ras, y = DEM) # crs=raster::crs(DEM))
+    }
+    ### DEM units must be meters
+    ras <- ras - (DEM * 100) # apply DEM to convert water surfaces to depths in centimeters ## UNIX: "Error in .local(.Object, ...) : "
+  }
+  names(ras) <- gsub(x = dateVec, pattern = "-", replacement = "")
   
   if (quarterly == FALSE) {
-    ### load raster for specified date 
-    targetRas <- ras[[which(gsub(x = ras@z$Date, pattern = "-", replacement = "")  %in% YYYYMMDD)]]
-    if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
-      if (!raster::compareCRS(DEM, targetRas)) { 
-        ### make sure projection matches DEM before subtracting to get water depth
-        targetRas <- raster::projectRaster(from = targetRas, to = DEM) # crs=raster::crs(DEM))
-      }
-      targetRas <- targetRas - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
-    }
-    
-    names(targetRas) <- "WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
-    rasDate <- as(targetRas, "SpatialPolygonsDataFrame")
-    rasDate <- sf::st_as_sf(rasDate)
-    
-    # rasDate <- sf::st_as_sf(rasDate)
-    # a.ras  <- raster::raster(a)
-    # a.ras <- a.ras - (DEM * 100) # apply DEM to convert water surfaces to depths ## UNIX: "Error in .local(.Object, ...) : "
-    # a.poly <- raster::rasterToPolygons(a.ras, dissolve = TRUE) #dissolve option requires rgeos
-    #
-    # names(a.sf)[names(a.sf) %in% "layer"] <- "WaterDepth"
-    returnDat <- list(date = as.Date(YYYYMMDD, format = "%Y%m%d"), data = rasDate)
+    ### subset specified date 
+    targetRas <- terra::subset(x = ras, subset = grep(pattern = YYYYMMDD, x = gsub(x = dateVec, pattern = "-", replacement = "")))
+    names(targetRas) <- YYYYMMDD #"WaterDepth"     # to match EDEN geoTiffs and getFireHydro hard-coded variables
+    returnDat <- list(date = as.Date(YYYYMMDD, format = "%Y%m%d"), data = targetRas)
   } else if (quarterly == TRUE) {
-    rasDate <- raster::stack(x = ras) #(x = file.path(tmpDir, paste0(qtr, ".nc")))
-    if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
-      ### make sure projection matches DEM
-      if (!raster::compareCRS(DEM, rasDate)) {
-        rasDate      <- raster::projectRaster(from = rasDate, to = DEM) # crs=raster::crs(DEM))
-      }
-      ### need to subtract DEM*100, convert each layer to SPDF, and sf::st_as_sf
-      rasDate  <- rasDate - (DEM*100)
-    }
-    
-    returnDat <- list(date = dateVec[1:nlayers(rasDate)], # this accommodates partial current quarters (could be improved)
-                      data = rasDate)
+    returnDat <- list(date = dateVec, # this accommodates partial current quarters (could be improved)
+                      data = ras)
   }
+  
+  # if (grepl(x = returnType, pattern = 'raster')) {
+  #   returnDat$data <- raster::stack(returnDat$data)
+  # }
 
   # unlink(x = temp)     # deletes the zipped file
-  unlink(x = file.path(tmpDir, paste0(qtr, ".nc"))) # deletes the unzipped file
-  
+  unlink(x = file.path(dirTemp, paste0(qtr, ".nc"))) # deletes the unzipped file
   class(returnDat) <- c("eden", class(returnDat)) 
-  
-  
   invisible(returnDat)
-  
 }

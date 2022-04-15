@@ -56,7 +56,7 @@ subset.eden <- function(x, subset, ...) {
     x$data <- terra::rast(x$data*1)
   }
   if (any(grepl(x = tolower(class(x$data)), pattern = '^spatraster$'))) {
-    data_new <- terra::subset(x = x$data*1, subset = targetIndex)
+    data_new <- terra::subset(x = x$data*1, subset = targetIndex, ...)
   }
   EDEN_list <- list(date = date_new,
                     data = data_new)

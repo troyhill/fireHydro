@@ -26,7 +26,6 @@
 #' @importFrom raster stack
 #' @importFrom terra  subset
 #' 
-#' @rdname eden-methods
 #' @export
 
 

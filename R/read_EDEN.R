@@ -22,7 +22,6 @@
 #' 
 #' @importFrom terra rast
 #' 
-#' @rdname eden-methods
 #' @export
 
 

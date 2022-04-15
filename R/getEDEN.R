@@ -73,7 +73,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
     }
     if(grepl(x = as.character(EDEN_date), pattern = "-")) {
       EDEN_date <- gsub(x = as.character(EDEN_date), pattern = "-", replacement = "")
-      cat("Date is interpreted as", as.character(EDEN_date), "(%Y-%m-%d)\n")
+      cat("Date is interpreted as", as.character(format(EDEN_date, format = "%d %b %Y")), "\n")
     }
     
     if (!grepl(x = EDEN_date, pattern = "^[0-9]{8}$")) {

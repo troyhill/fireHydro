@@ -23,7 +23,6 @@
 #' @importFrom terra rast
 #' @importFrom terra writeRaster
 #' 
-#' @rdname eden-methods
 #' @export
 
 

@@ -3,7 +3,7 @@
 #' @description Subset EDEN objects (lists with data and dates). Works only on SpatRaster data (raster data will be converted and returned as SpatRaster).
 #' 
 #' @param x  EDEN object
-#' @param subset  integer, character (in %Y-%m-%d format), or Date. Should indicate the layers (represented as integer or by the corresponding date)
+#' @param subset  integer, character (in \%Y-\%m-\%d format), or Date. Should indicate the layers (represented as integer or by the corresponding date)
 #' 
 #' @return a single `eden` object, which is a list with two elements: (1) the date(s) used, and (2) a spatial object with water levels (centimeters relative to soil surface) in the EDEN grid.
 #' 
@@ -14,15 +14,15 @@
 #' dat1 <- getEDEN(EDEN_date = "2022-01-01", quarterly = TRUE, returnType = 'terra')
 #' 
 #' ### subset by index
-#' dat2 <- subset(x = dat1, subset = 5)
+#' dat2 <- subset.eden(x = dat1, subset = 5)
 #' 
 #' ### subset by date
-#' dat3 <- subset(x = dat1, subset = "2022-01-15")
+#' dat3 <- subset.eden(x = dat1, subset = "2022-01-15")
 #' 
 #' ### subset using date range
 #' dateRange <- seq.Date(from = as.Date("2022-01-01"), 
 #'                       to = as.Date("2022-01-15"), by = "day")
-#' dat4 <- subset(x = dat1, subset = dateRange)
+#' dat4 <- subset.eden(x = dat1, subset = dateRange)
 #' 
 #' dat1$date
 #' dat2$date

@@ -33,7 +33,7 @@ read.eden <- function(filename = "C:/RDATA/dataTest.tif") {
     filename_base <- strsplit(x = filename, split = '[.]')[[1]][1]
   } else {
     ### if no period present, assume no file extension is provided
-    filename_base <- filename_base 
+    filename_base <- filename 
   }
   filename_data <- paste0(filename_base, ".tif")
   filename_date <- paste0(filename_base, ".txt")

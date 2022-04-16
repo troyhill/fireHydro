@@ -2,7 +2,7 @@
 % Please edit documentation in R/subset_EDEN.R
 \name{subset.eden}
 \alias{subset.eden}
-\title{Subset EDEN data}
+\title{Subset method for 'eden' class}
 \usage{
 subset.eden(x, subset, ...)
 }

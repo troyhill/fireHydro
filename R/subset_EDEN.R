@@ -1,4 +1,4 @@
-#' @title Subset EDEN data
+#' @title Subset method for 'eden' class
 #'
 #' @description Subset EDEN objects (lists with data and dates). Works only on SpatRaster data (raster data will be converted and returned as SpatRaster).
 #' 
@@ -34,7 +34,6 @@
 #' @importFrom terra rast
 #' @importFrom terra subset
 #' 
-#' @rdname eden-methods
 #' @export
 
 

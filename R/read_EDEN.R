@@ -25,7 +25,7 @@
 #' @export
 
 
-read.eden <- function(filename = "C:/RDATA/dataTest.tif") {
+read.eden <- function(filename) {
   ### requires two files in same directory with same name (different type)
   ### check if file extension is provided
   if(grepl(pattern = "\\.", x = filename)) {
@@ -45,4 +45,3 @@ read.eden <- function(filename = "C:/RDATA/dataTest.tif") {
   invisible(EDEN_list)
 }
 
-a <- read.eden()

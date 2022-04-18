@@ -49,7 +49,7 @@ merge.eden <- function(x, y = NULL, ...) {
   newOrder <- order(dateVec)
   date_new <- dateVec[newOrder]
   
-  if (grepl(x = tolower(class(inputList[[1]]$data)), pattern = '^rasterlayer$|^raster$')) {
+  if (grepl(x = tolower(class(inputList[[1]]$data)), pattern = '^rasterlayer$|^raster$|^rasterstack$')) {
     data_new <- Reduce(raster::stack, sapply(inputList, FUN = '[', 2))
     data_new <- raster::subset(x = data_new, subset = newOrder)
   }

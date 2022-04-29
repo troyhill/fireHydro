@@ -51,7 +51,7 @@ subset.eden <- function(x, subset, ...) {
   
   date_new <- x$date[targetIndex]
   
-  if (any(grepl(x = tolower(class(x$data)), pattern = '^rasterlayer$|^raster$'))) {
+  if (any(grepl(x = tolower(class(x$data)), pattern = '^rasterlayer$|^raster$|^rasterstack$'))) {
     x$data <- terra::rast(x$data*1)
   }
   if (any(grepl(x = tolower(class(x$data)), pattern = '^spatraster$'))) {

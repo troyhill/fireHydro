@@ -8,8 +8,6 @@ read.eden(filename)
 }
 \arguments{
 \item{filename}{character. Input filename with or without a file extension; extension is ignored. two files are saved: (1) a geoTiff with the data, and (2) a text file with the dates. These are combined when loaded using `read.eden()`}
-
-\item{x}{EDEN object}
 }
 \value{
 none

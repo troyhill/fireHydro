@@ -2,7 +2,6 @@
 #'
 #' @description Load a saved EDEN object (list with data and dates). Returns an eden obeject with SpatRaster data.
 #' 
-#' @param x  EDEN object
 #' @param filename  character. Input filename with or without a file extension; extension is ignored. two files are saved: (1) a geoTiff with the data, and (2) a text file with the dates. These are combined when loaded using `read.eden()`
 #' 
 #' @return none
@@ -44,4 +43,3 @@ read.eden <- function(filename) {
   class(EDEN_list) <- c("eden", grep(x = class(EDEN_list), pattern = "eden", invert = TRUE, value = TRUE)) 
   invisible(EDEN_list)
 }
-

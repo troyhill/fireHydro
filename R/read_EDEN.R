@@ -27,13 +27,13 @@
 read.eden <- function(filename) {
   ### requires two files in same directory with same name (different type)
   ### check if file extension is provided
-  if(grepl(pattern = "\\.", x = filename)) {
-    ### if period is present
-    filename_base <- strsplit(x = filename, split = '[.]')[[1]][1]
-  } else {
-    ### if no period present, assume no file extension is provided
-    filename_base <- filename 
-  }
+  # if(grepl(pattern = "\\.", x = filename)) {
+  #   ### if period is present
+    filename_base <- strsplit(x = filename, split = '[.]')[[1]][1] # first element is entire string if no period strsplit(x = "test/v1", split = '[.]')
+  # } else {
+  #   ### if no period present, assume no file extension is provided
+  #   filename_base <- filename 
+  # }
   filename_data <- paste0(filename_base, ".tif")
   filename_date <- paste0(filename_base, ".txt")
   

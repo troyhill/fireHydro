@@ -30,13 +30,13 @@ write.eden <- function(x,
                        filename) {
   ### need to save data and dates. filename will be used to save an tiff (data) and a .txt (dates) 
   ### with the same name
-  if(grepl(pattern = "\\.", x = filename)) {
-    ### if period is present
+  # if(grepl(pattern = "\\.", x = filename)) {
+  #   ### if period is present
     filename_base <- strsplit(x = filename, split = '[.]')[[1]][1]
-  } else {
-    ### if no period present, assume no file extension is provided
-    filename_base <- filename_base 
-  }
+  # } else {
+  #   ### if no period present, assume no file extension is provided
+  #   filename_base <- filename_base 
+  # }
   filename_data <- paste0(filename_base, ".tif")
   filename_date <- paste0(filename_base, ".txt")
   

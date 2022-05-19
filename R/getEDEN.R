@@ -149,6 +149,10 @@ getEDEN <- function(EDEN_date = Sys.Date(),
           # 3: load geotiff as sf, set projection
           a      <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
           a.ras  <- terra::rast(a)
+          
+          ### set projection to package-provided DEM to start, in case DEM argument is null
+          a.ras <- terra::project(x = a.ras, y = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")))
+          
           if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
             if (!identical(terra::crs(DEM, proj = TRUE), terra::crs(a.ras, proj = TRUE))) { 
               ### make sure projection matches DEM before subtracting to get water depth

@@ -61,7 +61,7 @@ merge.eden <- function(x, y = NULL, ...) {
     # x2[[2]]$data <- terra::rast(x2[[2]]$data*1)
     # c(x2[[1]]$data, x2[[2]]$data )
     data_new <- Reduce(c, sapply(inputList, FUN = '[', 2))
-    data_new <- terra::subset(x = data_new*1, subset = newOrder)
+    data_new <- terra::subset(x = data_new, subset = newOrder)
   }
   EDEN_list <- list(date = date_new,
                     data = data_new)

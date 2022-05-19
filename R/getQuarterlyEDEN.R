@@ -99,6 +99,8 @@ getQuarterlyEDEN <- function(YYYYMMDD,
   ras      <- terra::rast(x = file.path(dirTemp, paste0(qtr, ".nc")))
   dateVec <- dateVec[1:terra::nlyr(ras)]
   
+  ### set projection to package-provided DEM to start, in case DEM argument is null
+  ras <- terra::project(x = ras, y = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")))
   ### convert to water depths
   if (!is.null(DEM)) { # if DEM == NULL, water surface in cm NAVD88 is returned
     if (!identical(terra::crs(DEM, proj = TRUE), terra::crs(ras, proj = TRUE))) { 

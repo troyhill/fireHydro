@@ -20,7 +20,7 @@ Easily convert between two sets of common EDEN water surface units and datums (c
 \examples{
 
 \dontrun{
-edenDat <- getEDEN()
+edenDat <- getEDEN(returnType = 'terra')
 plot.eden(edenDat)
 
 edenDat$data <- convertEDEN(EDENdata = edenDat$data, to = "ft_NGVD29")

@@ -11,7 +11,7 @@
 #' @examples
 #' 
 #' \dontrun{
-#' edenDat <- getEDEN()
+#' edenDat <- getEDEN(returnType = 'terra')
 #' plot.eden(edenDat)
 #' 
 #' edenDat$data <- convertEDEN(EDENdata = edenDat$data, to = "ft_NGVD29")
@@ -51,7 +51,7 @@ convertEDEN <- function(EDENdata,  # the 'data' part of an EDEN date/data list
   
   ### converts EDEN data from cm depth (w.r.t soil surface) to ft. NGVD29
   dem_eden   <- terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")) # DEM used in eden data (meters NAVD88)
-  dem_ngvd   <- (dem_eden * 3.2808) + terra::rast(system.file("extdata/convertNGVD.grd", package = "EvergladesEBM"))
+  dem_ngvd   <- (dem_eden * 3.2808) + terra::rast(system.file("extdata/convertNGVD.grd", package = "fireHydro"))
   if (!identical(terra::crs(dem_ngvd, proj = TRUE), terra::crs(EDENdata, proj = TRUE))) { 
     EDENdata <- terra::project(x = EDENdata, y = dem_ngvd) 
   }

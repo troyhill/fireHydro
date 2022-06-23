@@ -121,7 +121,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         cat(" Because 'exact' was set to TRUE, no data is being returned. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n")
       }
       if (exact == FALSE) {
-        cat(paste0(" Because 'exact' was set to FALSE, the most recent data from ", txt$txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. Older dates need to be downloaded manually. \n\n"))
+        cat(paste0(" Because 'exact' was set to FALSE, the most recent data from ", txt$txt[1], " is being used instead. Check here for a list of available recent dates: https://sofia.usgs.gov/eden/models/real-time.php. \n\n"))
       }
       EDEN_date <- txt$txt[1]
     }

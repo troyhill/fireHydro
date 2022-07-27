@@ -22,8 +22,6 @@
 #' 
 #' }
 #' 
-#' @importFrom raster subset
-#' @importFrom raster stack
 #' @importFrom terra  subset
 #' 
 #' @export
@@ -50,8 +48,9 @@ merge.eden <- function(x, y = NULL, ...) {
   date_new <- dateVec[newOrder]
   
   if (grepl(x = tolower(class(inputList[[1]]$data)), pattern = '^rasterlayer$|^raster$|^rasterstack$')) {
-    data_new <- Reduce(raster::stack, sapply(inputList, FUN = '[', 2))
-    data_new <- raster::subset(x = data_new, subset = newOrder)
+    # data_new <- Reduce(raster::stack, sapply(inputList, FUN = '[', 2))
+    # data_new <- raster::subset(x = data_new, subset = newOrder)
+    message('raster class no longer supported.\n')
   }
   if (grepl(x = tolower(class(inputList[[1]]$data)), pattern = '^spatraster$')) {
     # x2 <- list(list(date = eden2022$date[1:2], data = subset(eden2022$data, 1:2)),

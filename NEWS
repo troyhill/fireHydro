@@ -1,4 +1,10 @@
-fireHydro version 0.2.05 (release date: TBD)
+fireHydro version 0.3.02 (release date: 2022-07-26)
+==================
+Changes:
+* Removed support for raster objects; use terra/sf
+
+
+fireHydro version 0.2.05 (release date: 2022-05-06)
 ==================
 Changes:
 * added merge, subset methods for eden objects

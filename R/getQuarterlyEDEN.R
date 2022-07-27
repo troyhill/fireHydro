@@ -36,7 +36,7 @@ getQuarterlyEDEN <- function(YYYYMMDD,
                        quarterly = FALSE, # why even have this argument? in case an older single day is desired.
                        download.method = 'libcurl') {
   
-  if (class(YYYYMMDD) == "Date") {
+  if (any(class(YYYYMMDD) == "Date")) {
     YYYYMMDD <- as.character(format(YYYYMMDD, format = "%Y%m%d"))
   }
   YYYYMMDD <- as.character(YYYYMMDD)

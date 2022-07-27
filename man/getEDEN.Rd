@@ -18,9 +18,9 @@ getEDEN(
 
 \item{exact}{logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date}
 
-\item{quarterly}{logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.}
+\item{quarterly}{logical; if set to TRUE, entire quarter is downloaded and returned as a SpatRaster.}
 
-\item{returnType}{character; class of object returned. Acceptable options: "sf", "terra", or "raster" (raster option will be removed soon)}
+\item{returnType}{character; class of object returned. Acceptable options: "sf" or "terra"}
 
 \item{DEM}{raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88. If a DEM is supplies and projection differs from the water surface, water surface is re-projected to match the DEM.}
 

@@ -1,8 +1,8 @@
 Package: fireHydro
 Type: Package
 Title: FireHydro tool
-Version: 0.3.01
-Date: 2022-04-07
+Version: 0.3.02
+Date: 2022-07-26
 Encoding: UTF-8
 Authors@R: c(
     person("Troy", "Hill", role = c("ctb", "cre"), email = "Hill.Troy@gmail.com", comment = c(ORCID = "0000-0003-2980-4099")),
@@ -15,17 +15,16 @@ Description: An R package integrating USGS-EDEN water level data and vegetation 
 License: file LICENSE
 URL: https://github.com/troyhill/fireHydro
 LazyData: true
+LazyDataCompression: xz
 Depends:
     R (>= 3.5.0),
-    raster,
     utils,
     dplyr,
-    terra,
     sf,
-    ncdf4,
     httr,
     ggplot2,
-    zoo
+    zoo,
+    terra
 RoxygenNote: 7.2.0
 Suggests: 
     covr,

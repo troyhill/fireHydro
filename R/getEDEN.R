@@ -4,8 +4,8 @@
 #' 
 #' @param EDEN_date The date(s) for which water levels are desired. Format should be a numeric or character string with the format "20181018" or "2018-10-18", or a Date object in any format. By default, today's date is used; if "exact = FALSE" this returns the most recent EDEN data available.
 #' @param exact logical; if TRUE, output is only returned if the requested date is available. If exact = FALSE, the function responds to an invalid EDEN_date input by returning data from the most recent available date
-#' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a RasterStack.
-#' @param returnType  character; class of object returned. Acceptable options: "sf", "terra", or "raster" (raster option will be removed soon)
+#' @param quarterly logical; if set to TRUE, entire quarter is downloaded and returned as a SpatRaster.
+#' @param returnType  character; class of object returned. Acceptable options: "sf" or "terra"
 #' @param DEM raster digital elevation model for south Florida. Used to subtract land elevations from water surface to get water depths in centimeters relative to soil surface. The default DEM is a USGS/EDEN product in meters NAVD88. If an alternate DEM is used, units should be meters. The DEM is multiplied by 100 internally in `getEDEN()` before being subtracted from the water surface. If `DEM = NULL`, output will be water surface in centimeters NAVD88. If a DEM is supplies and projection differs from the water surface, water surface is re-projected to match the DEM.
 #' @param download.method Method to be used for downloading files. See options in utils::download.file
 #' 
@@ -29,8 +29,6 @@
 #' 
 #' @importFrom httr GET
 #' @importFrom httr write_disk
-#' @importFrom raster raster
-#' @importFrom raster stack
 #' @importFrom terra rast
 #' @importFrom terra crs
 #' @importFrom terra project
@@ -68,7 +66,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
   } 
   if (length(EDEN_date) == 1) {
     ### accommodate hyphenated dates but notes
-    if (class(EDEN_date) == "Date") {
+    if (any(class(EDEN_date) == "Date")) {
       EDEN_date <- as.character(format(EDEN_date, format = "%Y%m%d"))
     }
     if(grepl(x = as.character(EDEN_date), pattern = "-")) {
@@ -182,7 +180,9 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         } else if (returnType == 'terra') {
           a.sf <- a.ras
         } else if (returnType == 'raster') {
-          a.sf <- raster::raster(a.ras)
+          #a.sf <- raster::raster(a.ras)
+          a.sf <- a.ras
+          message('raster returnType not supported. Returning SpatRaster.\n')
         } 
         ### change column name
         names(a.sf)[grepl(x = names(a.sf), pattern = paste0("layer|", EDEN_date))] <- EDEN_date
@@ -207,7 +207,8 @@ getEDEN <- function(EDEN_date = Sys.Date(),
         } else if (returnType == 'terra') {
           EDEN_list$data <- EDEN_list$data
         } else if (returnType == 'raster') {
-          EDEN_list$data <- raster::raster(EDEN_list$data)
+          # EDEN_list$data <- raster::raster(EDEN_list$data)
+          message('raster returnType not supported. Returning SpatRaster.\n')
         } 
         ### change column name
         names(EDEN_list$data)[grepl(x = names(EDEN_list$data), pattern = paste0("layer|", EDEN_date))] <- EDEN_date #"WaterDepth"

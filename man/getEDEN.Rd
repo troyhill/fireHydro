@@ -10,7 +10,7 @@ getEDEN(
   quarterly = FALSE,
   returnType = "sf",
   DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
-  download.method = "libcurl"
+  download.method = "curl"
 )
 }
 \arguments{

@@ -46,7 +46,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
                 quarterly = FALSE,
                 returnType  = "sf",
                 DEM = terra::rast(system.file("extdata/edenDEM.grd", package = "fireHydro")),
-                download.method = 'libcurl') {
+                download.method = 'curl') {
   
   ### issues: 
   ### - DEM not properly being subtracted

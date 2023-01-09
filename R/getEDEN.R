@@ -145,7 +145,7 @@ getEDEN <- function(EDEN_date = Sys.Date(),
           # 2: download and unzip zip file
           utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir())
           # 3: load geotiff as sf, set projection
-          a      <- paste0(tempdir(), "/s_", dataName) # "_v2rt.tif")
+          a      <- file.path(tempdir(), utils::unzip(zipfile = geotiff_zip, overwrite = TRUE, exdir = tempdir(), list = TRUE)$Name)
           a.ras  <- terra::rast(a)
           
           ### set projection to package-provided DEM to start, in case DEM argument is null
